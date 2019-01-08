@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         }
 
         // hardcode KS
-        ApiHelper.getClient().setKs("djJ8NDg3fDFTlz_bE-LZIeWTHcW4y3WPjn9M2vt7nRh2PxpRvMHota2X8VjAJuEOg80t7F6WEsPEyzMr8SogvOXs3sh-axJG9qQ19Qq6zuiuk6KAjw3JrUGSX7vrnXXU4Tr-N-J7oSoPQveaMG_RBOAfpQlEW1vl4ABTCXW6NmIdTMu8BSruERW_o0qz6rwlD_N_EQF8tQ==");
+        ApiHelper.getClient().setKs("djJ8NDg3fFDcpSJjfsM4v3F8VKCt5MDXpUzJqbddZ5rvOC8WIzFZV3zf26pevfvb3iegP7LiiqmSizVr3XZIxj7odpOuHDqGhSYxL_Gz3lngeb6d04UG_QAbQcvPg1MMKc-aw6cHHFIJL5Anb3WRvwHu7BsYUqnRyZC66hYVtv2Slitn3GHTuRfhsmtBN1DnLRfGJenFvA==");
     }
 
     @Override
