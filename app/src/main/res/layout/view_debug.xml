@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Request:"
+        android:textColor="@android:color/black" />
+
+    <RelativeLayout
+        android:id="@+id/request_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/editbox_background_normal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/request_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/request_sort"
+            android:textIsSelectable="true"
+            tools:text="Request" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/request_sort"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="3dp"
+            android:src="@drawable/ic_format_indent_increase_black_24dp"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Response:"
+        android:textColor="@android:color/black" />
+
+    <RelativeLayout
+        android:id="@+id/response_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/editbox_background_normal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/response_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/response_sort"
+            android:textIsSelectable="true"
+            tools:text="Response" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/response_sort"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="3dp"
+            android:src="@drawable/ic_format_indent_increase_black_24dp"
+            android:visibility="invisible" />
+    </RelativeLayout>
+</LinearLayout>

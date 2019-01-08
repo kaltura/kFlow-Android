@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">KFlow</string>
+
+    <plurals name="show_assets">
+        <item quantity="one">Show %s asset</item>
+        <item quantity="other">Show %s assets</item>
+    </plurals>
+
+    <plurals name="favorite_count">
+        <item quantity="one">%s favorite asset</item>
+        <item quantity="other">%s favorite assets</item>
+    </plurals>
+
+    <plurals name="history_count">
+        <item quantity="one">%s history asset</item>
+        <item quantity="other">%s history assets</item>
+    </plurals>
+</resources>
