@@ -67,6 +67,7 @@ public class AndroidAPIRequestsExecutor extends APIOkRequestsExecutor {
     private void provideDebugData(final RequestElement action, ResponseElement responseElement) {
         if (debugListener != null) {
             try {
+                debugListener.setRequestInfo(action.getUrl(), action.getMethod(), responseElement.getCode());
                 debugListener.setRequestBody(new JSONObject(action.getBody()));
                 debugListener.setResponseBody(new JSONObject(responseElement.getResponse()));
             } catch (JSONException e) {

@@ -1,16 +1,27 @@
 package com.kaltura.kflow.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.Uri;
+import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 
 public class Utils {
 
@@ -88,5 +99,43 @@ public class Utils {
             formatted.append("mb");
         }
         return formatted;
+    }
+
+    public static File saveToFile(Context context, String text) {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        String logFileName = "file_" + timeStamp;
+        File logFile;
+        try {
+            logFile = File.createTempFile(
+                    logFileName,           /* prefix */
+                    ".txt",         /* suffix */
+                    context.getCacheDir()      /* directory */
+            );
+            FileOutputStream fileOutputStream = new FileOutputStream(logFile, true);
+            fileOutputStream.write(text.getBytes());
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            logFile = new File(logFileName);
+        }
+        return logFile;
+    }
+
+    public static void shareFile(Activity activity, File file) {
+        if (file.exists()) {
+            Intent intentShareFile = new Intent(Intent.ACTION_SEND);
+            intentShareFile.setType("text/plain");
+            Uri fileUri;
+            if (Build.VERSION.SDK_INT > 21) {
+                fileUri = FileProvider.getUriForFile(activity, activity.getPackageName() + ".fileprovider", file);
+            } else {
+                fileUri = Uri.fromFile(file);
+            }
+
+            intentShareFile.putExtra(Intent.EXTRA_STREAM, fileUri);
+            intentShareFile.putExtra(Intent.EXTRA_SUBJECT, "Sharing request data");
+            intentShareFile.putExtra(Intent.EXTRA_TEXT, "Sharing request data...");
+            activity.startActivity(Intent.createChooser(intentShareFile, "Share request data"));
+        }
     }
 }

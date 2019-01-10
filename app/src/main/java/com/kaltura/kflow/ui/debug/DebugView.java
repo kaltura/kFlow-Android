@@ -28,6 +28,9 @@ public class DebugView extends RelativeLayout {
     private RelativeLayout mRequestContainer;
     private RelativeLayout mResponseContainer;
 
+    private String mRequestUrl;
+    private String mRequestMethod;
+    private int mResponseCode;
     private JSONObject mRequestJson;
     private JSONObject mResponseJson;
 
@@ -73,6 +76,18 @@ public class DebugView extends RelativeLayout {
         });
     }
 
+    public void setRequestUrl(String url) {
+        mRequestUrl = url;
+    }
+
+    public void setRequestMethod(String requestMethod) {
+        mRequestMethod = requestMethod;
+    }
+
+    public void setResponseCode(int responseCode) {
+        mResponseCode = responseCode;
+    }
+
     public void setRequestBody(JSONObject json) {
         try {
             mRequestJson = json;
@@ -105,9 +120,22 @@ public class DebugView extends RelativeLayout {
     }
 
     public void clear() {
+        mRequestUrl = "";
+        mRequestMethod = "";
+        mResponseCode = -1;
+        mRequestJson = null;
+        mResponseJson = null;
         mRequestBodyText.setText("");
         mResponseBodyText.setText("");
         mRequestBodySort.setVisibility(INVISIBLE);
         mResponseBodySort.setVisibility(INVISIBLE);
+    }
+
+    public String getSharedData() {
+        return "URL " + mRequestUrl + "\n" +
+                "Method " + mRequestMethod + "\n" +
+                "Status " + mResponseCode + "\n" +
+                "Request Body:\n" + mRequestBodyText.getText() + "\n" +
+                "Response Body:\n" + mResponseBodyText.getText() + "\n";
     }
 }
