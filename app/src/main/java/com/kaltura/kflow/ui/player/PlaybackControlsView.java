@@ -35,7 +35,7 @@ public class PlaybackControlsView extends LinearLayout implements View.OnClickLi
 
     private SeekBar seekBar;
     private TextView tvCurTime, tvTime;
-    private ImageButton btnPlay, btnPause;
+    private ImageButton btnPlay, btnPause, btnStartOver;
 
     private boolean dragging = false;
 
@@ -61,9 +61,11 @@ public class PlaybackControlsView extends LinearLayout implements View.OnClickLi
 
         btnPlay = findViewById(R.id.play);
         btnPause = findViewById(R.id.pause);
+        btnStartOver = findViewById(R.id.startover);
 
         btnPlay.setOnClickListener(this);
         btnPause.setOnClickListener(this);
+        btnStartOver.setOnClickListener(this);
 
         seekBar = findViewById(R.id.mediacontroller_progress);
         seekBar.setOnSeekBarChangeListener(this);
@@ -156,6 +158,9 @@ public class PlaybackControlsView extends LinearLayout implements View.OnClickLi
                 break;
             case R.id.pause:
                 player.pause();
+                break;
+            case R.id.startover:
+                player.replay();
                 break;
         }
     }
