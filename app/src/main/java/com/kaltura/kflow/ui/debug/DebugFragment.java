@@ -97,6 +97,6 @@ public abstract class DebugFragment extends Fragment implements DebugListener {
 
     protected void clearDebugView() {
         mDebugView.clear();
-        mShareMenuItem.setEnabled(false);
+        if (mShareMenuItem != null) mShareMenuItem.setEnabled(false);
     }
 }
