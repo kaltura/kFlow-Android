@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import com.kaltura.client.enums.SocialActionType;
 import com.kaltura.client.services.FavoriteService;
-import com.kaltura.client.services.SearchHistoryService;
 import com.kaltura.client.services.SocialActionService;
 import com.kaltura.client.types.Asset;
 import com.kaltura.client.types.Favorite;
@@ -86,6 +85,7 @@ public class PlayerFragment extends DebugFragment {
 
         mLike = getView().findViewById(R.id.like);
         mFavorite = getView().findViewById(R.id.favorite);
+        mPlayerControls = getView().findViewById(R.id.player_controls);
         mLike.setOnCheckedChangeListener((compoundButton, b) -> {
             if (mLike.isPressed()) actionLike();
         });
@@ -126,7 +126,14 @@ public class PlayerFragment extends DebugFragment {
 
     private void onMediaLoaded(PKMediaEntry mediaEntry) {
 
-        PKMediaConfig mediaConfig = new PKMediaConfig().setMediaEntry(mediaEntry).setStartPosition(0L);
+        PKMediaConfig mediaConfig = new PKMediaConfig().setMediaEntry(mediaEntry);
+        if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Live)) {
+            mPlayerControls.setAsset(mAsset);
+            mPlayerControls.disableControllers();
+        } else {
+            mediaConfig.setStartPosition(0L);
+        }
+
         if (mPlayer == null) {
 
             mPlayer = PlayKitManager.loadPlayer(requireContext(), new PKPluginConfigs());
@@ -138,7 +145,6 @@ public class PlayerFragment extends DebugFragment {
             FrameLayout layout = getView().findViewById(R.id.player_layout);
             layout.addView(mPlayer.getView());
 
-            mPlayerControls = getView().findViewById(R.id.player_controls);
             mPlayerControls.setPlayer(mPlayer);
         }
 

@@ -10,11 +10,14 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.C;
+import com.kaltura.client.types.Asset;
 import com.kaltura.kflow.R;
 import com.kaltura.playkit.PKLog;
 import com.kaltura.playkit.Player;
 import com.kaltura.playkit.PlayerState;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -29,6 +32,7 @@ public class PlaybackControlsView extends LinearLayout implements View.OnClickLi
 
     private Player player;
     private PlayerState playerState;
+    private Asset asset;
 
     private Formatter formatter;
     private StringBuilder formatBuilder;
@@ -74,8 +78,28 @@ public class PlaybackControlsView extends LinearLayout implements View.OnClickLi
         tvTime = findViewById(R.id.time);
     }
 
-
     private void updateProgress() {
+        if (asset == null) updateVodProgress();
+        else updateLiveProgress();
+    }
+
+    private void updateLiveProgress() {
+        long startDate = asset.getStartDate();
+        long endDate = asset.getEndDate();
+        long durationMs = endDate - startDate;
+        long currentProgress = new Date().getTime() / 1000 - startDate;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        String startTime = dateFormat.format(new Date(startDate));
+        String endTime = dateFormat.format(new Date(endDate));
+
+        tvCurTime.setText(startTime);
+        tvTime.setText(endTime);
+
+        seekBar.setProgress((int) ((float) PROGRESS_BAR_MAX * currentProgress / durationMs));
+    }
+
+    private void updateVodProgress() {
         long duration = C.TIME_UNSET;
         long position = C.POSITION_UNSET;
         long bufferedPosition = 0;
@@ -189,5 +213,21 @@ public class PlaybackControlsView extends LinearLayout implements View.OnClickLi
 
     public void resume() {
         updateProgress();
+    }
+
+    public void disableControllers() {
+        btnPause.setEnabled(false);
+        btnPlay.setEnabled(false);
+        btnStartOver.setEnabled(false);
+
+        btnPause.getDrawable().mutate().setTint(getResources().getColor(android.R.color.darker_gray));
+        btnPlay.getDrawable().mutate().setTint(getResources().getColor(android.R.color.darker_gray));
+        btnStartOver.getDrawable().mutate().setTint(getResources().getColor(android.R.color.darker_gray));
+
+        seekBar.setOnTouchListener((v, event) -> true);
+    }
+
+    public void setAsset(Asset asset) {
+        this.asset = asset;
     }
 }

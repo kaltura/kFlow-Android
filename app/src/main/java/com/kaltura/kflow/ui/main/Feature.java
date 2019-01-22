@@ -9,6 +9,7 @@ public enum Feature {
     ANONYMOUS_LOGIN("Anonymous login"),
     REGISTRATION("Registration"),
     VOD("VOD gallery"),
+    LIVE("Live TV"),
     FAVORITES("Favorites"),
     SEARCH("Search");
 
