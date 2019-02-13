@@ -22,6 +22,8 @@ import com.kaltura.kflow.utils.Utils;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,32 +32,32 @@ import androidx.appcompat.widget.AppCompatButton;
 /**
  * Created by alex_lytvynenko on 17.01.2019.
  */
-public class LiveTvFragment extends DebugFragment implements View.OnClickListener {
+public class EpgFragment extends DebugFragment implements View.OnClickListener {
 
-    private TextInputEditText mChannelName;
+    private TextInputEditText mEpgChannelId;
     private AppCompatButton mShowChannelButton;
     private ArrayList<Asset> mChannels = new ArrayList<>();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_live, container, false);
+        return inflater.inflate(R.layout.fragment_epg, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((MainActivity) requireActivity()).getSupportActionBar().setTitle("Live TV");
+        ((MainActivity) requireActivity()).getSupportActionBar().setTitle("EPG past programs");
 
-        mChannelName = getView().findViewById(R.id.channel_name);
+        mEpgChannelId = getView().findViewById(R.id.epg_channel_id);
         mShowChannelButton = getView().findViewById(R.id.show_channel);
 
         mShowChannelButton.setOnClickListener(this);
         getView().findViewById(R.id.get).setOnClickListener(this);
 
-        mChannelName.setText("Отр");
+        mEpgChannelId.setText("3286");
         mShowChannelButton.setVisibility(mChannels.isEmpty() ? View.GONE : View.VISIBLE);
-        mShowChannelButton.setText(getResources().getQuantityString(R.plurals.show_channels,
+        mShowChannelButton.setText(getResources().getQuantityString(R.plurals.show_past_programs,
                 mChannels.size(), NumberFormat.getInstance().format(mChannels.size())));
     }
 
@@ -69,26 +71,34 @@ public class LiveTvFragment extends DebugFragment implements View.OnClickListene
                 break;
             }
             case R.id.get: {
-                makeGetChannelsRequest(mChannelName.getText().toString());
+                makeGetChannelsRequest(mEpgChannelId.getText().toString());
                 break;
             }
         }
     }
 
-    private void makeGetChannelsRequest(String channelName) {
+    private void makeGetChannelsRequest(String epgChannelId) {
         if (Utils.hasInternetConnection(requireContext())) {
 
             mChannels.clear();
             mShowChannelButton.setVisibility(View.GONE);
 
+            Calendar startCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            startCalendar.set(Calendar.MILLISECOND, 0);
+            startCalendar.set(Calendar.SECOND, 0);
+            startCalendar.set(Calendar.MINUTE, 0);
+            startCalendar.set(Calendar.HOUR, 0);
+            long startDate = startCalendar.getTimeInMillis() / 1000;
+            long endDate = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000;
+
             SearchAssetFilter filter = new SearchAssetFilter();
             filter.setOrderBy(AssetOrderBy.START_DATE_DESC.getValue());
-            filter.setName(channelName);
-            filter.setKSql("(and name~'" + channelName + "' (and (and customer_type_blacklist != '5' (or region_agnostic_user_types = '5' (or region_whitelist = '1077' (and region_blacklist != '1077' (or region_whitelist !+ '' region_whitelist = '0'))))) asset_type='600'))");
+            filter.setTypeIn("0");
+            filter.setKSql("(and epg_channel_id = '" + epgChannelId + "' (and start_date < '" + endDate + "' end_date > '" + startDate + "' end_date < '" + endDate + "'))");
 
             FilterPager filterPager = new FilterPager();
             filterPager.setPageIndex(1);
-            filterPager.setPageSize(50);
+            filterPager.setPageSize(10);
 
             RequestBuilder requestBuilder = AssetService.list(filter, filterPager)
                     .setCompletion(result -> {
@@ -96,7 +106,7 @@ public class LiveTvFragment extends DebugFragment implements View.OnClickListene
                             if (result.results.getObjects() != null)
                                 mChannels.addAll(result.results.getObjects());
 
-                            mShowChannelButton.setText(getResources().getQuantityString(R.plurals.show_channels,
+                            mShowChannelButton.setText(getResources().getQuantityString(R.plurals.show_past_programs,
                                     mChannels.size(), NumberFormat.getInstance().format(mChannels.size())));
                             mShowChannelButton.setVisibility(View.VISIBLE);
                         }

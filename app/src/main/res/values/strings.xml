@@ -6,6 +6,16 @@
         <item quantity="other">Show %s assets</item>
     </plurals>
 
+    <plurals name="show_channels">
+        <item quantity="one">Show %s channel</item>
+        <item quantity="other">Show %s channels</item>
+    </plurals>
+
+    <plurals name="show_past_programs">
+        <item quantity="one">Show %s past program</item>
+        <item quantity="other">Show %s past programs</item>
+    </plurals>
+
     <plurals name="favorite_count">
         <item quantity="one">%s favorite asset</item>
         <item quantity="other">%s favorite assets</item>

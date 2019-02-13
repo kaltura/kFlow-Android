@@ -17,11 +17,11 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/channel_name"
+                android:id="@+id/epg_channel_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:hint="Channel Name"
+                android:hint="Epg channel id"
                 android:imeOptions="actionDone"
                 android:singleLine="true" />
 

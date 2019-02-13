@@ -14,6 +14,8 @@ import com.kaltura.client.services.SocialActionService;
 import com.kaltura.client.types.Asset;
 import com.kaltura.client.types.Favorite;
 import com.kaltura.client.types.FavoriteFilter;
+import com.kaltura.client.types.LiveAsset;
+import com.kaltura.client.types.ProgramAsset;
 import com.kaltura.client.types.SocialAction;
 import com.kaltura.client.types.SocialActionFilter;
 import com.kaltura.client.utils.request.RequestBuilder;
@@ -38,6 +40,10 @@ import com.kaltura.playkit.providers.api.phoenix.APIDefines;
 import com.kaltura.playkit.providers.base.OnMediaLoadCompletion;
 import com.kaltura.playkit.providers.ott.PhoenixMediaProvider;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -50,7 +56,7 @@ public class PlayerFragment extends DebugFragment {
 
     private static final String ARG_ASSET = "extra_asset";
 
-    private static final String Format = "DASH_Main";
+    private static final String Format = "DASH_Tablet";
 
     private SwitchCompat mLike;
     private SwitchCompat mFavorite;
@@ -58,6 +64,7 @@ public class PlayerFragment extends DebugFragment {
     private Player mPlayer;
     private Asset mAsset;
     private String mLikeId = "";
+    private PKMediaEntry mediaEntry;
 
     public static PlayerFragment newInstance(Asset asset) {
         PlayerFragment likeFragment = new PlayerFragment();
@@ -92,44 +99,55 @@ public class PlayerFragment extends DebugFragment {
         mFavorite.setOnCheckedChangeListener((compoundButton, b) -> {
             if (mFavorite.isPressed()) actionFavorite();
         });
+        mPlayerControls.setOnStartOverClickListener(view1 -> {
+            if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Vod)) {
+                mPlayer.replay();
+            }
+        });
 
         AppCompatTextView assetTitle = getView().findViewById(R.id.asset_title);
         assetTitle.setText(mAsset.getName());
 
-        initPlayer();
+        boolean isInPast = false;
+
+        if (mAsset instanceof ProgramAsset) isInPast = Utils.isProgramIsPast(mAsset);
+
+        initPlayer(isInPast ? APIDefines.PlaybackContextType.Catchup : APIDefines.PlaybackContextType.Playback);
         getLikeList();
         getFavoriteList();
     }
 
-    private void initPlayer() {
-        startOttMediaLoading(response ->
+    private void initPlayer(APIDefines.PlaybackContextType contextType) {
+        startOttMediaLoading(contextType, response ->
                 requireActivity().runOnUiThread(() -> {
                     if (response.getResponse() != null) {
-                        onMediaLoaded(response.getResponse());
+                        mediaEntry = response.getResponse();
+                        onMediaLoaded();
                     } else {
                         Toast.makeText(requireContext(), "failed to fetch media data: " + (response.getError() != null ? response.getError().getMessage() : ""), Toast.LENGTH_LONG).show();
                     }
                 }));
     }
 
-    private void startOttMediaLoading(final OnMediaLoadCompletion completion) {
+    private void startOttMediaLoading(APIDefines.PlaybackContextType contextType, final OnMediaLoadCompletion completion) {
         MediaEntryProvider mediaProvider = new PhoenixMediaProvider()
                 .setSessionProvider(new SimpleSessionProvider(Settings.host + "/api_v3/", Settings.partnerID, ApiHelper.getClient().getKs()))
-                .setAssetId(mAsset.getId().toString())
-                .setProtocol(PhoenixMediaProvider.HttpProtocol.Https)
-                .setContextType(APIDefines.PlaybackContextType.Playback)
-                .setAssetType(APIDefines.KalturaAssetType.Media)
+                .setAssetId(String.valueOf(mAsset.getId()))
+                .setFileIds("1247531")
+                .setProtocol(PhoenixMediaProvider.HttpProtocol.Http)
+                .setContextType(contextType)
+                .setAssetType(contextType == APIDefines.PlaybackContextType.Playback ? APIDefines.KalturaAssetType.Media : APIDefines.KalturaAssetType.Epg)
                 .setFormats(Format);
 
         mediaProvider.load(completion);
     }
 
-    private void onMediaLoaded(PKMediaEntry mediaEntry) {
+    private void onMediaLoaded() {
 
         PKMediaConfig mediaConfig = new PKMediaConfig().setMediaEntry(mediaEntry);
         if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Live)) {
             mPlayerControls.setAsset(mAsset);
-            mPlayerControls.disableControllers();
+            mPlayerControls.disableControllersForLive();
         } else {
             mediaConfig.setStartPosition(0L);
         }
@@ -139,6 +157,7 @@ public class PlayerFragment extends DebugFragment {
             mPlayer = PlayKitManager.loadPlayer(requireContext(), new PKPluginConfigs());
 
             mPlayer.getSettings().setSecureSurface(false);
+            mPlayer.getSettings().setAllowCrossProtocolRedirect(true);
 
             addPlayerListeners();
 

@@ -1,4 +1,4 @@
-package com.kaltura.kflow.ui.vodList;
+package com.kaltura.kflow.ui.assetList;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,16 +22,16 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * Created by alex_lytvynenko on 30.11.2018.
  */
-public class VodListFragment extends Fragment implements VodListAdapter.OnAssetClickListener {
+public class AssetListFragment extends Fragment implements AssetListAdapter.OnAssetClickListener {
 
     private static final String ARG_ASSETS = "extra_assets";
 
-    public static VodListFragment newInstance(ArrayList<Asset> assets) {
-        VodListFragment vodListFragment = new VodListFragment();
+    public static AssetListFragment newInstance(ArrayList<Asset> assets) {
+        AssetListFragment assetListFragment = new AssetListFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_ASSETS, assets);
-        vodListFragment.setArguments(bundle);
-        return vodListFragment;
+        assetListFragment.setArguments(bundle);
+        return assetListFragment;
     }
 
     @Nullable
@@ -43,7 +43,7 @@ public class VodListFragment extends Fragment implements VodListAdapter.OnAssetC
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((MainActivity) requireActivity()).getSupportActionBar().setTitle("VOD list");
+        ((MainActivity) requireActivity()).getSupportActionBar().setTitle("Asset list");
 
         initList();
     }
@@ -57,7 +57,7 @@ public class VodListFragment extends Fragment implements VodListAdapter.OnAssetC
         Bundle savedState = getArguments();
         ArrayList<Asset> assets = savedState != null ? (ArrayList<Asset>) savedState.getSerializable(ARG_ASSETS) : null;
 
-        VodListAdapter adapter = new VodListAdapter(assets, this);
+        AssetListAdapter adapter = new AssetListAdapter(assets, this);
         list.setAdapter(adapter);
     }
 

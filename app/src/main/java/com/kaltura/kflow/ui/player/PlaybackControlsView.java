@@ -69,7 +69,6 @@ public class PlaybackControlsView extends LinearLayout implements View.OnClickLi
 
         btnPlay.setOnClickListener(this);
         btnPause.setOnClickListener(this);
-        btnStartOver.setOnClickListener(this);
 
         seekBar = findViewById(R.id.mediacontroller_progress);
         seekBar.setOnSeekBarChangeListener(this);
@@ -183,9 +182,6 @@ public class PlaybackControlsView extends LinearLayout implements View.OnClickLi
             case R.id.pause:
                 player.pause();
                 break;
-            case R.id.startover:
-                player.replay();
-                break;
         }
     }
 
@@ -207,6 +203,10 @@ public class PlaybackControlsView extends LinearLayout implements View.OnClickLi
         player.seekTo(positionValue(seekBar.getProgress()));
     }
 
+    public void setOnStartOverClickListener(View.OnClickListener listener) {
+        btnStartOver.setOnClickListener(listener);
+    }
+
     public void release() {
         removeCallbacks(updateProgressAction);
     }
@@ -215,14 +215,12 @@ public class PlaybackControlsView extends LinearLayout implements View.OnClickLi
         updateProgress();
     }
 
-    public void disableControllers() {
+    public void disableControllersForLive() {
         btnPause.setEnabled(false);
         btnPlay.setEnabled(false);
-        btnStartOver.setEnabled(false);
 
         btnPause.getDrawable().mutate().setTint(getResources().getColor(android.R.color.darker_gray));
         btnPlay.getDrawable().mutate().setTint(getResources().getColor(android.R.color.darker_gray));
-        btnStartOver.getDrawable().mutate().setTint(getResources().getColor(android.R.color.darker_gray));
 
         seekBar.setOnTouchListener((v, event) -> true);
     }

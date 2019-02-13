@@ -8,16 +8,21 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.text.format.Time;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+
+import com.kaltura.client.types.Asset;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import androidx.annotation.Nullable;
@@ -137,5 +142,13 @@ public class Utils {
             intentShareFile.putExtra(Intent.EXTRA_TEXT, "Sharing request data...");
             activity.startActivity(Intent.createChooser(intentShareFile, "Share request data"));
         }
+    }
+
+    public static long utcToLocal(long utcTime) {
+        return utcTime + TimeZone.getDefault().getOffset(utcTime);
+    }
+
+    public static boolean isProgramIsPast(Asset asset) {
+        return asset.getEndDate() < Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000;
     }
 }

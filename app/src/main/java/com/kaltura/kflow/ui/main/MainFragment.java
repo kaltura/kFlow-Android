@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.kaltura.kflow.R;
 import com.kaltura.kflow.ui.AnonymousLoginFragment;
+import com.kaltura.kflow.ui.EpgFragment;
 import com.kaltura.kflow.ui.FavoritesFragment;
 import com.kaltura.kflow.ui.LiveTvFragment;
 import com.kaltura.kflow.ui.LoginFragment;
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static com.kaltura.kflow.ui.main.Feature.ANONYMOUS_LOGIN;
+import static com.kaltura.kflow.ui.main.Feature.EPG;
 import static com.kaltura.kflow.ui.main.Feature.FAVORITES;
 import static com.kaltura.kflow.ui.main.Feature.LIVE;
 import static com.kaltura.kflow.ui.main.Feature.LOGIN;
@@ -34,7 +36,7 @@ import static com.kaltura.kflow.ui.main.Feature.VOD;
  */
 public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureClickListener {
 
-    private Feature[] mFeatures = {LOGIN, ANONYMOUS_LOGIN, REGISTRATION, VOD, LIVE, FAVORITES, SEARCH};
+    private Feature[] mFeatures = {LOGIN, ANONYMOUS_LOGIN, REGISTRATION, VOD, EPG, LIVE, FAVORITES, SEARCH};
 
     @Nullable
     @Override
@@ -71,6 +73,9 @@ public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureCl
                 break;
             case VOD:
                 pushFragment(new GetVodFragment());
+                break;
+            case EPG:
+                pushFragment(new EpgFragment());
                 break;
             case LIVE:
                 pushFragment(new LiveTvFragment());

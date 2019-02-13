@@ -18,7 +18,7 @@ import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.kflow.R;
 import com.kaltura.kflow.ui.debug.DebugFragment;
 import com.kaltura.kflow.ui.main.MainActivity;
-import com.kaltura.kflow.ui.vodList.VodListFragment;
+import com.kaltura.kflow.ui.assetList.AssetListFragment;
 import com.kaltura.kflow.utils.ApiHelper;
 import com.kaltura.kflow.utils.Utils;
 
@@ -144,9 +144,9 @@ public class SearchFragment extends DebugFragment implements View.OnClickListene
     }
 
     private void showAssets() {
-        VodListFragment vodListFragment = VodListFragment.newInstance(mAssets);
+        AssetListFragment assetListFragment = AssetListFragment.newInstance(mAssets);
         requireActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, vodListFragment)
+                .replace(R.id.container, assetListFragment)
                 .addToBackStack(null)
                 .commit();
     }
