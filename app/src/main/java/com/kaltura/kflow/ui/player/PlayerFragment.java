@@ -14,11 +14,13 @@ import com.kaltura.client.services.SocialActionService;
 import com.kaltura.client.types.Asset;
 import com.kaltura.client.types.Favorite;
 import com.kaltura.client.types.FavoriteFilter;
+import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.types.LiveAsset;
 import com.kaltura.client.types.ProgramAsset;
 import com.kaltura.client.types.SocialAction;
 import com.kaltura.client.types.SocialActionFilter;
 import com.kaltura.client.utils.request.RequestBuilder;
+import com.kaltura.client.utils.response.base.ApiCompletion;
 import com.kaltura.kflow.R;
 import com.kaltura.kflow.Settings;
 import com.kaltura.kflow.ui.debug.DebugFragment;
@@ -133,9 +135,9 @@ public class PlayerFragment extends DebugFragment {
         MediaEntryProvider mediaProvider = new PhoenixMediaProvider()
                 .setSessionProvider(new SimpleSessionProvider(Settings.host + "/api_v3/", Settings.partnerID, ApiHelper.getClient().getKs()))
                 .setAssetId(String.valueOf(mAsset.getId()))
-                .setFileIds("1247531")
                 .setProtocol(PhoenixMediaProvider.HttpProtocol.Http)
                 .setContextType(contextType)
+                .setAssetReferenceType(contextType == APIDefines.PlaybackContextType.Playback ? APIDefines.AssetReferenceType.Media :APIDefines.AssetReferenceType.InternalEpg)
                 .setAssetType(contextType == APIDefines.PlaybackContextType.Playback ? APIDefines.KalturaAssetType.Media : APIDefines.KalturaAssetType.Epg)
                 .setFormats(Format);
 

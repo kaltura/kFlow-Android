@@ -5,6 +5,6 @@ package com.kaltura.kflow;
  */
 public class Settings {
 
-    public static int partnerID = 478;
-    public static String host = "https://rest.beeline.tv";
+    public static int partnerID = 3188;
+    public static String host = " https://rest.irs1.ott.kaltura.com/v5_2_2";
 }
