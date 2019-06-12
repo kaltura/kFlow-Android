@@ -55,7 +55,7 @@ public class GetVodFragment extends DebugFragment implements View.OnClickListene
         mShowAssetsButton.setOnClickListener(this);
         getView().findViewById(R.id.get).setOnClickListener(this);
 
-        mKsqlRequest.setText("(or name~\'Honey Chilli Prawns\')");
+        mKsqlRequest.setText("(or name~\'Bigg Boss S12\')");
         mShowAssetsButton.setVisibility(mAssets.isEmpty() ? View.GONE : View.VISIBLE);
         mShowAssetsButton.setText(getResources().getQuantityString(R.plurals.show_assets,
                 mAssets.size(), NumberFormat.getInstance().format(mAssets.size())));

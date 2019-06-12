@@ -58,7 +58,7 @@ public class PlayerFragment extends DebugFragment {
 
     private static final String ARG_ASSET = "extra_asset";
 
-    private static final String Format = "DASH_Tablet";
+    private static final String Format = "DASH_Main";
 
     private SwitchCompat mLike;
     private SwitchCompat mFavorite;
@@ -135,7 +135,7 @@ public class PlayerFragment extends DebugFragment {
         MediaEntryProvider mediaProvider = new PhoenixMediaProvider()
                 .setSessionProvider(new SimpleSessionProvider(Settings.host + "/api_v3/", Settings.partnerID, ApiHelper.getClient().getKs()))
                 .setAssetId(String.valueOf(mAsset.getId()))
-                .setProtocol(PhoenixMediaProvider.HttpProtocol.Http)
+                .setProtocol(PhoenixMediaProvider.HttpProtocol.Https)
                 .setContextType(contextType)
                 .setAssetReferenceType(contextType == APIDefines.PlaybackContextType.Playback ? APIDefines.AssetReferenceType.Media :APIDefines.AssetReferenceType.InternalEpg)
                 .setAssetType(contextType == APIDefines.PlaybackContextType.Playback ? APIDefines.KalturaAssetType.Media : APIDefines.KalturaAssetType.Epg)

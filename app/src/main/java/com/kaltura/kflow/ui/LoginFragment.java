@@ -56,7 +56,9 @@ public class LoginFragment extends DebugFragment implements View.OnClickListener
             RequestBuilder requestBuilder = OttUserService.login(Settings.partnerID, email, password,
                     null, Utils.getUUID(requireContext()))
                     .setCompletion((ApiCompletion<LoginResponse>) result -> {
-
+                        if (result.isSuccess()) {
+                            ApiHelper.getClient().setKs(result.results.getLoginSession().getKs());
+                        }
                     });
             ApiHelper.execute(requestBuilder);
             clearDebugView();
