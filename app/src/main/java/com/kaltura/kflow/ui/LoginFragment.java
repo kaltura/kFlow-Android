@@ -13,9 +13,10 @@ import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.base.ApiCompletion;
 import com.kaltura.kflow.R;
 import com.kaltura.kflow.Settings;
+import com.kaltura.kflow.manager.PreferenceManager;
 import com.kaltura.kflow.ui.debug.DebugFragment;
 import com.kaltura.kflow.ui.main.MainActivity;
-import com.kaltura.kflow.utils.ApiHelper;
+import com.kaltura.kflow.manager.PhoenixApiManager;
 import com.kaltura.kflow.utils.Utils;
 
 import androidx.annotation.NonNull;
@@ -53,14 +54,15 @@ public class LoginFragment extends DebugFragment implements View.OnClickListener
 
     private void makeLoginRequest(String email, String password) {
         if (Utils.hasInternetConnection(requireContext())) {
-            RequestBuilder requestBuilder = OttUserService.login(Settings.partnerID, email, password,
+            RequestBuilder requestBuilder = OttUserService.login(PreferenceManager.getInstance(requireContext()).getPartnerId(), email, password,
                     null, Utils.getUUID(requireContext()))
                     .setCompletion((ApiCompletion<LoginResponse>) result -> {
                         if (result.isSuccess()) {
-                            ApiHelper.getClient().setKs(result.results.getLoginSession().getKs());
+                            PreferenceManager.getInstance(requireContext()).saveKs(result.results.getLoginSession().getKs());
+                            PhoenixApiManager.getClient().setKs(result.results.getLoginSession().getKs());
                         }
                     });
-            ApiHelper.execute(requestBuilder);
+            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
@@ -71,7 +73,7 @@ public class LoginFragment extends DebugFragment implements View.OnClickListener
     public void onDestroyView() {
         super.onDestroyView();
         Utils.hideKeyboard(getView());
-        ApiHelper.cancelAll();
+        PhoenixApiManager.cancelAll();
     }
 
     @Override

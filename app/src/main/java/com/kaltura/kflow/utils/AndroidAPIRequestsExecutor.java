@@ -56,11 +56,11 @@ public class AndroidAPIRequestsExecutor extends APIOkRequestsExecutor {
         }
     }
 
-    static void setDebugListener(DebugListener debugListener) {
+    public static void setDebugListener(DebugListener debugListener) {
         AndroidAPIRequestsExecutor.debugListener = debugListener;
     }
 
-    static void removeDebugListener() {
+    public static void removeDebugListener() {
         AndroidAPIRequestsExecutor.debugListener = null;
     }
 

@@ -15,9 +15,10 @@ import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.base.ApiCompletion;
 import com.kaltura.kflow.R;
 import com.kaltura.kflow.Settings;
+import com.kaltura.kflow.manager.PreferenceManager;
 import com.kaltura.kflow.ui.debug.DebugFragment;
 import com.kaltura.kflow.ui.main.MainActivity;
-import com.kaltura.kflow.utils.ApiHelper;
+import com.kaltura.kflow.manager.PhoenixApiManager;
 import com.kaltura.kflow.utils.Utils;
 
 import androidx.annotation.NonNull;
@@ -50,14 +51,15 @@ public class AnonymousLoginFragment extends DebugFragment implements View.OnClic
 
     private void makeAnonymousLoginRequest() {
         if (Utils.hasInternetConnection(requireContext())) {
-            RequestBuilder requestBuilder = OttUserService.anonymousLogin(Settings.partnerID, Utils.getUUID(requireContext()))
+            RequestBuilder requestBuilder = OttUserService.anonymousLogin(PreferenceManager.getInstance(requireContext()).getPartnerId(), Utils.getUUID(requireContext()))
                     .setCompletion((ApiCompletion<LoginSession>) result -> {
                         if (result.isSuccess()) {
-                            ApiHelper.getClient().setKs(result.results.getKs());
+                            PreferenceManager.getInstance(requireContext()).saveKs(result.results.getKs());
+                            PhoenixApiManager.getClient().setKs(result.results.getKs());
 //                                generateAppToken();
                         }
                     });
-            ApiHelper.execute(requestBuilder);
+            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
@@ -74,7 +76,7 @@ public class AnonymousLoginFragment extends DebugFragment implements View.OnClic
                 .setCompletion((ApiCompletion<AppToken>) result -> {
 
                 });
-        ApiHelper.execute(requestBuilder);
+        PhoenixApiManager.execute(requestBuilder);
         clearDebugView();
     }
 
@@ -82,7 +84,7 @@ public class AnonymousLoginFragment extends DebugFragment implements View.OnClic
     public void onDestroyView() {
         super.onDestroyView();
         Utils.hideKeyboard(getView());
-        ApiHelper.cancelAll();
+        PhoenixApiManager.cancelAll();
     }
 
     @Override

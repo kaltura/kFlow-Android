@@ -12,7 +12,8 @@ public enum Feature {
     EPG("EPG (past programs)"),
     LIVE("Live TV"),
     FAVORITES("Favorites"),
-    SEARCH("Search");
+    SEARCH("Search"),
+    SETTINGS("Settings");
 
     private String text;
 

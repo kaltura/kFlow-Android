@@ -7,7 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.kaltura.kflow.R;
-import com.kaltura.kflow.utils.ApiHelper;
+import com.kaltura.kflow.manager.PhoenixApiManager;
 import com.kaltura.kflow.utils.Utils;
 
 import org.json.JSONObject;
@@ -56,7 +56,7 @@ public abstract class DebugFragment extends Fragment implements DebugListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ApiHelper.setDebugListener(this);
+        PhoenixApiManager.setDebugListener(this);
 
         mDebugView = getView().findViewById(getDebugViewId());
 
@@ -66,7 +66,7 @@ public abstract class DebugFragment extends Fragment implements DebugListener {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ApiHelper.removeDebugListener();
+        PhoenixApiManager.removeDebugListener();
     }
 
     @Override

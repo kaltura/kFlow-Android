@@ -1,26 +1,20 @@
-package com.kaltura.kflow.utils;
+package com.kaltura.kflow.manager;
 
 import com.kaltura.client.Client;
 import com.kaltura.client.Configuration;
 import com.kaltura.client.utils.request.RequestBuilder;
-import com.kaltura.kflow.Settings;
 import com.kaltura.kflow.ui.debug.DebugListener;
+import com.kaltura.kflow.utils.AndroidAPIRequestsExecutor;
 
 /**
  * Created by alex_lytvynenko on 11/18/18.
  */
-public class ApiHelper {
+public class PhoenixApiManager {
 
     private static Client client;
 
     public static Client getClient() {
-        if (client == null) {
-            Configuration config = new Configuration();
-            config.setConnectTimeout(10000);
-            config.setEndpoint(Settings.host);
-
-            client = new Client(config);
-        }
+        if (client == null) client = new Client(new Configuration());
         return client;
     }
 

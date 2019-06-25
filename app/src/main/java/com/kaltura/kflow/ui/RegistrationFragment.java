@@ -13,9 +13,10 @@ import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.base.ApiCompletion;
 import com.kaltura.kflow.R;
 import com.kaltura.kflow.Settings;
+import com.kaltura.kflow.manager.PreferenceManager;
 import com.kaltura.kflow.ui.debug.DebugFragment;
 import com.kaltura.kflow.ui.main.MainActivity;
-import com.kaltura.kflow.utils.ApiHelper;
+import com.kaltura.kflow.manager.PhoenixApiManager;
 import com.kaltura.kflow.utils.Utils;
 
 import androidx.annotation.NonNull;
@@ -65,11 +66,11 @@ public class RegistrationFragment extends DebugFragment implements View.OnClickL
             ottUser.lastName(lastName);
             ottUser.username(userName);
             ottUser.email(email);
-            RequestBuilder requestBuilder = OttUserService.register(Settings.partnerID, ottUser, password)
+            RequestBuilder requestBuilder = OttUserService.register(PreferenceManager.getInstance(requireContext()).getPartnerId(), ottUser, password)
                     .setCompletion((ApiCompletion<OTTUser>) result -> {
 
                     });
-            ApiHelper.execute(requestBuilder);
+            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
@@ -80,7 +81,7 @@ public class RegistrationFragment extends DebugFragment implements View.OnClickL
     public void onDestroyView() {
         super.onDestroyView();
         Utils.hideKeyboard(getView());
-        ApiHelper.cancelAll();
+        PhoenixApiManager.cancelAll();
     }
 
     @Override

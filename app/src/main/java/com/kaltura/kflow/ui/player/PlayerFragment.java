@@ -14,18 +14,16 @@ import com.kaltura.client.services.SocialActionService;
 import com.kaltura.client.types.Asset;
 import com.kaltura.client.types.Favorite;
 import com.kaltura.client.types.FavoriteFilter;
-import com.kaltura.client.types.ListResponse;
-import com.kaltura.client.types.LiveAsset;
 import com.kaltura.client.types.ProgramAsset;
 import com.kaltura.client.types.SocialAction;
 import com.kaltura.client.types.SocialActionFilter;
 import com.kaltura.client.utils.request.RequestBuilder;
-import com.kaltura.client.utils.response.base.ApiCompletion;
 import com.kaltura.kflow.R;
 import com.kaltura.kflow.Settings;
+import com.kaltura.kflow.manager.PreferenceManager;
 import com.kaltura.kflow.ui.debug.DebugFragment;
 import com.kaltura.kflow.ui.main.MainActivity;
-import com.kaltura.kflow.utils.ApiHelper;
+import com.kaltura.kflow.manager.PhoenixApiManager;
 import com.kaltura.kflow.utils.Utils;
 import com.kaltura.playkit.PKMediaConfig;
 import com.kaltura.playkit.PKMediaEntry;
@@ -41,10 +39,6 @@ import com.kaltura.playkit.providers.api.SimpleSessionProvider;
 import com.kaltura.playkit.providers.api.phoenix.APIDefines;
 import com.kaltura.playkit.providers.base.OnMediaLoadCompletion;
 import com.kaltura.playkit.providers.ott.PhoenixMediaProvider;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -133,7 +127,7 @@ public class PlayerFragment extends DebugFragment {
 
     private void startOttMediaLoading(APIDefines.PlaybackContextType contextType, final OnMediaLoadCompletion completion) {
         MediaEntryProvider mediaProvider = new PhoenixMediaProvider()
-                .setSessionProvider(new SimpleSessionProvider(Settings.host + "/api_v3/", Settings.partnerID, ApiHelper.getClient().getKs()))
+                .setSessionProvider(new SimpleSessionProvider(Settings.host + "/api_v3/", PreferenceManager.getInstance(requireContext()).getPartnerId(), PhoenixApiManager.getClient().getKs()))
                 .setAssetId(String.valueOf(mAsset.getId()))
                 .setProtocol(PhoenixMediaProvider.HttpProtocol.Https)
                 .setContextType(contextType)
@@ -215,7 +209,7 @@ public class PlayerFragment extends DebugFragment {
                             }
                         }
                     });
-            ApiHelper.execute(requestBuilder);
+            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
@@ -235,7 +229,7 @@ public class PlayerFragment extends DebugFragment {
                             }
                         }
                     });
-            ApiHelper.execute(requestBuilder);
+            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
@@ -267,7 +261,7 @@ public class PlayerFragment extends DebugFragment {
                             else mLike.setChecked(true);
                         });
             }
-            ApiHelper.execute(requestBuilder);
+            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
             mLike.setEnabled(false);
         } else {
@@ -300,7 +294,7 @@ public class PlayerFragment extends DebugFragment {
                             }
                         });
             }
-            ApiHelper.execute(requestBuilder);
+            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
@@ -311,7 +305,7 @@ public class PlayerFragment extends DebugFragment {
     public void onDestroyView() {
         super.onDestroyView();
         Utils.hideKeyboard(getView());
-        ApiHelper.cancelAll();
+        PhoenixApiManager.cancelAll();
     }
 
     @Override

@@ -19,7 +19,7 @@ import com.kaltura.kflow.R;
 import com.kaltura.kflow.ui.debug.DebugFragment;
 import com.kaltura.kflow.ui.main.MainActivity;
 import com.kaltura.kflow.ui.assetList.AssetListFragment;
-import com.kaltura.kflow.utils.ApiHelper;
+import com.kaltura.kflow.manager.PhoenixApiManager;
 import com.kaltura.kflow.utils.Utils;
 
 import java.text.NumberFormat;
@@ -102,7 +102,7 @@ public class GetVodFragment extends DebugFragment implements View.OnClickListene
                             mShowAssetsButton.setVisibility(View.VISIBLE);
                         }
                     });
-            ApiHelper.execute(requestBuilder);
+            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
@@ -121,7 +121,7 @@ public class GetVodFragment extends DebugFragment implements View.OnClickListene
     public void onDestroyView() {
         super.onDestroyView();
         Utils.hideKeyboard(getView());
-        ApiHelper.cancelAll();
+        PhoenixApiManager.cancelAll();
     }
 
     @Override

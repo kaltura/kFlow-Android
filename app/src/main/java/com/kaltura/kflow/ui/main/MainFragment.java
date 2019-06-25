@@ -14,6 +14,7 @@ import com.kaltura.kflow.ui.LoginFragment;
 import com.kaltura.kflow.ui.RegistrationFragment;
 import com.kaltura.kflow.ui.GetVodFragment;
 import com.kaltura.kflow.ui.SearchFragment;
+import com.kaltura.kflow.ui.SettingsFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ import static com.kaltura.kflow.ui.main.Feature.LIVE;
 import static com.kaltura.kflow.ui.main.Feature.LOGIN;
 import static com.kaltura.kflow.ui.main.Feature.REGISTRATION;
 import static com.kaltura.kflow.ui.main.Feature.SEARCH;
+import static com.kaltura.kflow.ui.main.Feature.SETTINGS;
 import static com.kaltura.kflow.ui.main.Feature.VOD;
 
 /**
@@ -36,7 +38,7 @@ import static com.kaltura.kflow.ui.main.Feature.VOD;
  */
 public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureClickListener {
 
-    private Feature[] mFeatures = {LOGIN, ANONYMOUS_LOGIN, REGISTRATION, VOD, EPG, LIVE, FAVORITES, SEARCH};
+    private Feature[] mFeatures = {LOGIN, ANONYMOUS_LOGIN, REGISTRATION, VOD, EPG, LIVE, FAVORITES, SEARCH, SETTINGS};
 
     @Nullable
     @Override
@@ -85,6 +87,9 @@ public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureCl
                 break;
             case SEARCH:
                 pushFragment(new SearchFragment());
+                break;
+            case SETTINGS:
+                pushFragment(new SettingsFragment());
                 break;
         }
     }
