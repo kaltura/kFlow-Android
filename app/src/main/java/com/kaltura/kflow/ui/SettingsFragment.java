@@ -85,15 +85,17 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
     }
 
     private void save() {
-        PreferenceManager.getInstance(requireContext()).clear();
-        AccountEntity accountEntity = ConfigurationManager.getInstance().getConfiguration().getAccounts().get(mAccountSpinner.getSelectedItemPosition());
-        PartnerEntity partnerEntity = accountEntity.getPartners().get(mPartnerSpinner.getSelectedItemPosition());
-        PreferenceManager.getInstance(requireContext()).saveBaseUrl(accountEntity.getBaseUrl());
-        PreferenceManager.getInstance(requireContext()).savePartnerId(Integer.parseInt(partnerEntity.getPartnerId()));
+        if (mAccountSpinner.getSelectedItemPosition() != -1 && mPartnerSpinner.getSelectedItemPosition() != -1) {
+            PreferenceManager.getInstance(requireContext()).clear();
+            AccountEntity accountEntity = ConfigurationManager.getInstance().getConfiguration().getAccounts().get(mAccountSpinner.getSelectedItemPosition());
+            PartnerEntity partnerEntity = accountEntity.getPartners().get(mPartnerSpinner.getSelectedItemPosition());
+            PreferenceManager.getInstance(requireContext()).saveBaseUrl(accountEntity.getBaseUrl());
+            PreferenceManager.getInstance(requireContext()).savePartnerId(Integer.parseInt(partnerEntity.getPartnerId()));
 
-        Configuration config = new Configuration();
-        config.setEndpoint(PreferenceManager.getInstance(requireContext()).getBaseUrl());
-        PhoenixApiManager.getClient().setConnectionConfiguration(config);
+            Configuration config = new Configuration();
+            config.setEndpoint(PreferenceManager.getInstance(requireContext()).getBaseUrl());
+            PhoenixApiManager.getClient().setConnectionConfiguration(config);
+        }
     }
 
     @Override

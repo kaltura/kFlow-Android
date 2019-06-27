@@ -15,6 +15,7 @@ public class ConfigurationManager {
     private ConfigurationEntity configuration;
 
     private ConfigurationManager() {
+        configuration = new ConfigurationEntity();
     }
 
     public static ConfigurationManager getInstance() {
