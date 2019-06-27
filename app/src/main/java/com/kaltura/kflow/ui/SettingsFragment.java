@@ -73,10 +73,15 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
 
     private void initPartnerSpinner(AccountEntity accountEntity) {
         List<String> partnersName = new ArrayList<>();
+        int selectedPosition = 0;
         for (PartnerEntity partnerEntity : accountEntity.getPartners()) {
             partnersName.add(partnerEntity.getName());
+            if (Integer.parseInt(partnerEntity.getPartnerId()) == PreferenceManager.getInstance(requireContext()).getPartnerId()) {
+                selectedPosition = accountEntity.getPartners().indexOf(partnerEntity);
+            }
         }
         mPartnerSpinner.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, partnersName));
+        mPartnerSpinner.setSelection(selectedPosition);
     }
 
     private void save() {

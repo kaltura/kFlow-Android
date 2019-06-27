@@ -47,7 +47,7 @@ public class PreferenceManager {
     }
 
     public String getKs() {
-        return prefs.getString(KEY_KS, "");
+        return prefs.getString(KEY_KS, null);
     }
 
     public void clear() {
