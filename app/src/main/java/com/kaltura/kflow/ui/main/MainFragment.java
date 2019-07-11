@@ -11,6 +11,7 @@ import com.kaltura.kflow.ui.EpgFragment;
 import com.kaltura.kflow.ui.FavoritesFragment;
 import com.kaltura.kflow.ui.LiveTvFragment;
 import com.kaltura.kflow.ui.LoginFragment;
+import com.kaltura.kflow.ui.MediaPageFragment;
 import com.kaltura.kflow.ui.RegistrationFragment;
 import com.kaltura.kflow.ui.GetVodFragment;
 import com.kaltura.kflow.ui.SearchFragment;
@@ -28,6 +29,7 @@ import static com.kaltura.kflow.ui.main.Feature.EPG;
 import static com.kaltura.kflow.ui.main.Feature.FAVORITES;
 import static com.kaltura.kflow.ui.main.Feature.LIVE;
 import static com.kaltura.kflow.ui.main.Feature.LOGIN;
+import static com.kaltura.kflow.ui.main.Feature.MEDIA_PAGE;
 import static com.kaltura.kflow.ui.main.Feature.REGISTRATION;
 import static com.kaltura.kflow.ui.main.Feature.SEARCH;
 import static com.kaltura.kflow.ui.main.Feature.SETTINGS;
@@ -38,7 +40,7 @@ import static com.kaltura.kflow.ui.main.Feature.VOD;
  */
 public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureClickListener {
 
-    private Feature[] mFeatures = {LOGIN, ANONYMOUS_LOGIN, REGISTRATION, VOD, EPG, LIVE, FAVORITES, SEARCH, SETTINGS};
+    private Feature[] mFeatures = {LOGIN, ANONYMOUS_LOGIN, REGISTRATION, VOD, EPG, LIVE, FAVORITES, SEARCH, MEDIA_PAGE, SETTINGS};
 
     @Nullable
     @Override
@@ -87,6 +89,9 @@ public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureCl
                 break;
             case SEARCH:
                 pushFragment(new SearchFragment());
+                break;
+            case MEDIA_PAGE:
+                pushFragment(new MediaPageFragment());
                 break;
             case SETTINGS:
                 pushFragment(new SettingsFragment());

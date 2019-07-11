@@ -2,7 +2,7 @@ package com.kaltura.kflow.manager;
 
 import com.kaltura.client.Client;
 import com.kaltura.client.Configuration;
-import com.kaltura.client.utils.request.RequestBuilder;
+import com.kaltura.client.utils.request.BaseRequestBuilder;
 import com.kaltura.kflow.ui.debug.DebugListener;
 import com.kaltura.kflow.utils.AndroidAPIRequestsExecutor;
 
@@ -26,7 +26,7 @@ public class PhoenixApiManager {
         AndroidAPIRequestsExecutor.removeDebugListener();
     }
 
-    public static void execute(RequestBuilder<?, ?, ?> requestBuilder) {
+    public static void execute(BaseRequestBuilder requestBuilder) {
         AndroidAPIRequestsExecutor.getExecutor().queue(requestBuilder.build(getClient()));
     }
 

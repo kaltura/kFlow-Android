@@ -13,6 +13,7 @@ public enum Feature {
     LIVE("Live TV"),
     FAVORITES("Favorites"),
     SEARCH("Search"),
+    MEDIA_PAGE("Media page"),
     SETTINGS("Settings");
 
     private String text;
