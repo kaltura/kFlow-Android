@@ -37,6 +37,14 @@ public class Utils {
         }
     }
 
+    public static void showKeyboard(@Nullable View view) {
+        if (view != null) {
+            view.requestFocus();
+            InputMethodManager keyboard = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            keyboard.showSoftInput(view, 0);
+        }
+    }
+
     public static boolean hasInternetConnection(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isAvailable() && cm.getActiveNetworkInfo().isConnected();

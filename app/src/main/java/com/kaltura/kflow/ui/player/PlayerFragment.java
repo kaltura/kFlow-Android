@@ -114,7 +114,8 @@ public class PlayerFragment extends DebugFragment {
     }
 
     private void initPlayer(APIDefines.PlaybackContextType contextType) {
-        startOttMediaLoading(contextType, response ->
+        startOttMediaLoading(contextType, response -> {
+            if (isAdded()) {
                 requireActivity().runOnUiThread(() -> {
                     if (response.getResponse() != null) {
                         mediaEntry = response.getResponse();
@@ -122,7 +123,9 @@ public class PlayerFragment extends DebugFragment {
                     } else {
                         Toast.makeText(requireContext(), "failed to fetch media data: " + (response.getError() != null ? response.getError().getMessage() : ""), Toast.LENGTH_LONG).show();
                     }
-                }));
+                });
+            }
+        });
     }
 
     private void startOttMediaLoading(APIDefines.PlaybackContextType contextType, final OnMediaLoadCompletion completion) {
@@ -131,7 +134,7 @@ public class PlayerFragment extends DebugFragment {
                 .setAssetId(String.valueOf(mAsset.getId()))
                 .setProtocol(PhoenixMediaProvider.HttpProtocol.Https)
                 .setContextType(contextType)
-                .setAssetReferenceType(contextType == APIDefines.PlaybackContextType.Playback ? APIDefines.AssetReferenceType.Media :APIDefines.AssetReferenceType.InternalEpg)
+                .setAssetReferenceType(contextType == APIDefines.PlaybackContextType.Playback ? APIDefines.AssetReferenceType.Media : APIDefines.AssetReferenceType.InternalEpg)
                 .setAssetType(contextType == APIDefines.PlaybackContextType.Playback ? APIDefines.KalturaAssetType.Media : APIDefines.KalturaAssetType.Epg)
                 .setFormats(Format);
 
