@@ -65,6 +65,58 @@
             android:text="Favorite"
             app:switchPadding="10dp" />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/check_all"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginBottom="5dp"
+            android:backgroundTint="@color/colorAccent"
+            android:text="Check all validations"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:id="@+id/pin_layout"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            android:animateLayoutChanges="true"
+            android:weightSum="1"
+            android:layout_height="55dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/pin_input_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:layout_weight="0.4">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/pin"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="number"
+                    android:hint="Insert pin"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/insert_pin"
+                android:layout_weight="0.6"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/colorAccent"
+                android:text="Insert pin"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
         <com.kaltura.kflow.ui.debug.DebugView
             android:id="@+id/debug_view"
             android:layout_width="match_parent"

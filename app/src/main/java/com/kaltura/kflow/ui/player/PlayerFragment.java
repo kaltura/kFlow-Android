@@ -6,17 +6,33 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+import com.kaltura.client.enums.AssetType;
+import com.kaltura.client.enums.PinType;
+import com.kaltura.client.enums.RuleType;
 import com.kaltura.client.enums.SocialActionType;
+import com.kaltura.client.services.BookmarkService;
 import com.kaltura.client.services.FavoriteService;
+import com.kaltura.client.services.PinService;
+import com.kaltura.client.services.ProductPriceService;
 import com.kaltura.client.services.SocialActionService;
+import com.kaltura.client.services.UserAssetRuleService;
 import com.kaltura.client.types.Asset;
+import com.kaltura.client.types.BookmarkFilter;
 import com.kaltura.client.types.Favorite;
 import com.kaltura.client.types.FavoriteFilter;
+import com.kaltura.client.types.ListResponse;
+import com.kaltura.client.types.ProductPriceFilter;
 import com.kaltura.client.types.ProgramAsset;
 import com.kaltura.client.types.SocialAction;
 import com.kaltura.client.types.SocialActionFilter;
+import com.kaltura.client.types.UserAssetRule;
+import com.kaltura.client.types.UserAssetRuleFilter;
+import com.kaltura.client.utils.request.MultiRequestBuilder;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.kflow.R;
 import com.kaltura.kflow.Settings;
@@ -42,8 +58,11 @@ import com.kaltura.playkit.providers.ott.PhoenixMediaProvider;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SwitchCompat;
+
+import java.util.List;
 
 /**
  * Created by alex_lytvynenko on 04.12.2018.
@@ -56,11 +75,17 @@ public class PlayerFragment extends DebugFragment {
 
     private SwitchCompat mLike;
     private SwitchCompat mFavorite;
+    private AppCompatButton mCheckAll;
+    private AppCompatButton mInsertPin;
+    private LinearLayout mPinLayout;
+    private TextInputLayout mPinInputLayout;
+    private TextInputEditText mPin;
     private PlaybackControlsView mPlayerControls;
     private Player mPlayer;
     private Asset mAsset;
     private String mLikeId = "";
     private PKMediaEntry mediaEntry;
+    private int mParentalRuleId;
 
     public static PlayerFragment newInstance(Asset asset) {
         PlayerFragment likeFragment = new PlayerFragment();
@@ -89,6 +114,12 @@ public class PlayerFragment extends DebugFragment {
         mLike = getView().findViewById(R.id.like);
         mFavorite = getView().findViewById(R.id.favorite);
         mPlayerControls = getView().findViewById(R.id.player_controls);
+        mCheckAll = getView().findViewById(R.id.check_all);
+        mInsertPin = getView().findViewById(R.id.insert_pin);
+        mPinLayout = getView().findViewById(R.id.pin_layout);
+        mPin = getView().findViewById(R.id.pin);
+        mPinInputLayout = getView().findViewById(R.id.pin_input_layout);
+
         mLike.setOnCheckedChangeListener((compoundButton, b) -> {
             if (mLike.isPressed()) actionLike();
         });
@@ -98,6 +129,19 @@ public class PlayerFragment extends DebugFragment {
         mPlayerControls.setOnStartOverClickListener(view1 -> {
             if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Vod)) {
                 mPlayer.replay();
+            }
+        });
+
+        mCheckAll.setOnClickListener(view1 -> {
+            Utils.hideKeyboard(getView());
+            checkAllTogetherRequest();
+        });
+        mInsertPin.setOnClickListener(view1 -> {
+            Utils.hideKeyboard(getView());
+            if (mPinInputLayout.getVisibility() == View.GONE) {
+                showPinInput();
+            } else {
+                checkPinRequest(mPin.getText().toString());
             }
         });
 
@@ -302,6 +346,74 @@ public class PlayerFragment extends DebugFragment {
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void checkAllTogetherRequest() {
+        if (Utils.hasInternetConnection(requireContext())) {
+
+            if (TextUtils.isDigitsOnly(mAsset.getId().toString())) {
+                MultiRequestBuilder multiRequestBuilder = new MultiRequestBuilder();
+
+                // product price request
+                ProductPriceFilter productPriceFilter = new ProductPriceFilter();
+                productPriceFilter.setFileIdIn(mAsset.getId().toString());
+                multiRequestBuilder.add(ProductPriceService.list(productPriceFilter));
+
+                // bookmark request
+                BookmarkFilter bookmarkFilter = new BookmarkFilter();
+                bookmarkFilter.setAssetIdIn(mAsset.getId().toString());
+                bookmarkFilter.setAssetTypeEqual(AssetType.MEDIA);
+                multiRequestBuilder.add(BookmarkService.list(bookmarkFilter));
+
+                // asset rules request
+                UserAssetRuleFilter userAssetRuleFilter = new UserAssetRuleFilter();
+                userAssetRuleFilter.setAssetTypeEqual(1);
+                userAssetRuleFilter.setAssetIdEqual(mAsset.getId());
+                multiRequestBuilder.add(UserAssetRuleService.list(userAssetRuleFilter));
+
+                multiRequestBuilder.setCompletion(result -> {
+                    if (result.isSuccess()) {
+                        if (result.results != null && result.results.get(2) != null) {
+                            List<UserAssetRule> userAssetRules = ((ListResponse) result.results.get(2)).getObjects();
+                            for (UserAssetRule userAssetRule : userAssetRules) {
+                                if (userAssetRule.getRuleType() == RuleType.PARENTAL) {
+                                    mParentalRuleId = userAssetRule.getId().intValue();
+                                    mPinLayout.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }
+                    }
+                });
+
+                PhoenixApiManager.execute(multiRequestBuilder);
+                clearDebugView();
+            } else {
+                Toast.makeText(requireContext(), "Wrong input", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void checkPinRequest(String pin) {
+        if (Utils.hasInternetConnection(requireContext())) {
+
+            if (TextUtils.isDigitsOnly(pin)) {
+                RequestBuilder requestBuilder = PinService.validate(pin, PinType.PARENTAL, mParentalRuleId);
+                PhoenixApiManager.execute(requestBuilder);
+                clearDebugView();
+            } else {
+                Toast.makeText(requireContext(), "Wrong input", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showPinInput() {
+        mPinInputLayout.setVisibility(View.VISIBLE);
+        mInsertPin.setText("Check pin");
+        Utils.showKeyboard(mPin);
     }
 
     @Override
