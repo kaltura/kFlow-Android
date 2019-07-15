@@ -16,6 +16,7 @@ import com.kaltura.kflow.ui.RegistrationFragment;
 import com.kaltura.kflow.ui.GetVodFragment;
 import com.kaltura.kflow.ui.SearchFragment;
 import com.kaltura.kflow.ui.SettingsFragment;
+import com.kaltura.kflow.ui.SubscriptionFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +34,7 @@ import static com.kaltura.kflow.ui.main.Feature.MEDIA_PAGE;
 import static com.kaltura.kflow.ui.main.Feature.REGISTRATION;
 import static com.kaltura.kflow.ui.main.Feature.SEARCH;
 import static com.kaltura.kflow.ui.main.Feature.SETTINGS;
+import static com.kaltura.kflow.ui.main.Feature.SUBSCRIPTION;
 import static com.kaltura.kflow.ui.main.Feature.VOD;
 
 /**
@@ -40,7 +42,8 @@ import static com.kaltura.kflow.ui.main.Feature.VOD;
  */
 public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureClickListener {
 
-    private Feature[] mFeatures = {LOGIN, ANONYMOUS_LOGIN, REGISTRATION, VOD, EPG, LIVE, FAVORITES, SEARCH, MEDIA_PAGE, SETTINGS};
+    private Feature[] mFeatures = {LOGIN, ANONYMOUS_LOGIN, REGISTRATION, VOD, EPG, LIVE, FAVORITES,
+            SEARCH, MEDIA_PAGE, SUBSCRIPTION, SETTINGS};
 
     @Nullable
     @Override
@@ -92,6 +95,9 @@ public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureCl
                 break;
             case MEDIA_PAGE:
                 pushFragment(new MediaPageFragment());
+                break;
+            case SUBSCRIPTION:
+                pushFragment(new SubscriptionFragment());
                 break;
             case SETTINGS:
                 pushFragment(new SettingsFragment());

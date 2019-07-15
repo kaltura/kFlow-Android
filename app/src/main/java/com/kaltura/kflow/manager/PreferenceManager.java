@@ -31,7 +31,8 @@ public class PreferenceManager {
     }
 
     public String getBaseUrl() {
-        return prefs.getString(KEY_BASE_URL, Settings.host);
+//        return prefs.getString(KEY_BASE_URL, Settings.host);
+        return "https://rest-us.ott.kaltura.com/v4_5";
     }
 
     public void savePartnerId(int partnerId) {
