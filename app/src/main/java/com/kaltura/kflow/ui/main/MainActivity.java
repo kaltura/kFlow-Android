@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.kaltura.kflow.R;
-import com.kaltura.kflow.manager.ConfigurationManager;
 
 public class MainActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
 
@@ -21,8 +20,6 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.container, new MainFragment()).commit();
         }
-
-        ConfigurationManager.getInstance().loadConfiguration();
     }
 
     @Override

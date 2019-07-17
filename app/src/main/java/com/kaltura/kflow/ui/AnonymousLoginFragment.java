@@ -14,7 +14,6 @@ import com.kaltura.client.types.LoginSession;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.base.ApiCompletion;
 import com.kaltura.kflow.R;
-import com.kaltura.kflow.Settings;
 import com.kaltura.kflow.manager.PreferenceManager;
 import com.kaltura.kflow.ui.debug.DebugFragment;
 import com.kaltura.kflow.ui.main.MainActivity;
@@ -59,8 +58,8 @@ public class AnonymousLoginFragment extends DebugFragment implements View.OnClic
 //                                generateAppToken();
                         }
                     });
-            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
+            PhoenixApiManager.execute(requestBuilder);
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
         }

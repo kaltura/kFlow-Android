@@ -12,7 +12,6 @@ import com.kaltura.client.types.LoginResponse;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.base.ApiCompletion;
 import com.kaltura.kflow.R;
-import com.kaltura.kflow.Settings;
 import com.kaltura.kflow.manager.PreferenceManager;
 import com.kaltura.kflow.ui.debug.DebugFragment;
 import com.kaltura.kflow.ui.main.MainActivity;
@@ -62,8 +61,8 @@ public class LoginFragment extends DebugFragment implements View.OnClickListener
                             PhoenixApiManager.getClient().setKs(result.results.getLoginSession().getKs());
                         }
                     });
-            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
+            PhoenixApiManager.execute(requestBuilder);
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
         }

@@ -102,8 +102,8 @@ public class GetVodFragment extends DebugFragment implements View.OnClickListene
                             mShowAssetsButton.setVisibility(View.VISIBLE);
                         }
                     });
-            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
+            PhoenixApiManager.execute(requestBuilder);
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
         }

@@ -3,8 +3,6 @@ package com.kaltura.kflow.manager;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.kaltura.kflow.Settings;
-
 /**
  * Created by alex_lytvynenko on 2019-06-24.
  */
@@ -12,6 +10,7 @@ public class PreferenceManager {
 
     private String KEY_BASE_URL = "prefs_base_url";
     private String KEY_PARTNER_ID = "prefs_partner_id";
+    private String KEY_MAIN_MEDIA_FILE_FORMAT = "prefs_main_media_file_format";
     private String KEY_KS = "prefs_ks";
 
     private static PreferenceManager sInstance = null;
@@ -31,8 +30,15 @@ public class PreferenceManager {
     }
 
     public String getBaseUrl() {
-//        return prefs.getString(KEY_BASE_URL, Settings.host);
-        return "https://rest-us.ott.kaltura.com/v4_5";
+        return prefs.getString(KEY_BASE_URL, "");
+    }
+
+    public void saveMediaFileFormat(String mediaFileFormat) {
+        prefs.edit().putString(KEY_MAIN_MEDIA_FILE_FORMAT, mediaFileFormat).apply();
+    }
+
+    public String getMediaFileFormat() {
+        return prefs.getString(KEY_MAIN_MEDIA_FILE_FORMAT, "");
     }
 
     public void savePartnerId(int partnerId) {
@@ -40,7 +46,7 @@ public class PreferenceManager {
     }
 
     public int getPartnerId() {
-        return prefs.getInt(KEY_PARTNER_ID, Settings.partnerID);
+        return prefs.getInt(KEY_PARTNER_ID, 0);
     }
 
     public void saveKs(String ks) {
@@ -49,6 +55,10 @@ public class PreferenceManager {
 
     public String getKs() {
         return prefs.getString(KEY_KS, null);
+    }
+
+    public void clearKs() {
+        prefs.edit().putString(KEY_KS, null).apply();
     }
 
     public void clear() {

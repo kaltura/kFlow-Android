@@ -111,8 +111,8 @@ public class EpgFragment extends DebugFragment implements View.OnClickListener {
                             mShowChannelButton.setVisibility(View.VISIBLE);
                         }
                     });
-            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
+            PhoenixApiManager.execute(requestBuilder);
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
         }

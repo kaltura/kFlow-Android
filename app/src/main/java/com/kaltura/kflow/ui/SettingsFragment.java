@@ -1,36 +1,30 @@
 package com.kaltura.kflow.ui;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.kaltura.client.Configuration;
 import com.kaltura.kflow.R;
-import com.kaltura.kflow.entity.AccountEntity;
-import com.kaltura.kflow.entity.PartnerEntity;
 import com.kaltura.kflow.manager.PhoenixApiManager;
 import com.kaltura.kflow.manager.PreferenceManager;
 import com.kaltura.kflow.ui.main.MainActivity;
-import com.kaltura.kflow.manager.ConfigurationManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by alex_lytvynenko on 2019-06-24.
  */
-public class SettingsFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class SettingsFragment extends Fragment implements View.OnClickListener {
 
-    private AppCompatSpinner mAccountSpinner;
-    private AppCompatSpinner mPartnerSpinner;
+    private TextInputEditText mUrl;
+    private TextInputEditText mPartnerId;
+    private TextInputEditText mMediaFileFormat;
 
     @Nullable
     @Override
@@ -43,69 +37,41 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
         super.onViewCreated(view, savedInstanceState);
         ((MainActivity) requireActivity()).getSupportActionBar().setTitle("Settings");
 
-        mAccountSpinner = getView().findViewById(R.id.account_spinner);
-        mPartnerSpinner = getView().findViewById(R.id.partner_id_spinner);
+        mUrl = getView().findViewById(R.id.url);
+        mPartnerId = getView().findViewById(R.id.partner_id);
+        mMediaFileFormat = getView().findViewById(R.id.media_file_format);
 
-        mAccountSpinner.setOnItemSelectedListener(this);
-        mPartnerSpinner.setOnItemSelectedListener(this);
         getView().findViewById(R.id.save).setOnClickListener(this);
-
-        initAccountSpinner();
+        initUI();
     }
 
     @Override
     public void onClick(View view) {
-        save();
+        save(mUrl.getText().toString(), mPartnerId.getText().toString(), mMediaFileFormat.getText().toString());
     }
 
-    private void initAccountSpinner() {
-        List<String> accountsName = new ArrayList<>();
-        int selectedPosition = 0;
-        for (AccountEntity accountEntity : ConfigurationManager.getInstance().getConfiguration().getAccounts()) {
-            accountsName.add(accountEntity.getName());
-            if (accountEntity.getBaseUrl().equals(PreferenceManager.getInstance(requireContext()).getBaseUrl())) {
-                selectedPosition = ConfigurationManager.getInstance().getConfiguration().getAccounts().indexOf(accountEntity);
-            }
-        }
-        mAccountSpinner.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, accountsName));
-        mAccountSpinner.setSelection(selectedPosition);
+    private void initUI() {
+        mUrl.setText(PreferenceManager.getInstance(requireContext()).getBaseUrl());
+        mPartnerId.setText(String.valueOf(PreferenceManager.getInstance(requireContext()).getPartnerId()));
+        mMediaFileFormat.setText(PreferenceManager.getInstance(requireContext()).getMediaFileFormat());
     }
 
-    private void initPartnerSpinner(AccountEntity accountEntity) {
-        List<String> partnersName = new ArrayList<>();
-        int selectedPosition = 0;
-        for (PartnerEntity partnerEntity : accountEntity.getPartners()) {
-            partnersName.add(partnerEntity.getName());
-            if (Integer.parseInt(partnerEntity.getPartnerId()) == PreferenceManager.getInstance(requireContext()).getPartnerId()) {
-                selectedPosition = accountEntity.getPartners().indexOf(partnerEntity);
-            }
-        }
-        mPartnerSpinner.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, partnersName));
-        mPartnerSpinner.setSelection(selectedPosition);
-    }
-
-    private void save() {
-        if (mAccountSpinner.getSelectedItemPosition() != -1 && mPartnerSpinner.getSelectedItemPosition() != -1) {
-            PreferenceManager.getInstance(requireContext()).clear();
-            AccountEntity accountEntity = ConfigurationManager.getInstance().getConfiguration().getAccounts().get(mAccountSpinner.getSelectedItemPosition());
-            PartnerEntity partnerEntity = accountEntity.getPartners().get(mPartnerSpinner.getSelectedItemPosition());
-            PreferenceManager.getInstance(requireContext()).saveBaseUrl(accountEntity.getBaseUrl());
-            PreferenceManager.getInstance(requireContext()).savePartnerId(Integer.parseInt(partnerEntity.getPartnerId()));
-
+    private void save(String baseUrl, String partnerId, String mediaFileFormat) {
+        if (!baseUrl.isEmpty()) {
+            PreferenceManager.getInstance(requireContext()).clearKs();
+            PreferenceManager.getInstance(requireContext()).saveBaseUrl(baseUrl);
             Configuration config = new Configuration();
             config.setEndpoint(PreferenceManager.getInstance(requireContext()).getBaseUrl());
             PhoenixApiManager.getClient().setConnectionConfiguration(config);
         }
-    }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (parent.getId() == R.id.account_spinner) {
-            initPartnerSpinner(ConfigurationManager.getInstance().getConfiguration().getAccounts().get(position));
+        if (!partnerId.isEmpty() && TextUtils.isDigitsOnly(partnerId)) {
+            PreferenceManager.getInstance(requireContext()).clearKs();
+            PreferenceManager.getInstance(requireContext()).savePartnerId(Integer.parseInt(partnerId));
         }
-    }
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
+        if (!mediaFileFormat.isEmpty()) {
+            PreferenceManager.getInstance(requireContext()).saveMediaFileFormat(mediaFileFormat);
+        }
     }
 }

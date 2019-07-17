@@ -35,7 +35,6 @@ import com.kaltura.client.types.UserAssetRuleFilter;
 import com.kaltura.client.utils.request.MultiRequestBuilder;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.kflow.R;
-import com.kaltura.kflow.Settings;
 import com.kaltura.kflow.manager.PreferenceManager;
 import com.kaltura.kflow.ui.debug.DebugFragment;
 import com.kaltura.kflow.ui.main.MainActivity;
@@ -70,8 +69,6 @@ import java.util.List;
 public class PlayerFragment extends DebugFragment {
 
     private static final String ARG_ASSET = "extra_asset";
-
-    private static final String Format = "DASH_Main";
 
     private SwitchCompat mLike;
     private SwitchCompat mFavorite;
@@ -174,13 +171,13 @@ public class PlayerFragment extends DebugFragment {
 
     private void startOttMediaLoading(APIDefines.PlaybackContextType contextType, final OnMediaLoadCompletion completion) {
         MediaEntryProvider mediaProvider = new PhoenixMediaProvider()
-                .setSessionProvider(new SimpleSessionProvider(Settings.host + "/api_v3/", PreferenceManager.getInstance(requireContext()).getPartnerId(), PhoenixApiManager.getClient().getKs()))
+                .setSessionProvider(new SimpleSessionProvider(PreferenceManager.getInstance(requireContext()).getBaseUrl() + "/api_v3/", PreferenceManager.getInstance(requireContext()).getPartnerId(), PhoenixApiManager.getClient().getKs()))
                 .setAssetId(String.valueOf(mAsset.getId()))
                 .setProtocol(PhoenixMediaProvider.HttpProtocol.Https)
                 .setContextType(contextType)
                 .setAssetReferenceType(contextType == APIDefines.PlaybackContextType.Playback ? APIDefines.AssetReferenceType.Media : APIDefines.AssetReferenceType.InternalEpg)
                 .setAssetType(contextType == APIDefines.PlaybackContextType.Playback ? APIDefines.KalturaAssetType.Media : APIDefines.KalturaAssetType.Epg)
-                .setFormats(Format);
+                .setFormats(PreferenceManager.getInstance(requireContext()).getMediaFileFormat());
 
         mediaProvider.load(completion);
     }

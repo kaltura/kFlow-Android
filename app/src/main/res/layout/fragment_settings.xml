@@ -12,27 +12,56 @@
         android:layout_height="wrap_content"
         android:textColor="@android:color/black"
         android:textSize="18sp"
-        android:text="Choose an account:" />
+        android:gravity="center"
+        android:text="Please set here your account details. After changing your account, please re-login to be able to continue work with the app." />
 
-    <androidx.appcompat.widget.AppCompatSpinner
-        android:id="@+id/account_spinner"
-        android:layout_marginStart="-8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <androidx.appcompat.widget.AppCompatTextView
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:layout_marginTop="20dp"
-        android:textSize="18sp"
-        android:text="Choose partner id:" />
+        android:layout_height="wrap_content">
 
-    <androidx.appcompat.widget.AppCompatSpinner
-        android:id="@+id/partner_id_spinner"
-        android:layout_width="wrap_content"
-        android:layout_marginStart="-8dp"
-        android:layout_height="wrap_content" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:hint="END Point URL"
+            android:imeOptions="actionNext"
+            android:nextFocusDown="@id/partner_id"
+            android:singleLine="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/partner_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:hint="Partner ID"
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            android:nextFocusDown="@id/media_file_format"
+            android:singleLine="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/media_file_format"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:hint="Main media file format"
+            android:imeOptions="actionDone"
+            android:singleLine="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/save"

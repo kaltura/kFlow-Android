@@ -12,7 +12,6 @@ import com.kaltura.client.types.OTTUser;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.base.ApiCompletion;
 import com.kaltura.kflow.R;
-import com.kaltura.kflow.Settings;
 import com.kaltura.kflow.manager.PreferenceManager;
 import com.kaltura.kflow.ui.debug.DebugFragment;
 import com.kaltura.kflow.ui.main.MainActivity;
@@ -70,8 +69,8 @@ public class RegistrationFragment extends DebugFragment implements View.OnClickL
                     .setCompletion((ApiCompletion<OTTUser>) result -> {
 
                     });
-            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
+            PhoenixApiManager.execute(requestBuilder);
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
         }

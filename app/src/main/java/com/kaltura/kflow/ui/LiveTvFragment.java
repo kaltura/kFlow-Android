@@ -101,8 +101,8 @@ public class LiveTvFragment extends DebugFragment implements View.OnClickListene
                             mShowChannelButton.setVisibility(View.VISIBLE);
                         }
                     });
-            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
+            PhoenixApiManager.execute(requestBuilder);
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
         }

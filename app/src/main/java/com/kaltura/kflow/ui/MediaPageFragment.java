@@ -147,8 +147,8 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
                             validateButtons();
                         }
                     });
-            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
+            PhoenixApiManager.execute(requestBuilder);
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
         }
@@ -161,8 +161,8 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
             productPriceFilter.setFileIdIn(assetId);
 
             RequestBuilder requestBuilder = ProductPriceService.list(productPriceFilter);
-            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
+            PhoenixApiManager.execute(requestBuilder);
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
         }
@@ -176,8 +176,8 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
             bookmarkFilter.setAssetTypeEqual(AssetType.MEDIA);
 
             RequestBuilder requestBuilder = BookmarkService.list(bookmarkFilter);
-            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
+            PhoenixApiManager.execute(requestBuilder);
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
         }
@@ -199,8 +199,8 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
                         validateButtons();
                     }
                 });
-                PhoenixApiManager.execute(requestBuilder);
                 clearDebugView();
+                PhoenixApiManager.execute(requestBuilder);
             } else {
                 Toast.makeText(requireContext(), "Wrong input", Toast.LENGTH_SHORT).show();
             }
@@ -241,8 +241,8 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
                     }
                 });
 
-                PhoenixApiManager.execute(multiRequestBuilder);
                 clearDebugView();
+                PhoenixApiManager.execute(multiRequestBuilder);
             } else {
                 Toast.makeText(requireContext(), "Wrong input", Toast.LENGTH_SHORT).show();
             }
@@ -256,8 +256,8 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
 
             if (TextUtils.isDigitsOnly(pin)) {
                 RequestBuilder requestBuilder = PinService.validate(pin, PinType.PARENTAL, mParentalRuleId);
-                PhoenixApiManager.execute(requestBuilder);
                 clearDebugView();
+                PhoenixApiManager.execute(requestBuilder);
             } else {
                 Toast.makeText(requireContext(), "Wrong input", Toast.LENGTH_SHORT).show();
             }

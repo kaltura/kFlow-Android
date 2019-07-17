@@ -136,8 +136,8 @@ public class SearchFragment extends DebugFragment implements View.OnClickListene
                         }
                     });
             mHistoryCount.setVisibility(View.GONE);
-            PhoenixApiManager.execute(requestBuilder);
             clearDebugView();
+            PhoenixApiManager.execute(requestBuilder);
         } else {
             Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
         }

@@ -12,6 +12,8 @@ import com.kaltura.kflow.ui.debug.DebugListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import okhttp3.Request;
+
 /**
  * Created by alex_lytvynenko on 20.11.2018.
  */
@@ -39,6 +41,26 @@ public class AndroidAPIRequestsExecutor extends APIOkRequestsExecutor {
 
     public AndroidAPIRequestsExecutor(ConnectionConfiguration defaultConfiguration) {
         super(defaultConfiguration);
+    }
+
+    @Override
+    public String queue(RequestElement requestElement) {
+        try {
+            return super.queue(requestElement);
+        } catch (Exception ex) {
+            if (debugListener != null) {
+                try {
+                    debugListener.setRequestInfo(requestElement.getUrl(), requestElement.getMethod(), -1);
+                    debugListener.setRequestBody(new JSONObject(requestElement.getBody()));
+                    debugListener.setResponseBody(new JSONObject("{\"error\":" + "\"" + ex.toString() + "\"}"));
+                } catch (JSONException e) {
+                    debugListener.onError();
+                    debugListener.onError();
+                    e.printStackTrace();
+                }
+            }
+            return "";
+        }
     }
 
     @Override
