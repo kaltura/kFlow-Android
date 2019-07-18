@@ -49,7 +49,7 @@
             android:textColor="@android:color/white"
             android:textSize="16sp" />
 
-        <com.kaltura.kflow.ui.debug.DebugView
+        <com.kaltura.kflow.presentation.debug.DebugView
             android:id="@+id/debug_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

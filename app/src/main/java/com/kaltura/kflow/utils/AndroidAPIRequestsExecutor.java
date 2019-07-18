@@ -7,12 +7,10 @@ import com.kaltura.client.APIOkRequestsExecutor;
 import com.kaltura.client.utils.request.ConnectionConfiguration;
 import com.kaltura.client.utils.request.RequestElement;
 import com.kaltura.client.utils.response.base.ResponseElement;
-import com.kaltura.kflow.ui.debug.DebugListener;
+import com.kaltura.kflow.presentation.debug.DebugListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import okhttp3.Request;
 
 /**
  * Created by alex_lytvynenko on 20.11.2018.

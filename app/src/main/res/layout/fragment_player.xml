@@ -41,7 +41,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp" />
 
-            <com.kaltura.kflow.ui.player.PlaybackControlsView
+            <com.kaltura.kflow.presentation.player.PlaybackControlsView
                 android:id="@+id/player_controls"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
 
         </LinearLayout>
 
-        <com.kaltura.kflow.ui.debug.DebugView
+        <com.kaltura.kflow.presentation.debug.DebugView
             android:id="@+id/debug_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

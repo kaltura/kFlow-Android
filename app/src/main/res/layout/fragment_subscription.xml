@@ -21,23 +21,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:inputType="number"
                 android:hint="Package asset type"
                 android:imeOptions="actionDone"
+                android:inputType="number"
                 android:singleLine="true" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/get"
+            android:id="@+id/get_packages"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginBottom="5dp"
             android:backgroundTint="@color/colorAccent"
             android:gravity="center"
-            android:text="Get"
+            android:text="Get Package List"
             android:textColor="@android:color/white"
             android:textSize="16sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/package_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:overScrollMode="never"
+            android:visibility="gone" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/show_assets"
@@ -49,7 +57,18 @@
             android:textColor="@android:color/white"
             android:textSize="16sp" />
 
-        <com.kaltura.kflow.ui.debug.DebugView
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/get_entitlements"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginBottom="5dp"
+            android:backgroundTint="@color/colorAccent"
+            android:gravity="center"
+            android:text="Get Entitlement List"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <com.kaltura.kflow.presentation.debug.DebugView
             android:id="@+id/debug_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

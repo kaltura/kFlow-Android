@@ -3,7 +3,7 @@ package com.kaltura.kflow.manager;
 import com.kaltura.client.Client;
 import com.kaltura.client.Configuration;
 import com.kaltura.client.utils.request.BaseRequestBuilder;
-import com.kaltura.kflow.ui.debug.DebugListener;
+import com.kaltura.kflow.presentation.debug.DebugListener;
 import com.kaltura.kflow.utils.AndroidAPIRequestsExecutor;
 
 /**

@@ -30,7 +30,7 @@ public class PreferenceManager {
     }
 
     public String getBaseUrl() {
-        return prefs.getString(KEY_BASE_URL, "");
+        return prefs.getString(KEY_BASE_URL, "https://rest-us.ott.kaltura.com/v5_0_3/");
     }
 
     public void saveMediaFileFormat(String mediaFileFormat) {
@@ -46,7 +46,7 @@ public class PreferenceManager {
     }
 
     public int getPartnerId() {
-        return prefs.getInt(KEY_PARTNER_ID, 0);
+        return prefs.getInt(KEY_PARTNER_ID, 3009);
     }
 
     public void saveKs(String ks) {
