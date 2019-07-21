@@ -4,14 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
+    android:paddingStart="16dp"
     android:paddingTop="10dp"
+    android:paddingEnd="16dp"
     android:paddingBottom="10dp">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/asset_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toStartOf="@+id/action_layout"
+        android:layout_toStartOf="@+id/arrow"
         android:textColor="@android:color/black"
         android:textSize="18sp" />
 
@@ -20,41 +22,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/asset_name"
-        android:layout_toStartOf="@+id/action_layout"
+        android:layout_toStartOf="@+id/arrow"
         android:textSize="15sp" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/base_id"
+        android:id="@+id/channel_ids"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/asset_id"
-        android:layout_toStartOf="@+id/action_layout"
+        android:layout_toStartOf="@+id/arrow"
         android:textSize="15sp" />
 
-    <FrameLayout
-        android:id="@+id/action_layout"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true">
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/get"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:backgroundTint="@color/colorAccent"
-            android:gravity="center"
-            android:text="Get\nSubscriptions"
-            android:textColor="@android:color/white"
-            android:textSize="14sp" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/arrow_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_expand_more_black_24dp"
-            android:visibility="gone" />
-    </FrameLayout>
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
 
 </RelativeLayout>

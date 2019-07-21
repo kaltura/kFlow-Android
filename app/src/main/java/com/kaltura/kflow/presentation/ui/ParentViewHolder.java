@@ -11,6 +11,7 @@ public class ParentViewHolder extends RecyclerView.ViewHolder implements View.On
 
     private ParentListItemExpandCollapseListener mParentListItemExpandCollapseListener;
     private boolean mExpanded;
+    private boolean mIsExpandable = true;
 
     /**
      * implementations to be notified of expand/collapse state change events.
@@ -128,7 +129,11 @@ public class ParentViewHolder extends RecyclerView.ViewHolder implements View.On
      * @return true to set an {@link android.view.View.OnClickListener} on the item view
      */
     public boolean shouldItemViewClickToggleExpansion() {
-        return true;
+        return mIsExpandable;
+    }
+
+    public void setIsExpandable(boolean isExpandable) {
+        this.mIsExpandable = isExpandable;
     }
 
     /**

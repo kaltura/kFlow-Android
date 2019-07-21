@@ -166,7 +166,12 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
             filterPager.setPageIndex(1);
             filterPager.setPageSize(40);
 
-            RequestBuilder requestBuilder = SubscriptionService.list(subscriptionFilter, filterPager);
+            RequestBuilder requestBuilder = SubscriptionService.list(subscriptionFilter, filterPager)
+                    .setCompletion(result -> {
+                        if (result.isSuccess()) {
+                            mSubscriptionListAdapter.addSubscriptionToPackage(Double.parseDouble(subscriptionBaseId), result.results.getObjects());
+                        }
+                    });
             clearDebugView();
             PhoenixApiManager.execute(requestBuilder);
         } else {
@@ -212,5 +217,10 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
     @Override
     public void onPackageGetSubscriptionClicked(Double packageBaseId) {
         getSubscriptionRequest(String.valueOf(packageBaseId.intValue()));
+    }
+
+    @Override
+    public void onSubscriptionClicked(long subscriptionChannelId) {
+        Toast.makeText(requireContext(), subscriptionChannelId + "", Toast.LENGTH_SHORT).show();
     }
 }

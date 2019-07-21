@@ -11,6 +11,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.kaltura.client.types.Asset;
+import com.kaltura.client.types.BaseChannel;
 import com.kaltura.client.types.DoubleValue;
 import com.kaltura.client.types.Subscription;
 import com.kaltura.client.types.Value;
@@ -22,6 +23,7 @@ import com.kaltura.kflow.presentation.ui.ParentListItem;
 import com.kaltura.kflow.presentation.ui.ParentViewHolder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by alex_lytvynenko on 30.11.2018.
@@ -42,24 +44,38 @@ public class SubscriptionListAdapter extends ExpandableRecyclerAdapter<Subscript
 
     @Override
     public SubscriptionViewHolder onCreateChildViewHolder(ViewGroup childViewGroup) {
-        return new SubscriptionViewHolder(LayoutInflater.from(childViewGroup.getContext()).inflate(R.layout.item_package, childViewGroup, false));
+        return new SubscriptionViewHolder(LayoutInflater.from(childViewGroup.getContext()).inflate(R.layout.item_subscription, childViewGroup, false));
 
     }
 
     @Override
     public void onBindParentViewHolder(PackageViewHolder packageViewHolder, int position, ParentListItem parentListItem) {
         ParentRecyclerViewItem item = (ParentRecyclerViewItem) parentListItem;
-        packageViewHolder.bind((Asset) item.getParent(), mListener);
+        packageViewHolder.bind((Asset) item.getParent(), !item.getChildItemList().isEmpty(), mListener);
     }
 
     @Override
     public void onBindChildViewHolder(SubscriptionViewHolder subscriptionViewHolder, int position, Object childListItem) {
         Subscription subscription = (Subscription) childListItem;
-        subscriptionViewHolder.bind(subscription);
+        subscriptionViewHolder.bind(subscription, mListener);
+    }
+
+    void addSubscriptionToPackage(Double packageBaseId, List<Subscription> subscriptions) {
+        for (ParentListItem item : getParentItemList()) {
+            ParentRecyclerViewItem parentRecyclerViewItem = (ParentRecyclerViewItem) item;
+            Value baseId = ((Asset) parentRecyclerViewItem.getParent()).getMetas().get("Base ID");
+            if (baseId != null && ((DoubleValue) baseId).getValue().equals(packageBaseId)) {
+                expandParent(item);
+                parentRecyclerViewItem.getChildItemList().addAll(subscriptions);
+                notifyChildItemRangeInserted(getParentItemList().indexOf(item), 0, subscriptions.size());
+            }
+        }
     }
 
     public interface OnPackageClickListener {
         void onPackageGetSubscriptionClicked(Double packageBaseId);
+
+        void onSubscriptionClicked(long subscriptionChannelId);
     }
 
     public class PackageViewHolder extends ParentViewHolder {
@@ -82,13 +98,20 @@ public class SubscriptionListAdapter extends ExpandableRecyclerAdapter<Subscript
             mArrowView = v.findViewById(R.id.arrow_icon);
         }
 
-        void bind(final Asset asset, final SubscriptionListAdapter.OnPackageClickListener clickListener) {
+        void bind(final Asset asset, boolean isExpandable, final SubscriptionListAdapter.OnPackageClickListener clickListener) {
+            setExpanded(isExpandable);
             mName.setText(asset.getName());
-            mId.setText("Asset ID: " + asset.getId());
+            mId.setText("Package ID: " + asset.getId());
             Value baseId = asset.getMetas().get("Base ID");
             mBaseId.setText("Base ID: " + (baseId != null ? ((DoubleValue) baseId).getValue().intValue() : "No ID"));
             mGetSubscription.setVisibility(baseId != null ? View.VISIBLE : View.GONE);
-            mGetSubscription.setOnClickListener(view -> clickListener.onPackageGetSubscriptionClicked(((DoubleValue) baseId).getValue()));
+            mGetSubscription.setOnClickListener(view -> {
+                if (clickListener != null) {
+                    clickListener.onPackageGetSubscriptionClicked(((DoubleValue) baseId).getValue());
+                    mGetSubscription.setVisibility(View.GONE);
+                    mArrowView.setVisibility(View.VISIBLE);
+                }
+            });
         }
 
         @Override
@@ -118,17 +141,39 @@ public class SubscriptionListAdapter extends ExpandableRecyclerAdapter<Subscript
             rotateAnimation.setDuration(200);
             rotateAnimation.setFillAfter(true);
             mArrowView.startAnimation(rotateAnimation);
-
         }
     }
 
-    public class SubscriptionViewHolder extends ChildViewHolder {
+    class SubscriptionViewHolder extends ChildViewHolder {
 
-        public SubscriptionViewHolder(View itemView) {
+        private AppCompatTextView mName;
+        private AppCompatTextView mId;
+        private AppCompatTextView mChannelIds;
+
+        SubscriptionViewHolder(View itemView) {
             super(itemView);
+            mName = itemView.findViewById(R.id.asset_name);
+            mId = itemView.findViewById(R.id.asset_id);
+            mChannelIds = itemView.findViewById(R.id.channel_ids);
         }
 
-        public void bind(Subscription subscription) {
+        void bind(Subscription subscription, final SubscriptionListAdapter.OnPackageClickListener clickListener) {
+            mName.setText(subscription.getName());
+            mId.setText("Subscription ID: " + subscription.getId());
+            StringBuilder stringBuilder = new StringBuilder("Channels ID: [");
+            if (subscription.getChannels() != null) {
+                for (BaseChannel baseChannel : subscription.getChannels()) {
+                    if (subscription.getChannels().indexOf(baseChannel) != 0)
+                        stringBuilder.append(", ");
+                    stringBuilder.append(baseChannel.getId().toString());
+                }
+            }
+            stringBuilder.append("]");
+            mChannelIds.setText(stringBuilder);
+            itemView.setOnClickListener(view -> {
+                if (clickListener != null)
+                    clickListener.onSubscriptionClicked(subscription.getChannels().get(0).getId());
+            });
         }
     }
 }
