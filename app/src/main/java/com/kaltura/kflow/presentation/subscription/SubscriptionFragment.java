@@ -21,18 +21,22 @@ import com.kaltura.client.services.AssetService;
 import com.kaltura.client.services.EntitlementService;
 import com.kaltura.client.services.SubscriptionService;
 import com.kaltura.client.types.Asset;
+import com.kaltura.client.types.ChannelFilter;
 import com.kaltura.client.types.EntitlementFilter;
 import com.kaltura.client.types.FilterPager;
 import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.types.SearchAssetFilter;
 import com.kaltura.client.types.SubscriptionFilter;
+import com.kaltura.client.utils.request.MultiRequestBuilder;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.base.ApiCompletion;
 import com.kaltura.kflow.R;
 import com.kaltura.kflow.entity.ParentRecyclerViewItem;
 import com.kaltura.kflow.manager.PhoenixApiManager;
+import com.kaltura.kflow.presentation.assetList.AssetListFragment;
 import com.kaltura.kflow.presentation.debug.DebugFragment;
 import com.kaltura.kflow.presentation.main.MainActivity;
+import com.kaltura.kflow.presentation.ui.ProgressDialog;
 import com.kaltura.kflow.utils.Utils;
 
 import java.text.NumberFormat;
@@ -48,6 +52,7 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
     private RecyclerView mPackageList;
     private ArrayList<Asset> mAssets = new ArrayList<>();
     private SubscriptionListAdapter mSubscriptionListAdapter;
+    private ProgressDialog mProgressDialog;
 
     @Nullable
     @Override
@@ -71,6 +76,8 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
         mShowAssetsButton.setVisibility(mAssets.isEmpty() ? View.GONE : View.VISIBLE);
         mShowAssetsButton.setText(getResources().getQuantityString(R.plurals.show_assets,
                 mAssets.size(), NumberFormat.getInstance().format(mAssets.size())));
+
+        mProgressDialog = new ProgressDialog(getContext());
     }
 
     private void initList() {
@@ -88,7 +95,7 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
 
         switch (view.getId()) {
             case R.id.show_assets: {
-                showAssets();
+                showPackages();
                 break;
             }
             case R.id.get_packages: {
@@ -179,7 +186,44 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
         }
     }
 
-    private void showAssets() {
+    private void getAssetsInSubscription(ArrayList<Long> subscriptionChannelsId) {
+        if (Utils.hasInternetConnection(requireContext())) {
+
+            MultiRequestBuilder multiRequestBuilder = new MultiRequestBuilder();
+
+            ChannelFilter channelFilter = new ChannelFilter();
+
+            FilterPager filterPager = new FilterPager();
+            filterPager.setPageIndex(1);
+            filterPager.setPageSize(40);
+
+            for (Long channelId : subscriptionChannelsId) {
+                channelFilter.setIdEqual(channelId.intValue());
+                multiRequestBuilder.add(AssetService.list(channelFilter, filterPager));
+            }
+
+            multiRequestBuilder.setCompletion(result -> {
+                if (result.isSuccess() && result.results != null) {
+                    ArrayList<Asset> assets = new ArrayList<>();
+                    for (Object listResponse : result.results) {
+                        assets.addAll(((ListResponse) listResponse).getObjects());
+                    }
+                    hideLoadingDialog();
+
+                    if (assets.isEmpty())
+                        Toast.makeText(requireContext(), "No assets in this subscription", Toast.LENGTH_LONG).show();
+                    else showAssets(assets);
+                }
+            });
+
+            clearDebugView();
+            PhoenixApiManager.execute(multiRequestBuilder);
+        } else {
+            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showPackages() {
         mPackageList.setVisibility(View.VISIBLE);
         mShowAssetsButton.setVisibility(View.GONE);
         ArrayList<ParentRecyclerViewItem> packages = new ArrayList<>();
@@ -188,6 +232,14 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
         }
         mSubscriptionListAdapter = new SubscriptionListAdapter(packages, this);
         mPackageList.setAdapter(mSubscriptionListAdapter);
+    }
+
+    private void showAssets(ArrayList<Asset> assets) {
+        AssetListFragment assetListFragment = AssetListFragment.newInstance(assets);
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, assetListFragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
@@ -220,7 +272,16 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
     }
 
     @Override
-    public void onSubscriptionClicked(long subscriptionChannelId) {
-        Toast.makeText(requireContext(), subscriptionChannelId + "", Toast.LENGTH_SHORT).show();
+    public void onSubscriptionClicked(ArrayList<Long> subscriptionChannelsId) {
+        showLoadingDialog();
+        getAssetsInSubscription(subscriptionChannelsId);
+    }
+
+    private void showLoadingDialog() {
+        if (!mProgressDialog.isShowing()) mProgressDialog.show();
+    }
+
+    private void hideLoadingDialog() {
+        if (mProgressDialog.isShowing()) mProgressDialog.dismiss();
     }
 }

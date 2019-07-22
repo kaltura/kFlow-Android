@@ -1,4 +1,4 @@
-package com.kaltura.kflow.presentation.ui;
+package com.kaltura.kflow.presentation.ui.expandableRecyclerView;
 
 import android.view.View;
 

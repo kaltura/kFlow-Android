@@ -1,6 +1,6 @@
 package com.kaltura.kflow.entity;
 
-import com.kaltura.kflow.presentation.ui.ParentListItem;
+import com.kaltura.kflow.presentation.ui.expandableRecyclerView.ParentListItem;
 
 import java.util.List;
 

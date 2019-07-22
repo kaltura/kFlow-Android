@@ -17,10 +17,10 @@ import com.kaltura.client.types.Subscription;
 import com.kaltura.client.types.Value;
 import com.kaltura.kflow.R;
 import com.kaltura.kflow.entity.ParentRecyclerViewItem;
-import com.kaltura.kflow.presentation.ui.ChildViewHolder;
-import com.kaltura.kflow.presentation.ui.ExpandableRecyclerAdapter;
-import com.kaltura.kflow.presentation.ui.ParentListItem;
-import com.kaltura.kflow.presentation.ui.ParentViewHolder;
+import com.kaltura.kflow.presentation.ui.expandableRecyclerView.ChildViewHolder;
+import com.kaltura.kflow.presentation.ui.expandableRecyclerView.ExpandableRecyclerAdapter;
+import com.kaltura.kflow.presentation.ui.expandableRecyclerView.ParentListItem;
+import com.kaltura.kflow.presentation.ui.expandableRecyclerView.ParentViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +75,7 @@ public class SubscriptionListAdapter extends ExpandableRecyclerAdapter<Subscript
     public interface OnPackageClickListener {
         void onPackageGetSubscriptionClicked(Double packageBaseId);
 
-        void onSubscriptionClicked(long subscriptionChannelId);
+        void onSubscriptionClicked(ArrayList<Long> subscriptionChannelsId);
     }
 
     public class PackageViewHolder extends ParentViewHolder {
@@ -149,12 +149,14 @@ public class SubscriptionListAdapter extends ExpandableRecyclerAdapter<Subscript
         private AppCompatTextView mName;
         private AppCompatTextView mId;
         private AppCompatTextView mChannelIds;
+        private AppCompatImageView mArrow;
 
         SubscriptionViewHolder(View itemView) {
             super(itemView);
             mName = itemView.findViewById(R.id.asset_name);
             mId = itemView.findViewById(R.id.asset_id);
             mChannelIds = itemView.findViewById(R.id.channel_ids);
+            mArrow = itemView.findViewById(R.id.arrow);
         }
 
         void bind(Subscription subscription, final SubscriptionListAdapter.OnPackageClickListener clickListener) {
@@ -170,9 +172,15 @@ public class SubscriptionListAdapter extends ExpandableRecyclerAdapter<Subscript
             }
             stringBuilder.append("]");
             mChannelIds.setText(stringBuilder);
+            mArrow.setVisibility(subscription.getChannels().isEmpty() ? View.GONE : View.VISIBLE);
             itemView.setOnClickListener(view -> {
-                if (clickListener != null)
-                    clickListener.onSubscriptionClicked(subscription.getChannels().get(0).getId());
+                if (clickListener != null) {
+                    ArrayList<Long> channelsId = new ArrayList<>();
+                    for (BaseChannel baseChannel : subscription.getChannels())
+                        channelsId.add(baseChannel.getId());
+
+                    clickListener.onSubscriptionClicked(channelsId);
+                }
             });
         }
     }
