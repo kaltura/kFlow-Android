@@ -12,6 +12,7 @@ import com.kaltura.kflow.presentation.FavoritesFragment;
 import com.kaltura.kflow.presentation.LiveTvFragment;
 import com.kaltura.kflow.presentation.LoginFragment;
 import com.kaltura.kflow.presentation.MediaPageFragment;
+import com.kaltura.kflow.presentation.productPrice.ProductPriceFragment;
 import com.kaltura.kflow.presentation.RegistrationFragment;
 import com.kaltura.kflow.presentation.GetVodFragment;
 import com.kaltura.kflow.presentation.SearchFragment;
@@ -31,6 +32,7 @@ import static com.kaltura.kflow.presentation.main.Feature.FAVORITES;
 import static com.kaltura.kflow.presentation.main.Feature.LIVE;
 import static com.kaltura.kflow.presentation.main.Feature.LOGIN;
 import static com.kaltura.kflow.presentation.main.Feature.MEDIA_PAGE;
+import static com.kaltura.kflow.presentation.main.Feature.PRODUCT_PRICE;
 import static com.kaltura.kflow.presentation.main.Feature.REGISTRATION;
 import static com.kaltura.kflow.presentation.main.Feature.SEARCH;
 import static com.kaltura.kflow.presentation.main.Feature.SETTINGS;
@@ -43,7 +45,7 @@ import static com.kaltura.kflow.presentation.main.Feature.VOD;
 public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureClickListener {
 
     private Feature[] mFeatures = {LOGIN, ANONYMOUS_LOGIN, REGISTRATION, VOD, EPG, LIVE, FAVORITES,
-            SEARCH, MEDIA_PAGE, SUBSCRIPTION, SETTINGS};
+            SEARCH, MEDIA_PAGE, SUBSCRIPTION, PRODUCT_PRICE, SETTINGS};
 
     @Nullable
     @Override
@@ -98,6 +100,9 @@ public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureCl
                 break;
             case SUBSCRIPTION:
                 pushFragment(new SubscriptionFragment());
+                break;
+            case PRODUCT_PRICE:
+                pushFragment(new ProductPriceFragment());
                 break;
             case SETTINGS:
                 pushFragment(new SettingsFragment());

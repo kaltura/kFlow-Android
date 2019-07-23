@@ -15,6 +15,7 @@ public enum Feature {
     SEARCH("Search"),
     MEDIA_PAGE("Media page"),
     SUBSCRIPTION("Subscription"),
+    PRODUCT_PRICE("Product price"),
     SETTINGS("Settings");
 
     private String text;

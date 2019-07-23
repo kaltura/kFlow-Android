@@ -6,6 +6,11 @@
         <item quantity="other">Show %s assets</item>
     </plurals>
 
+    <plurals name="show_product_prices">
+        <item quantity="one">Show %s product price</item>
+        <item quantity="other">Show %s product prices</item>
+    </plurals>
+
     <plurals name="show_channels">
         <item quantity="one">Show %s channel</item>
         <item quantity="other">Show %s channels</item>
