@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.kaltura.kflow.R;
 import com.kaltura.kflow.presentation.AnonymousLoginFragment;
+import com.kaltura.kflow.presentation.CheckReceiptFragment;
 import com.kaltura.kflow.presentation.EpgFragment;
 import com.kaltura.kflow.presentation.FavoritesFragment;
 import com.kaltura.kflow.presentation.LiveTvFragment;
@@ -28,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static com.kaltura.kflow.presentation.main.Feature.ANONYMOUS_LOGIN;
+import static com.kaltura.kflow.presentation.main.Feature.CHECK_RECEIPT;
 import static com.kaltura.kflow.presentation.main.Feature.EPG;
 import static com.kaltura.kflow.presentation.main.Feature.FAVORITES;
 import static com.kaltura.kflow.presentation.main.Feature.LIVE;
@@ -47,7 +49,7 @@ import static com.kaltura.kflow.presentation.main.Feature.VOD;
 public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureClickListener {
 
     private Feature[] mFeatures = {LOGIN, ANONYMOUS_LOGIN, REGISTRATION, VOD, EPG, LIVE, FAVORITES,
-            SEARCH, MEDIA_PAGE, SUBSCRIPTION, PRODUCT_PRICE, TRANSACTION_HISTORY, SETTINGS};
+            SEARCH, MEDIA_PAGE, SUBSCRIPTION, PRODUCT_PRICE, CHECK_RECEIPT, TRANSACTION_HISTORY, SETTINGS};
 
     @Nullable
     @Override
@@ -105,6 +107,9 @@ public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureCl
                 break;
             case PRODUCT_PRICE:
                 pushFragment(new ProductPriceFragment());
+                break;
+            case CHECK_RECEIPT:
+                pushFragment(new CheckReceiptFragment());
                 break;
             case TRANSACTION_HISTORY:
                 pushFragment(new TransactionHistoryFragment());
