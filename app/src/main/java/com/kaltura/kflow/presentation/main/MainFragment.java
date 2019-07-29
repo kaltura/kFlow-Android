@@ -18,6 +18,7 @@ import com.kaltura.kflow.presentation.GetVodFragment;
 import com.kaltura.kflow.presentation.SearchFragment;
 import com.kaltura.kflow.presentation.SettingsFragment;
 import com.kaltura.kflow.presentation.subscription.SubscriptionFragment;
+import com.kaltura.kflow.presentation.transactionHistory.TransactionHistoryFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,6 +38,7 @@ import static com.kaltura.kflow.presentation.main.Feature.REGISTRATION;
 import static com.kaltura.kflow.presentation.main.Feature.SEARCH;
 import static com.kaltura.kflow.presentation.main.Feature.SETTINGS;
 import static com.kaltura.kflow.presentation.main.Feature.SUBSCRIPTION;
+import static com.kaltura.kflow.presentation.main.Feature.TRANSACTION_HISTORY;
 import static com.kaltura.kflow.presentation.main.Feature.VOD;
 
 /**
@@ -45,7 +47,7 @@ import static com.kaltura.kflow.presentation.main.Feature.VOD;
 public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureClickListener {
 
     private Feature[] mFeatures = {LOGIN, ANONYMOUS_LOGIN, REGISTRATION, VOD, EPG, LIVE, FAVORITES,
-            SEARCH, MEDIA_PAGE, SUBSCRIPTION, PRODUCT_PRICE, SETTINGS};
+            SEARCH, MEDIA_PAGE, SUBSCRIPTION, PRODUCT_PRICE, TRANSACTION_HISTORY, SETTINGS};
 
     @Nullable
     @Override
@@ -103,6 +105,9 @@ public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureCl
                 break;
             case PRODUCT_PRICE:
                 pushFragment(new ProductPriceFragment());
+                break;
+            case TRANSACTION_HISTORY:
+                pushFragment(new TransactionHistoryFragment());
                 break;
             case SETTINGS:
                 pushFragment(new SettingsFragment());

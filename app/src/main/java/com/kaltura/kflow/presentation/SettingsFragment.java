@@ -63,11 +63,13 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             Configuration config = new Configuration();
             config.setEndpoint(PreferenceManager.getInstance(requireContext()).getBaseUrl());
             PhoenixApiManager.getClient().setConnectionConfiguration(config);
+            PhoenixApiManager.getClient().setKs(null);
         }
 
         if (!partnerId.isEmpty() && TextUtils.isDigitsOnly(partnerId)) {
             PreferenceManager.getInstance(requireContext()).clearKs();
             PreferenceManager.getInstance(requireContext()).savePartnerId(Integer.parseInt(partnerId));
+            PhoenixApiManager.getClient().setKs(null);
         }
 
         if (!mediaFileFormat.isEmpty()) {
