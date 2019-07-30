@@ -64,6 +64,12 @@ public class CheckReceiptFragment extends DebugFragment implements View.OnClickL
     }
 
     private void checkReceiptRequest(String receiptId, String productType, String productId, String contentId) {
+        if (TextUtils.isEmpty(receiptId) || TextUtils.isEmpty(productType) ||
+                TextUtils.isEmpty(productId) || TextUtils.isEmpty(contentId)) {
+            Toast.makeText(requireContext(), "Wrong input, please fill in all the fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (Utils.hasInternetConnection(requireContext())) {
 
             if (TextUtils.isDigitsOnly(productId) && TextUtils.isDigitsOnly(contentId)) {
