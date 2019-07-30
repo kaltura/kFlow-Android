@@ -79,6 +79,7 @@ public class CheckReceiptFragment extends DebugFragment implements View.OnClickL
                 externalReceipt.setProductType(transactionType);
                 externalReceipt.setProductId(Integer.parseInt(productId));
                 externalReceipt.setContentId(Integer.parseInt(contentId));
+                externalReceipt.setPaymentGatewayName("PGAdapterGoogle");
 
                 RequestBuilder requestBuilder = TransactionService.validateReceipt(externalReceipt);
                 clearDebugView();
