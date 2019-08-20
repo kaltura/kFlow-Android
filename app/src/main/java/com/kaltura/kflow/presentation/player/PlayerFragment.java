@@ -173,7 +173,7 @@ public class PlayerFragment extends DebugFragment {
         MediaEntryProvider mediaProvider = new PhoenixMediaProvider()
                 .setSessionProvider(new SimpleSessionProvider(PreferenceManager.getInstance(requireContext()).getBaseUrl() + "/api_v3/", PreferenceManager.getInstance(requireContext()).getPartnerId(), PhoenixApiManager.getClient().getKs()))
                 .setAssetId(String.valueOf(mAsset.getId()))
-                .setProtocol(PhoenixMediaProvider.HttpProtocol.Https)
+                .setProtocol(PhoenixMediaProvider.HttpProtocol.All)
                 .setContextType(contextType)
                 .setAssetReferenceType(contextType == APIDefines.PlaybackContextType.Playback ? APIDefines.AssetReferenceType.Media : APIDefines.AssetReferenceType.InternalEpg)
                 .setAssetType(contextType == APIDefines.PlaybackContextType.Playback ? APIDefines.KalturaAssetType.Media : APIDefines.KalturaAssetType.Epg)
