@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -64,16 +65,23 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             config.setEndpoint(PreferenceManager.getInstance(requireContext()).getBaseUrl());
             PhoenixApiManager.getClient().setConnectionConfiguration(config);
             PhoenixApiManager.getClient().setKs(null);
+        }else{
+            Toast.makeText(requireContext(), "END Point URL is empty", Toast.LENGTH_SHORT).show();
         }
 
         if (!partnerId.isEmpty() && TextUtils.isDigitsOnly(partnerId)) {
             PreferenceManager.getInstance(requireContext()).clearKs();
             PreferenceManager.getInstance(requireContext()).savePartnerId(Integer.parseInt(partnerId));
             PhoenixApiManager.getClient().setKs(null);
+        }else {
+            Toast.makeText(requireContext(), "Parthner ID is missing or invalid", Toast.LENGTH_SHORT).show();
         }
 
         if (!mediaFileFormat.isEmpty()) {
             PreferenceManager.getInstance(requireContext()).saveMediaFileFormat(mediaFileFormat);
+        }else {
+            Toast.makeText(requireContext(), "Media File Format is missing", Toast.LENGTH_SHORT).show();
         }
+        Toast.makeText(requireContext(), "Saved", Toast.LENGTH_SHORT).show();
     }
 }
