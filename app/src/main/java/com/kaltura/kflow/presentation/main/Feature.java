@@ -18,6 +18,7 @@ public enum Feature {
     PRODUCT_PRICE("Product price"),
     CHECK_RECEIPT("Check receipt"),
     TRANSACTION_HISTORY("Transaction history"),
+    RECORDINGS("Recordings"),
     SETTINGS("Settings");
 
     private String text;

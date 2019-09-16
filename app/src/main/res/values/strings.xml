@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">KFlow</string>
 
+    <string name="show_empty_recorded">No recorded</string>
+    <string name="show_empty_ongoing_recordings">No on going recordings</string>
+    <string name="show_empty_scheduled_recordings">No scheduled recordings</string>
+
     <plurals name="show_assets">
         <item quantity="one">Show %s asset</item>
         <item quantity="other">Show %s assets</item>
@@ -34,5 +38,20 @@
     <plurals name="history_count">
         <item quantity="one">%s history asset</item>
         <item quantity="other">%s history assets</item>
+    </plurals>
+
+    <plurals name="show_recorded">
+        <item quantity="one">Show %s recorded</item>
+        <item quantity="other">Show %s recorded</item>
+    </plurals>
+
+    <plurals name="show_on_going_recording">
+        <item quantity="one">Show %s on going recording</item>
+        <item quantity="other">Show %s on going recordings</item>
+    </plurals>
+
+    <plurals name="show_scheduled_recording">
+        <item quantity="one">Show %s scheduled recording</item>
+        <item quantity="other">Show %s scheduled recordings</item>
     </plurals>
 </resources>
