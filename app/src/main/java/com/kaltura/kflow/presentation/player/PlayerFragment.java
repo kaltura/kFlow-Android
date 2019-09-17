@@ -69,6 +69,7 @@ import java.util.List;
 public class PlayerFragment extends DebugFragment {
 
     private static final String ARG_ASSET = "extra_asset";
+    private static final String ARG_ASSET_ID = "extra_asset_id";
 
     private SwitchCompat mLike;
     private SwitchCompat mFavorite;
@@ -88,6 +89,14 @@ public class PlayerFragment extends DebugFragment {
         PlayerFragment likeFragment = new PlayerFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_ASSET, asset);
+        likeFragment.setArguments(bundle);
+        return likeFragment;
+    }
+
+    public static PlayerFragment newInstance(long assetId) {
+        PlayerFragment likeFragment = new PlayerFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_ASSET_ID, assetId);
         likeFragment.setArguments(bundle);
         return likeFragment;
     }

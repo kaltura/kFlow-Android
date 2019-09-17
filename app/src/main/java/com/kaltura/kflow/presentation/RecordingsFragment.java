@@ -19,6 +19,7 @@ import com.kaltura.kflow.R;
 import com.kaltura.kflow.manager.PhoenixApiManager;
 import com.kaltura.kflow.presentation.debug.DebugFragment;
 import com.kaltura.kflow.presentation.main.MainActivity;
+import com.kaltura.kflow.presentation.recordingList.RecordingListFragment;
 import com.kaltura.kflow.utils.Utils;
 
 import java.lang.annotation.Retention;
@@ -132,6 +133,7 @@ public class RecordingsFragment extends DebugFragment implements View.OnClickLis
                     else
                         mShowRecordings.setText(getResources().getQuantityString(R.plurals.show_recorded,
                                 mFilteredRecordings.size(), NumberFormat.getInstance().format(mFilteredRecordings.size())));
+
                     break;
                 }
                 case ON_GOING_FILTER: {
@@ -168,11 +170,13 @@ public class RecordingsFragment extends DebugFragment implements View.OnClickLis
     }
 
     private void showRecordings() {
-//        AssetListFragment assetListFragment = AssetListFragment.newInstance(mFilteredRecordings);
-//        requireActivity().getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.container, assetListFragment)
-//                .addToBackStack(null)
-//                .commit();
+        if (!mFilteredRecordings.isEmpty()) {
+            RecordingListFragment recordingListFragment = RecordingListFragment.newInstance(mFilteredRecordings);
+            requireActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, recordingListFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 
     @Override
