@@ -11,10 +11,12 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.kaltura.client.enums.AssetReferenceType;
 import com.kaltura.client.enums.AssetType;
 import com.kaltura.client.enums.PinType;
 import com.kaltura.client.enums.RuleType;
 import com.kaltura.client.enums.SocialActionType;
+import com.kaltura.client.services.AssetService;
 import com.kaltura.client.services.BookmarkService;
 import com.kaltura.client.services.FavoriteService;
 import com.kaltura.client.services.PinService;
@@ -28,6 +30,7 @@ import com.kaltura.client.types.FavoriteFilter;
 import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.types.ProductPriceFilter;
 import com.kaltura.client.types.ProgramAsset;
+import com.kaltura.client.types.Recording;
 import com.kaltura.client.types.SocialAction;
 import com.kaltura.client.types.SocialActionFilter;
 import com.kaltura.client.types.UserAssetRule;
@@ -69,7 +72,7 @@ import java.util.List;
 public class PlayerFragment extends DebugFragment {
 
     private static final String ARG_ASSET = "extra_asset";
-    private static final String ARG_ASSET_ID = "extra_asset_id";
+    private static final String ARG_RECORDING = "extra_recording";
 
     private SwitchCompat mLike;
     private SwitchCompat mFavorite;
@@ -81,6 +84,7 @@ public class PlayerFragment extends DebugFragment {
     private PlaybackControlsView mPlayerControls;
     private Player mPlayer;
     private Asset mAsset;
+    private Recording mRecording;
     private String mLikeId = "";
     private PKMediaEntry mediaEntry;
     private int mParentalRuleId;
@@ -93,10 +97,10 @@ public class PlayerFragment extends DebugFragment {
         return likeFragment;
     }
 
-    public static PlayerFragment newInstance(long assetId) {
+    public static PlayerFragment newInstance(Recording recording) {
         PlayerFragment likeFragment = new PlayerFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_ASSET_ID, assetId);
+        bundle.putSerializable(ARG_RECORDING, recording);
         likeFragment.setArguments(bundle);
         return likeFragment;
     }
@@ -111,12 +115,19 @@ public class PlayerFragment extends DebugFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ((MainActivity) requireActivity()).getSupportActionBar().setTitle("Player");
+        initUI();
 
         Bundle savedState = getArguments();
         if (savedState != null) {
             mAsset = (Asset) savedState.getSerializable(ARG_ASSET);
+            mRecording = (Recording) savedState.getSerializable(ARG_RECORDING);
         }
 
+        if (mAsset == null && mRecording != null) loadAsset(mRecording.getAssetId());
+        else onAssetLoaded();
+    }
+
+    private void initUI() {
         mLike = getView().findViewById(R.id.like);
         mFavorite = getView().findViewById(R.id.favorite);
         mPlayerControls = getView().findViewById(R.id.player_controls);
@@ -150,21 +161,34 @@ public class PlayerFragment extends DebugFragment {
                 checkPinRequest(mPin.getText().toString());
             }
         });
+    }
 
-        AppCompatTextView assetTitle = getView().findViewById(R.id.asset_title);
-        assetTitle.setText(mAsset.getName());
+    private void loadAsset(long assetId) {
+        if (Utils.hasInternetConnection(requireContext())) {
+            RequestBuilder requestBuilder = AssetService.get(String.valueOf(assetId), AssetReferenceType.EPG_INTERNAL)
+                    .setCompletion(result -> {
+                        if (result.isSuccess()) {
+                            mAsset = result.results;
+                            onAssetLoaded();
+                        }
+                    });
+            PhoenixApiManager.execute(requestBuilder);
+            clearDebugView();
+        } else {
+            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+        }
+    }
 
-        boolean isInPast = false;
+    private void onAssetLoaded() {
+        ((AppCompatTextView) getView().findViewById(R.id.asset_title)).setText(mAsset.getName());
 
-        if (mAsset instanceof ProgramAsset) isInPast = Utils.isProgramIsPast(mAsset);
-
-        initPlayer(isInPast ? APIDefines.PlaybackContextType.Catchup : APIDefines.PlaybackContextType.Playback);
+        initPlayer();
         getLikeList();
         getFavoriteList();
     }
 
-    private void initPlayer(APIDefines.PlaybackContextType contextType) {
-        startOttMediaLoading(contextType, response -> {
+    private void initPlayer() {
+        startOttMediaLoading(response -> {
             if (isAdded()) {
                 requireActivity().runOnUiThread(() -> {
                     if (response.getResponse() != null) {
@@ -178,17 +202,36 @@ public class PlayerFragment extends DebugFragment {
         });
     }
 
-    private void startOttMediaLoading(APIDefines.PlaybackContextType contextType, final OnMediaLoadCompletion completion) {
+    private void startOttMediaLoading(final OnMediaLoadCompletion completion) {
         MediaEntryProvider mediaProvider = new PhoenixMediaProvider()
                 .setSessionProvider(new SimpleSessionProvider(PreferenceManager.getInstance(requireContext()).getBaseUrl() + "/api_v3/", PreferenceManager.getInstance(requireContext()).getPartnerId(), PhoenixApiManager.getClient().getKs()))
                 .setAssetId(String.valueOf(mAsset.getId()))
                 .setProtocol(PhoenixMediaProvider.HttpProtocol.All)
-                .setContextType(contextType)
-                .setAssetReferenceType(contextType == APIDefines.PlaybackContextType.Playback ? APIDefines.AssetReferenceType.Media : APIDefines.AssetReferenceType.InternalEpg)
-                .setAssetType(contextType == APIDefines.PlaybackContextType.Playback ? APIDefines.KalturaAssetType.Media : APIDefines.KalturaAssetType.Epg)
+                .setContextType(getPlaybackContextType())
+                .setAssetReferenceType(getAssetReferenceType())
+                .setAssetType(getAssetType())
                 .setFormats(PreferenceManager.getInstance(requireContext()).getMediaFileFormat());
 
         mediaProvider.load(completion);
+    }
+
+    private APIDefines.KalturaAssetType getAssetType() {
+        if (mRecording != null) return APIDefines.KalturaAssetType.Recording;
+        else if (mAsset instanceof ProgramAsset && Utils.isProgramIsPast(mAsset))
+            return APIDefines.KalturaAssetType.Epg;
+        else return APIDefines.KalturaAssetType.Media;
+    }
+
+    private APIDefines.PlaybackContextType getPlaybackContextType() {
+        if (mRecording == null && mAsset instanceof ProgramAsset && Utils.isProgramIsPast(mAsset))
+            return APIDefines.PlaybackContextType.Catchup;
+        else return APIDefines.PlaybackContextType.Playback;
+    }
+
+    private APIDefines.AssetReferenceType getAssetReferenceType() {
+        if (mRecording == null && getPlaybackContextType() == APIDefines.PlaybackContextType.Playback)
+            return APIDefines.AssetReferenceType.Media;
+        else return APIDefines.AssetReferenceType.InternalEpg;
     }
 
     private void onMediaLoaded() {

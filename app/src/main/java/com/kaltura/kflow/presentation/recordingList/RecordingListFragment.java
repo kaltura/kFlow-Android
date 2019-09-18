@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.kaltura.client.enums.RecordingStatus;
 import com.kaltura.client.types.Recording;
 import com.kaltura.kflow.R;
 import com.kaltura.kflow.presentation.main.MainActivity;
@@ -63,10 +64,12 @@ public class RecordingListFragment extends Fragment implements RecordingListAdap
 
     @Override
     public void onRecordingClicked(Recording recording) {
-//        PlayerFragment playerFragment = PlayerFragment.newInstance(recording.getAssetId());
-//        requireActivity().getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.container, playerFragment)
-//                .addToBackStack(null)
-//                .commit();
+        if (recording.getStatus() == RecordingStatus.RECORDED) {
+            PlayerFragment playerFragment = PlayerFragment.newInstance(recording);
+            requireActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, playerFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 }
