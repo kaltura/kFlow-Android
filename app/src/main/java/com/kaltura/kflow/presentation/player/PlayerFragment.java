@@ -210,7 +210,7 @@ public class PlayerFragment extends DebugFragment {
                 .setContextType(getPlaybackContextType())
                 .setAssetReferenceType(getAssetReferenceType())
                 .setAssetType(getAssetType())
-                .setFormats("BP_Live_Dash");
+                .setFormats(PreferenceManager.getInstance(requireContext()).getMediaFileFormat());
 
         mediaProvider.load(completion);
     }
