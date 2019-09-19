@@ -205,12 +205,12 @@ public class PlayerFragment extends DebugFragment {
     private void startOttMediaLoading(final OnMediaLoadCompletion completion) {
         MediaEntryProvider mediaProvider = new PhoenixMediaProvider()
                 .setSessionProvider(new SimpleSessionProvider(PreferenceManager.getInstance(requireContext()).getBaseUrl() + "/api_v3/", PreferenceManager.getInstance(requireContext()).getPartnerId(), PhoenixApiManager.getClient().getKs()))
-                .setAssetId(String.valueOf(mAsset.getId()))
+                .setAssetId(String.valueOf(mRecording.getId()))
                 .setProtocol(PhoenixMediaProvider.HttpProtocol.All)
                 .setContextType(getPlaybackContextType())
                 .setAssetReferenceType(getAssetReferenceType())
                 .setAssetType(getAssetType())
-                .setFormats(PreferenceManager.getInstance(requireContext()).getMediaFileFormat());
+                .setFormats("BP_Live_Dash");
 
         mediaProvider.load(completion);
     }
