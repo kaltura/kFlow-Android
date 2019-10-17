@@ -2,6 +2,7 @@ package com.kaltura.kflow.presentation.player;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,8 @@ import com.kaltura.playkit.PlayKitManager;
 import com.kaltura.playkit.Player;
 import com.kaltura.playkit.PlayerEvent;
 import com.kaltura.playkit.PlayerState;
+import com.kaltura.playkit.player.PKTracks;
+import com.kaltura.playkit.player.TextTrack;
 import com.kaltura.playkit.plugins.ads.AdEvent;
 import com.kaltura.playkit.plugins.ott.OttEvent;
 import com.kaltura.playkit.providers.MediaEntryProvider;
@@ -255,6 +258,7 @@ public class PlayerFragment extends DebugFragment {
 
             mPlayer.getSettings().setSecureSurface(false);
             mPlayer.getSettings().setAllowCrossProtocolRedirect(true);
+            mPlayer.getSettings().setCea608CaptionsEnabled(true); // default is false
 
             addPlayerListeners();
 
@@ -269,6 +273,18 @@ public class PlayerFragment extends DebugFragment {
     }
 
     private void addPlayerListeners() {
+
+        mPlayer.addListener(this, PlayerEvent.tracksAvailable, event -> {
+            //When the track data available, this event occurs. It brings the info object with it.
+            Log.d("elad", "Tracks Info Are Here");
+            if (event != null && event.tracksInfo != null && !event.tracksInfo.getTextTracks().isEmpty()) {
+                Log.d("elad", "Text Tracks AreAvailable");
+                TextTrack tr = event.tracksInfo.getTextTracks().get(1);
+                mPlayer.changeTrack(tr.getUniqueId());
+                Log.d("elad", "Text Selected : " + tr.getLanguage());
+            }
+
+        });
 
         mPlayer.addEventListener(event -> mPlayerControls.setPlayerState(PlayerState.READY), AdEvent.Type.CONTENT_PAUSE_REQUESTED);
 
@@ -291,6 +307,17 @@ public class PlayerFragment extends DebugFragment {
 
         //OLD WAY FOR GETTING THE CONCURRENCY
         mPlayer.addEventListener(event -> Toast.makeText(requireContext(), "Concurrency event", Toast.LENGTH_LONG).show(), OttEvent.OttEventType.Concurrency);
+    }
+
+    private String getDefaultSubIndex(PKTracks tracksInfo) {
+        String res = "";
+        if (!tracksInfo.getTextTracks().isEmpty()) {
+            for (TextTrack tr : tracksInfo.getTextTracks()) {
+                if (tr.getLabel().equalsIgnoreCase("en"))
+                    res = tr.getUniqueId();
+            }
+        }
+        return res;
     }
 
     private void getLikeList() {
