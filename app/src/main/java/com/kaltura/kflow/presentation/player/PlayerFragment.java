@@ -205,7 +205,7 @@ public class PlayerFragment extends DebugFragment {
     private void startOttMediaLoading(final OnMediaLoadCompletion completion) {
         MediaEntryProvider mediaProvider = new PhoenixMediaProvider()
                 .setSessionProvider(new SimpleSessionProvider(PreferenceManager.getInstance(requireContext()).getBaseUrl() + "/api_v3/", PreferenceManager.getInstance(requireContext()).getPartnerId(), PhoenixApiManager.getClient().getKs()))
-                .setAssetId(String.valueOf(mRecording.getId()))
+                .setAssetId(getAssetIdByFlowType())
                 .setProtocol(PhoenixMediaProvider.HttpProtocol.All)
                 .setContextType(getPlaybackContextType())
                 .setAssetReferenceType(getAssetReferenceType())
@@ -213,6 +213,11 @@ public class PlayerFragment extends DebugFragment {
                 .setFormats(PreferenceManager.getInstance(requireContext()).getMediaFileFormat());
 
         mediaProvider.load(completion);
+    }
+
+    private String getAssetIdByFlowType() {
+        if (mRecording == null) return String.valueOf(mAsset.getId());
+        else return String.valueOf(mRecording.getId());
     }
 
     private APIDefines.KalturaAssetType getAssetType() {
@@ -231,7 +236,7 @@ public class PlayerFragment extends DebugFragment {
     private APIDefines.AssetReferenceType getAssetReferenceType() {
         if (mRecording == null && getPlaybackContextType() == APIDefines.PlaybackContextType.Playback)
             return APIDefines.AssetReferenceType.Media;
-        else return APIDefines.AssetReferenceType.InternalEpg;
+        else return APIDefines.AssetReferenceType.Npvr;
     }
 
     private void onMediaLoaded() {
