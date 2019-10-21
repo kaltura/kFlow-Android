@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -64,9 +66,11 @@ import com.kaltura.playkit.providers.ott.PhoenixMediaProvider;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SwitchCompat;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -81,6 +85,7 @@ public class PlayerFragment extends DebugFragment {
     private SwitchCompat mFavorite;
     private AppCompatButton mCheckAll;
     private AppCompatButton mInsertPin;
+    private AppCompatSpinner mSubtitles;
     private LinearLayout mPinLayout;
     private TextInputLayout mPinInputLayout;
     private TextInputEditText mPin;
@@ -137,6 +142,7 @@ public class PlayerFragment extends DebugFragment {
         mCheckAll = getView().findViewById(R.id.check_all);
         mInsertPin = getView().findViewById(R.id.insert_pin);
         mPinLayout = getView().findViewById(R.id.pin_layout);
+        mSubtitles = getView().findViewById(R.id.subtitles);
         mPin = getView().findViewById(R.id.pin);
         mPinInputLayout = getView().findViewById(R.id.pin_input_layout);
 
@@ -279,9 +285,10 @@ public class PlayerFragment extends DebugFragment {
             Log.d("elad", "Tracks Info Are Here");
             if (event != null && event.tracksInfo != null && !event.tracksInfo.getTextTracks().isEmpty()) {
                 Log.d("elad", "Text Tracks AreAvailable");
-                TextTrack tr = event.tracksInfo.getTextTracks().get(1);
-                mPlayer.changeTrack(tr.getUniqueId());
-                Log.d("elad", "Text Selected : " + tr.getLanguage());
+                TextTrack defaultTextTrack = getDefaultTextTrack(event.tracksInfo);
+                initSubtitles(event.tracksInfo.getTextTracks(), defaultTextTrack);
+                changeTextTrack(defaultTextTrack);
+                Log.d("elad", "Text Selected : " + defaultTextTrack.getLanguage());
             }
         });
 
@@ -309,15 +316,38 @@ public class PlayerFragment extends DebugFragment {
         );
     }
 
-    private String getDefaultSubIndex(PKTracks tracksInfo) {
-        String res = "";
-        if (!tracksInfo.getTextTracks().isEmpty()) {
-            for (TextTrack tr : tracksInfo.getTextTracks()) {
-                if (tr.getLabel().equalsIgnoreCase("en"))
-                    res = tr.getUniqueId();
-            }
+    private void initSubtitles(List<TextTrack> tracks, TextTrack selected) {
+        List<String> languages = new ArrayList<>();
+        for (TextTrack textTrack : tracks) {
+            languages.add(textTrack.getLanguage());
         }
-        return res;
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, languages);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSubtitles.setAdapter(adapter);
+        mSubtitles.setSelection(tracks.indexOf(selected));
+        mSubtitles.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                changeTextTrack(tracks.get(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+    }
+
+    private void changeTextTrack(TextTrack textTrack) {
+        mPlayer.changeTrack(textTrack.getUniqueId());
+    }
+
+    private TextTrack getDefaultTextTrack(PKTracks tracksInfo) {
+        TextTrack track = tracksInfo.getTextTracks().get(0);
+        for (TextTrack tr : tracksInfo.getTextTracks()) {
+            if (tr.getLanguage().equalsIgnoreCase("en"))
+                track = tr;
+        }
+        return track;
     }
 
     private void getLikeList() {

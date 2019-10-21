@@ -48,6 +48,27 @@
                 android:layout_alignParentBottom="true" />
         </RelativeLayout>
 
+        <LinearLayout
+            android:id="@+id/subtitles_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Subtitles:"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/subtitles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown" />
+        </LinearLayout>
+
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/like"
             android:layout_width="wrap_content"
@@ -71,47 +92,47 @@
             android:layout_height="55dp"
             android:layout_marginBottom="5dp"
             android:backgroundTint="@color/colorAccent"
-            android:text="Check all validations"
             android:gravity="center"
+            android:text="Check all validations"
             android:textColor="@android:color/white"
             android:textSize="16sp" />
 
         <LinearLayout
             android:id="@+id/pin_layout"
-            android:visibility="gone"
             android:layout_width="match_parent"
+            android:layout_height="55dp"
             android:layout_marginBottom="5dp"
-            android:orientation="horizontal"
             android:animateLayoutChanges="true"
-            android:weightSum="1"
-            android:layout_height="55dp">
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:weightSum="1">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/pin_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone"
-                android:layout_weight="0.4">
+                android:layout_weight="0.4"
+                android:visibility="gone">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/pin"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:inputType="number"
                     android:hint="Insert pin"
                     android:imeOptions="actionDone"
+                    android:inputType="number"
                     android:singleLine="true" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/insert_pin"
-                android:layout_weight="0.6"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_weight="0.6"
                 android:backgroundTint="@color/colorAccent"
-                android:text="Insert pin"
                 android:gravity="center"
+                android:text="Insert pin"
                 android:textColor="@android:color/white"
                 android:textSize="16sp" />
 
