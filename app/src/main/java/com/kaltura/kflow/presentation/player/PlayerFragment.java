@@ -283,30 +283,30 @@ public class PlayerFragment extends DebugFragment {
                 mPlayer.changeTrack(tr.getUniqueId());
                 Log.d("elad", "Text Selected : " + tr.getLanguage());
             }
-
         });
 
-        mPlayer.addEventListener(event -> mPlayerControls.setPlayerState(PlayerState.READY), AdEvent.Type.CONTENT_PAUSE_REQUESTED);
+        mPlayer.addListener(this, AdEvent.Type.CONTENT_PAUSE_REQUESTED, event ->
+                mPlayerControls.setPlayerState(PlayerState.READY)
+        );
 
-        mPlayer.addStateChangeListener(event -> {
-            if (event instanceof PlayerEvent.StateChanged) {
-                PlayerEvent.StateChanged stateChanged = (PlayerEvent.StateChanged) event;
-                if (mPlayerControls != null) {
-                    mPlayerControls.setPlayerState(stateChanged.newState);
-                }
+        mPlayer.addListener(this, PlayerEvent.stateChanged, event -> {
+            if (mPlayerControls != null) {
+                mPlayerControls.setPlayerState(event.newState);
             }
         });
 
-        mPlayer.addEventListener(event -> {
+        mPlayer.addListener(this, PlayerEvent.Type.ERROR, event -> {
             //When the track data available, this event occurs. It brings the info object with it.
             PlayerEvent.Error playerError = (PlayerEvent.Error) event;
             if (playerError != null && playerError.error != null) {
                 Toast.makeText(requireContext(), "PlayerEvent.Error event  position = " + playerError.error.errorType + " errorMessage = " + playerError.error.message, Toast.LENGTH_LONG).show();
             }
-        }, PlayerEvent.Type.ERROR);
+        });
 
         //OLD WAY FOR GETTING THE CONCURRENCY
-        mPlayer.addEventListener(event -> Toast.makeText(requireContext(), "Concurrency event", Toast.LENGTH_LONG).show(), OttEvent.OttEventType.Concurrency);
+        mPlayer.addListener(this, OttEvent.OttEventType.Concurrency, event ->
+                Toast.makeText(requireContext(), "Concurrency event", Toast.LENGTH_LONG).show()
+        );
     }
 
     private String getDefaultSubIndex(PKTracks tracksInfo) {
