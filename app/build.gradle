@@ -6,8 +6,8 @@ android {
         applicationId "com.kaltura.kflow"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 5
-        versionName "1.5"
+        versionCode 6
+        versionName "1.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -35,5 +35,5 @@ dependencies {
         exclude module: 'log4j-core'
     }
     implementation 'com.kaltura.playkit:playkit:3.9.4'
-    implementation 'com.kaltura.playkit:playkitproviders:3.9.8'
+    implementation 'com.kaltura.playkit:playkitproviders:3.9.10'
 }
