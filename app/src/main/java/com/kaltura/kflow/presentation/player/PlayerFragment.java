@@ -2,9 +2,12 @@ package com.kaltura.kflow.presentation.player;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -50,6 +53,8 @@ import com.kaltura.playkit.PlayKitManager;
 import com.kaltura.playkit.Player;
 import com.kaltura.playkit.PlayerEvent;
 import com.kaltura.playkit.PlayerState;
+import com.kaltura.playkit.player.PKTracks;
+import com.kaltura.playkit.player.TextTrack;
 import com.kaltura.playkit.plugins.ads.AdEvent;
 import com.kaltura.playkit.plugins.ott.OttEvent;
 import com.kaltura.playkit.providers.MediaEntryProvider;
@@ -61,9 +66,11 @@ import com.kaltura.playkit.providers.ott.PhoenixMediaProvider;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SwitchCompat;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -78,6 +85,7 @@ public class PlayerFragment extends DebugFragment {
     private SwitchCompat mFavorite;
     private AppCompatButton mCheckAll;
     private AppCompatButton mInsertPin;
+    private AppCompatSpinner mSubtitles;
     private LinearLayout mPinLayout;
     private TextInputLayout mPinInputLayout;
     private TextInputEditText mPin;
@@ -134,6 +142,7 @@ public class PlayerFragment extends DebugFragment {
         mCheckAll = getView().findViewById(R.id.check_all);
         mInsertPin = getView().findViewById(R.id.insert_pin);
         mPinLayout = getView().findViewById(R.id.pin_layout);
+        mSubtitles = getView().findViewById(R.id.subtitles);
         mPin = getView().findViewById(R.id.pin);
         mPinInputLayout = getView().findViewById(R.id.pin_input_layout);
 
@@ -205,7 +214,7 @@ public class PlayerFragment extends DebugFragment {
     private void startOttMediaLoading(final OnMediaLoadCompletion completion) {
         MediaEntryProvider mediaProvider = new PhoenixMediaProvider()
                 .setSessionProvider(new SimpleSessionProvider(PreferenceManager.getInstance(requireContext()).getBaseUrl() + "/api_v3/", PreferenceManager.getInstance(requireContext()).getPartnerId(), PhoenixApiManager.getClient().getKs()))
-                .setAssetId(String.valueOf(mRecording.getId()))
+                .setAssetId(getAssetIdByFlowType())
                 .setProtocol(PhoenixMediaProvider.HttpProtocol.All)
                 .setContextType(getPlaybackContextType())
                 .setAssetReferenceType(getAssetReferenceType())
@@ -213,6 +222,11 @@ public class PlayerFragment extends DebugFragment {
                 .setFormats(PreferenceManager.getInstance(requireContext()).getMediaFileFormat());
 
         mediaProvider.load(completion);
+    }
+
+    private String getAssetIdByFlowType() {
+        if (mRecording == null) return String.valueOf(mAsset.getId());
+        else return String.valueOf(mRecording.getId());
     }
 
     private APIDefines.KalturaAssetType getAssetType() {
@@ -250,6 +264,7 @@ public class PlayerFragment extends DebugFragment {
 
             mPlayer.getSettings().setSecureSurface(false);
             mPlayer.getSettings().setAllowCrossProtocolRedirect(true);
+            mPlayer.getSettings().setCea608CaptionsEnabled(true); // default is false
 
             addPlayerListeners();
 
@@ -265,27 +280,74 @@ public class PlayerFragment extends DebugFragment {
 
     private void addPlayerListeners() {
 
-        mPlayer.addEventListener(event -> mPlayerControls.setPlayerState(PlayerState.READY), AdEvent.Type.CONTENT_PAUSE_REQUESTED);
-
-        mPlayer.addStateChangeListener(event -> {
-            if (event instanceof PlayerEvent.StateChanged) {
-                PlayerEvent.StateChanged stateChanged = (PlayerEvent.StateChanged) event;
-                if (mPlayerControls != null) {
-                    mPlayerControls.setPlayerState(stateChanged.newState);
-                }
+        mPlayer.addListener(this, PlayerEvent.tracksAvailable, event -> {
+            //When the track data available, this event occurs. It brings the info object with it.
+            Log.d("elad", "Tracks Info Are Here");
+            if (event != null && event.tracksInfo != null && !event.tracksInfo.getTextTracks().isEmpty()) {
+                Log.d("elad", "Text Tracks AreAvailable");
+                TextTrack defaultTextTrack = getDefaultTextTrack(event.tracksInfo);
+                initSubtitles(event.tracksInfo.getTextTracks(), defaultTextTrack);
+                changeTextTrack(defaultTextTrack);
+                Log.d("elad", "Text Selected : " + defaultTextTrack.getLanguage());
             }
         });
 
-        mPlayer.addEventListener(event -> {
+        mPlayer.addListener(this, AdEvent.Type.CONTENT_PAUSE_REQUESTED, event ->
+                mPlayerControls.setPlayerState(PlayerState.READY)
+        );
+
+        mPlayer.addListener(this, PlayerEvent.stateChanged, event -> {
+            if (mPlayerControls != null) {
+                mPlayerControls.setPlayerState(event.newState);
+            }
+        });
+
+        mPlayer.addListener(this, PlayerEvent.Type.ERROR, event -> {
             //When the track data available, this event occurs. It brings the info object with it.
             PlayerEvent.Error playerError = (PlayerEvent.Error) event;
             if (playerError != null && playerError.error != null) {
                 Toast.makeText(requireContext(), "PlayerEvent.Error event  position = " + playerError.error.errorType + " errorMessage = " + playerError.error.message, Toast.LENGTH_LONG).show();
             }
-        }, PlayerEvent.Type.ERROR);
+        });
 
         //OLD WAY FOR GETTING THE CONCURRENCY
-        mPlayer.addEventListener(event -> Toast.makeText(requireContext(), "Concurrency event", Toast.LENGTH_LONG).show(), OttEvent.OttEventType.Concurrency);
+        mPlayer.addListener(this, OttEvent.OttEventType.Concurrency, event ->
+                Toast.makeText(requireContext(), "Concurrency event", Toast.LENGTH_LONG).show()
+        );
+    }
+
+    private void initSubtitles(List<TextTrack> tracks, TextTrack selected) {
+        List<String> languages = new ArrayList<>();
+        for (TextTrack textTrack : tracks) {
+            languages.add(textTrack.getLanguage());
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, languages);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSubtitles.setAdapter(adapter);
+        mSubtitles.setSelection(tracks.indexOf(selected));
+        mSubtitles.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                changeTextTrack(tracks.get(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+    }
+
+    private void changeTextTrack(TextTrack textTrack) {
+        mPlayer.changeTrack(textTrack.getUniqueId());
+    }
+
+    private TextTrack getDefaultTextTrack(PKTracks tracksInfo) {
+        TextTrack track = tracksInfo.getTextTracks().get(0);
+        for (TextTrack tr : tracksInfo.getTextTracks()) {
+            if (tr.getLanguage().equalsIgnoreCase("en"))
+                track = tr;
+        }
+        return track;
     }
 
     private void getLikeList() {
