@@ -2,7 +2,6 @@ package com.kaltura.kflow.presentation.player;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -282,13 +281,10 @@ public class PlayerFragment extends DebugFragment {
 
         mPlayer.addListener(this, PlayerEvent.tracksAvailable, event -> {
             //When the track data available, this event occurs. It brings the info object with it.
-            Log.d("elad", "Tracks Info Are Here");
             if (event != null && event.tracksInfo != null && !event.tracksInfo.getTextTracks().isEmpty()) {
-                Log.d("elad", "Text Tracks AreAvailable");
                 TextTrack defaultTextTrack = getDefaultTextTrack(event.tracksInfo);
                 initSubtitles(event.tracksInfo.getTextTracks(), defaultTextTrack);
                 changeTextTrack(defaultTextTrack);
-                Log.d("elad", "Text Selected : " + defaultTextTrack.getLanguage());
             }
         });
 
