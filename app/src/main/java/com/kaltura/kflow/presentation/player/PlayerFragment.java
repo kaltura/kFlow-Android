@@ -313,7 +313,7 @@ public class PlayerFragment extends DebugFragment {
     }
 
     private void initSubtitles(List<TextTrack> tracks, TextTrack selected) {
-        List<String> languages = new ArrayList<>();
+        List<String> languages = new ArrayList<>(); 
         for (TextTrack textTrack : tracks) {
             if (textTrack != null && textTrack.getLanguage() != null)
                 languages.add(textTrack.getLanguage());
