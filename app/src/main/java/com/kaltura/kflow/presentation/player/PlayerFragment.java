@@ -319,7 +319,8 @@ public class PlayerFragment extends DebugFragment {
     private void initSubtitles(List<TextTrack> tracks, TextTrack selected) {
         List<String> languages = new ArrayList<>();
         for (TextTrack textTrack : tracks) {
-            languages.add(textTrack.getLanguage());
+            if (textTrack != null && textTrack.getLanguage() != null)
+                languages.add(textTrack.getLanguage());
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, languages);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -344,7 +345,7 @@ public class PlayerFragment extends DebugFragment {
     private TextTrack getDefaultTextTrack(PKTracks tracksInfo) {
         TextTrack track = tracksInfo.getTextTracks().get(0);
         for (TextTrack tr : tracksInfo.getTextTracks()) {
-            if (tr.getLanguage().equalsIgnoreCase("en"))
+            if (tr != null && tr.getLanguage() != null && tr.getLanguage().equalsIgnoreCase("en"))
                 track = tr;
         }
         return track;
