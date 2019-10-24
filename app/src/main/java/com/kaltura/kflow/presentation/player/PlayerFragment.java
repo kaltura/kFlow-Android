@@ -81,9 +81,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by alex_lytvynenko on 04.12.2018.
@@ -727,23 +724,17 @@ public class PlayerFragment extends DebugFragment {
     private Runnable fireKeepAliveCallsRunnable = new Runnable() {
         @Override
         public void run() {
-
             if (mIsKeepAlive) {
                 if (!mPlayer.isPlaying()) {
-                    cancelFireKeepAliveService();
-                    fireKeepAliveHeaderUrl(keepAliveURL);
-                    scheduler.postDelayed(fireKeepAliveCallsRunnable,KEEP_ALIVE_CYCLE);
+                    startFireKeepAliveService();
                 } else {
                     if (PAUSE_BUFFER_LENGTH <= 0) {
                         cancelFireKeepAliveService();
                     }else {
-                        cancelFireKeepAliveService();
-                        fireKeepAliveHeaderUrl(keepAliveURL);
-                        scheduler.postDelayed(fireKeepAliveCallsRunnable,KEEP_ALIVE_CYCLE);
-                        Log.d(TAG,"Keep calling KeepAlive in play mode "+KEEP_ALIVE_CYCLE);
+                        startFireKeepAliveService();
                         PAUSE_BUFFER_LENGTH = PAUSE_BUFFER_LENGTH - (int)KEEP_ALIVE_CYCLE;
+                        Log.d(TAG,"PAUSE_BUFFER_LENGTH is "+PAUSE_BUFFER_LENGTH);
                     }
-                    Log.d(TAG,"PAUSE_BUFFER_LENGTH is "+PAUSE_BUFFER_LENGTH);
                 }
             }
         }
