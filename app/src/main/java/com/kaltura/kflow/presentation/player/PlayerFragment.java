@@ -58,6 +58,7 @@ import com.kaltura.playkit.PlayKitManager;
 import com.kaltura.playkit.Player;
 import com.kaltura.playkit.PlayerEvent;
 import com.kaltura.playkit.PlayerState;
+import com.kaltura.playkit.player.LoadControlBuffers;
 import com.kaltura.playkit.player.PKTracks;
 import com.kaltura.playkit.player.TextTrack;
 import com.kaltura.playkit.plugins.ads.AdEvent;
@@ -92,8 +93,10 @@ public class PlayerFragment extends DebugFragment {
     private static final String ARG_ASSET = "extra_asset";
     private static final String ARG_KEEP_ALIVE = "extra_keep_alive";
     private static final String ARG_RECORDING = "extra_recording";
-    private static final long KEEP_ALIVE_CYCLE = 10000;
+    private static final long KEEP_ALIVE_CYCLE = 10000l;
     private final static String TAG = PlayerFragment.class.getCanonicalName();
+    private static int PK_BUFFER_LENGTH = 0;
+    private static int PAUSE_BUFFER_LENGTH = 0;
 
     private SwitchCompat mLike;
     private SwitchCompat mFavorite;
@@ -158,22 +161,6 @@ public class PlayerFragment extends DebugFragment {
         if (mAsset == null && mRecording != null) loadAsset(mRecording.getAssetId());
         else onAssetLoaded();
     }
-
-    private void initKeepAliveScheduler() {
-        if (scheduler == null) {
-            scheduler = new Handler();
-        }
-        scheduler.removeCallbacksAndMessages(null);
-    }
-
-    private Runnable fireKeepAliveCallsRunnable = new Runnable() {
-        @Override
-        public void run() {
-
-            fireKeepAliveHeaderUrl(keepAliveURL);
-
-        }
-    };
 
     private void initUI() {
         mLike = getView().findViewById(R.id.like);
@@ -288,36 +275,6 @@ public class PlayerFragment extends DebugFragment {
         else return APIDefines.AssetReferenceType.Npvr;
     }
 
-//    private void onMediaLoaded() {
-//
-//        PKMediaConfig mediaConfig = new PKMediaConfig().setMediaEntry(mediaEntry);
-//        if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Live)) {
-//            mPlayerControls.setAsset(mAsset);
-//            mPlayerControls.disableControllersForLive();
-//        } else {
-//            mediaConfig.setStartPosition(0L);
-//        }
-//
-//        if (mPlayer == null) {
-//
-//            mPlayer = PlayKitManager.loadPlayer(requireContext(), new PKPluginConfigs());
-//
-//            mPlayer.getSettings().setSecureSurface(false);
-//            mPlayer.getSettings().setAllowCrossProtocolRedirect(true);
-//            mPlayer.getSettings().setCea608CaptionsEnabled(true); // default is false
-//
-//            addPlayerListeners();
-//
-//            FrameLayout layout = getView().findViewById(R.id.player_layout);
-//            layout.addView(mPlayer.getView());
-//
-//            mPlayerControls.setPlayer(mPlayer);
-//        }
-//
-//        mPlayer.prepare(mediaConfig);
-//        mPlayer.play();
-//    }
-
     private void onMediaLoaded() {
 
         if (mPlayer == null) {
@@ -328,6 +285,8 @@ public class PlayerFragment extends DebugFragment {
             mPlayer.getSettings().setAllowCrossProtocolRedirect(true);
             mPlayer.getSettings().setCea608CaptionsEnabled(true); // default is false
 
+            getPlayerBufferLenfgth();
+
             addPlayerListeners();
 
             FrameLayout layout = getView().findViewById(R.id.player_layout);
@@ -336,7 +295,7 @@ public class PlayerFragment extends DebugFragment {
             mPlayerControls.setPlayer(mPlayer);
         }
 
-        if (mIsKeepAlive) {
+        if (!mIsKeepAlive) {
             PKMediaConfig mediaConfig = new PKMediaConfig().setMediaEntry(mediaEntry);
             if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Live)) {
                 mPlayerControls.setAsset(mAsset);
@@ -344,7 +303,6 @@ public class PlayerFragment extends DebugFragment {
             } else {
                 mediaConfig.setStartPosition(0L);
             }
-
             mPlayer.prepare(mediaConfig);
             mPlayer.play();
 
@@ -388,6 +346,12 @@ public class PlayerFragment extends DebugFragment {
         }
     }
 
+    private void getPlayerBufferLenfgth() {
+        LoadControlBuffers lcb = new LoadControlBuffers();
+        PK_BUFFER_LENGTH = lcb.getMaxPlayerBufferMs();
+        Log.d(TAG,"The BufferLenfgth is : "+PK_BUFFER_LENGTH);
+    }
+
     public void getKeepAliveHeaderUrl(final URL url, final KeepAliveUrlResultListener listener) {
         new Thread(new Runnable() {
             @Override
@@ -408,6 +372,7 @@ public class PlayerFragment extends DebugFragment {
                     }
 
                 } catch (Exception e) {
+                    listener.onResult(false,"Failed to retreive Location header : "+e.getMessage());
                     e.printStackTrace();
                 }
 
@@ -457,12 +422,12 @@ public class PlayerFragment extends DebugFragment {
                 mPlayerControls.setPlayerState(PlayerState.READY)
         );
 
-        mPlayer.addListener(this, PlayerEvent.pause, event ->
-                startFireKeepAliveService()
-        );
+        mPlayer.addListener(this, PlayerEvent.pause, event -> {
+            startFireKeepAliveService();
+        });
 
         mPlayer.addListener(this, PlayerEvent.play, event ->
-                cancelFireKeepAliveService()
+                PAUSE_BUFFER_LENGTH = PK_BUFFER_LENGTH
         );
 
         mPlayer.addListener(this, PlayerEvent.stateChanged, event -> {
@@ -486,14 +451,20 @@ public class PlayerFragment extends DebugFragment {
     }
 
     private void startFireKeepAliveService() {
-        cancelFireKeepAliveService();
-        fireKeepAliveHeaderUrl(keepAliveURL);
-        scheduler.postDelayed(fireKeepAliveCallsRunnable,KEEP_ALIVE_CYCLE);
+        if (mIsKeepAlive) {
+            if (scheduler != null) {
+                cancelFireKeepAliveService();
+                fireKeepAliveHeaderUrl(keepAliveURL);
+                scheduler.postDelayed(fireKeepAliveCallsRunnable,KEEP_ALIVE_CYCLE);
+            }
+        }
     }
 
     private void cancelFireKeepAliveService() {
-        if (scheduler != null) {
-            scheduler.removeCallbacksAndMessages(null);
+        if (mIsKeepAlive) {
+            if (scheduler != null) {
+                scheduler.removeCallbacksAndMessages(null);
+            }
         }
 
     }
@@ -713,8 +684,10 @@ public class PlayerFragment extends DebugFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mIsKeepAlive = false;
         Utils.hideKeyboard(getView());
         PhoenixApiManager.cancelAll();
+        cancelFireKeepAliveService();
     }
 
     @Override
@@ -743,6 +716,39 @@ public class PlayerFragment extends DebugFragment {
             mPlayerControls.resume();
         }
     }
+
+    private void initKeepAliveScheduler() {
+        if (scheduler == null) {
+            scheduler = new Handler();
+        }
+        scheduler.removeCallbacksAndMessages(null);
+    }
+
+    private Runnable fireKeepAliveCallsRunnable = new Runnable() {
+        @Override
+        public void run() {
+
+            if (mIsKeepAlive) {
+                if (!mPlayer.isPlaying()) {
+                    cancelFireKeepAliveService();
+                    fireKeepAliveHeaderUrl(keepAliveURL);
+                    scheduler.postDelayed(fireKeepAliveCallsRunnable,KEEP_ALIVE_CYCLE);
+                } else {
+                    if (PAUSE_BUFFER_LENGTH <= 0) {
+                        cancelFireKeepAliveService();
+                    }else {
+                        cancelFireKeepAliveService();
+                        fireKeepAliveHeaderUrl(keepAliveURL);
+                        scheduler.postDelayed(fireKeepAliveCallsRunnable,KEEP_ALIVE_CYCLE);
+                        Log.d(TAG,"Keep calling KeepAlive in play mode "+KEEP_ALIVE_CYCLE);
+                        PAUSE_BUFFER_LENGTH = PAUSE_BUFFER_LENGTH - (int)KEEP_ALIVE_CYCLE;
+                    }
+                    Log.d(TAG,"PAUSE_BUFFER_LENGTH is "+PAUSE_BUFFER_LENGTH);
+                }
+            }
+        }
+    };
+
     public interface KeepAliveUrlResultListener{
         void onResult(boolean status,String url);
     }
