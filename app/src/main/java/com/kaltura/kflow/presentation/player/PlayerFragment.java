@@ -1,7 +1,10 @@
 package com.kaltura.kflow.presentation.player;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +38,7 @@ import com.kaltura.client.types.ProgramAsset;
 import com.kaltura.client.types.Recording;
 import com.kaltura.client.types.SocialAction;
 import com.kaltura.client.types.SocialActionFilter;
+import com.kaltura.client.types.Tag;
 import com.kaltura.client.types.UserAssetRule;
 import com.kaltura.client.types.UserAssetRuleFilter;
 import com.kaltura.client.utils.request.MultiRequestBuilder;
@@ -47,6 +51,8 @@ import com.kaltura.kflow.manager.PhoenixApiManager;
 import com.kaltura.kflow.utils.Utils;
 import com.kaltura.playkit.PKMediaConfig;
 import com.kaltura.playkit.PKMediaEntry;
+import com.kaltura.playkit.PKMediaFormat;
+import com.kaltura.playkit.PKMediaSource;
 import com.kaltura.playkit.PKPluginConfigs;
 import com.kaltura.playkit.PlayKitManager;
 import com.kaltura.playkit.Player;
@@ -69,8 +75,14 @@ import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SwitchCompat;
 
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by alex_lytvynenko on 04.12.2018.
@@ -79,6 +91,7 @@ public class PlayerFragment extends DebugFragment {
 
     private static final String ARG_ASSET = "extra_asset";
     private static final String ARG_RECORDING = "extra_recording";
+    private final static String TAG = PlayerFragment.class.getCanonicalName();
 
     private SwitchCompat mLike;
     private SwitchCompat mFavorite;
@@ -94,7 +107,10 @@ public class PlayerFragment extends DebugFragment {
     private Recording mRecording;
     private String mLikeId = "";
     private PKMediaEntry mediaEntry;
+    private String keepAliveURL="";
     private int mParentalRuleId;
+
+    ScheduledExecutorService scheduler = null;
 
     public static PlayerFragment newInstance(Asset asset) {
         PlayerFragment likeFragment = new PlayerFragment();
@@ -130,6 +146,7 @@ public class PlayerFragment extends DebugFragment {
             mRecording = (Recording) savedState.getSerializable(ARG_RECORDING);
         }
 
+        scheduler =  Executors.newSingleThreadScheduledExecutor();
         if (mAsset == null && mRecording != null) loadAsset(mRecording.getAssetId());
         else onAssetLoaded();
     }
@@ -247,15 +264,37 @@ public class PlayerFragment extends DebugFragment {
         else return APIDefines.AssetReferenceType.Npvr;
     }
 
-    private void onMediaLoaded() {
+//    private void onMediaLoaded() {
+//
+//        PKMediaConfig mediaConfig = new PKMediaConfig().setMediaEntry(mediaEntry);
+//        if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Live)) {
+//            mPlayerControls.setAsset(mAsset);
+//            mPlayerControls.disableControllersForLive();
+//        } else {
+//            mediaConfig.setStartPosition(0L);
+//        }
+//
+//        if (mPlayer == null) {
+//
+//            mPlayer = PlayKitManager.loadPlayer(requireContext(), new PKPluginConfigs());
+//
+//            mPlayer.getSettings().setSecureSurface(false);
+//            mPlayer.getSettings().setAllowCrossProtocolRedirect(true);
+//            mPlayer.getSettings().setCea608CaptionsEnabled(true); // default is false
+//
+//            addPlayerListeners();
+//
+//            FrameLayout layout = getView().findViewById(R.id.player_layout);
+//            layout.addView(mPlayer.getView());
+//
+//            mPlayerControls.setPlayer(mPlayer);
+//        }
+//
+//        mPlayer.prepare(mediaConfig);
+//        mPlayer.play();
+//    }
 
-        PKMediaConfig mediaConfig = new PKMediaConfig().setMediaEntry(mediaEntry);
-        if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Live)) {
-            mPlayerControls.setAsset(mAsset);
-            mPlayerControls.disableControllersForLive();
-        } else {
-            mediaConfig.setStartPosition(0L);
-        }
+    private void onMediaLoaded() {
 
         if (mPlayer == null) {
 
@@ -273,8 +312,110 @@ public class PlayerFragment extends DebugFragment {
             mPlayerControls.setPlayer(mPlayer);
         }
 
-        mPlayer.prepare(mediaConfig);
-        mPlayer.play();
+        if (false) {
+            PKMediaConfig mediaConfig = new PKMediaConfig().setMediaEntry(mediaEntry);
+            if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Live)) {
+                mPlayerControls.setAsset(mAsset);
+                mPlayerControls.disableControllersForLive();
+            } else {
+                mediaConfig.setStartPosition(0L);
+            }
+
+            mPlayer.prepare(mediaConfig);
+            mPlayer.play();
+
+        } else {
+            String sourceUrl = "";
+            List<PKMediaSource> sources =  mediaEntry.getSources();
+            for (PKMediaSource pkms: sources) {
+                if(pkms.getMediaFormat().equals(PKMediaFormat.dash)){
+                    sourceUrl = pkms.getUrl();
+                }
+            }
+
+            try {
+                URL url = new URL(sourceUrl);
+                getKeepAliveHeaderUrl(url, new KeepAliveUrlResultListener() {
+                    @Override
+                    public void onResult(boolean status, String url) {
+
+                        if (mediaEntry.getSources() != null && !mediaEntry.getSources().isEmpty()) {
+                            Log.d(TAG,"The KeepAlive Url is : "+url);
+                            keepAliveURL = url;
+                            mediaEntry.getSources().get(0).setUrl(url);
+                        }
+
+                        PKMediaConfig mediaConfig = new PKMediaConfig().setMediaEntry(mediaEntry);
+                        if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Live)) {
+                            mPlayerControls.setAsset(mAsset);
+                            mPlayerControls.disableControllersForLive();
+                        } else {
+                            mediaConfig.setStartPosition(0L);
+                        }
+
+                        mPlayer.prepare(mediaConfig);
+                        mPlayer.play();
+                    }
+                });
+            } catch (MalformedURLException e) {
+                Log.d(TAG,"The KeepAlive Url is : "+e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void getKeepAliveHeaderUrl(final URL url, final KeepAliveUrlResultListener listener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+                    conn.setInstanceFollowRedirects(false);
+                    final String keepAliveURL = conn.getHeaderField("Location");
+                    final boolean isSucsess = !TextUtils.isEmpty(keepAliveURL) && conn.getResponseCode() == 307;
+                    if(isSucsess){
+                        requireActivity().runOnUiThread(() -> {
+                            listener.onResult(true,keepAliveURL);
+                        });
+                    }else {
+                        URL url = new URL(keepAliveURL);
+                        getKeepAliveHeaderUrl(url,listener);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+
+    }
+
+    public void fireKeepAliveHeaderUrl(final String url) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    String keepAliveStr = url + "/"+"keepalive";
+                    URL firedKAURL = new URL(keepAliveStr);
+                    HttpURLConnection conn = (HttpURLConnection)firedKAURL.openConnection();
+                    conn.setInstanceFollowRedirects(false);
+                    final boolean isSucsess = conn.getResponseCode() == 204;
+                    if(isSucsess) {
+                        Log.d(TAG, "Firing KeepAliveURL : " + firedKAURL);
+                    }else {
+                        Log.d(TAG, "Firing KeepAliveURL failed : " + firedKAURL);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+
     }
 
     private void addPlayerListeners() {
@@ -290,6 +431,14 @@ public class PlayerFragment extends DebugFragment {
 
         mPlayer.addListener(this, AdEvent.Type.CONTENT_PAUSE_REQUESTED, event ->
                 mPlayerControls.setPlayerState(PlayerState.READY)
+        );
+
+        mPlayer.addListener(this, PlayerEvent.pause, event ->
+                startFireKeepAliveService()
+        );
+
+        mPlayer.addListener(this, PlayerEvent.play, event ->
+                cancelFireKeepAliveService()
         );
 
         mPlayer.addListener(this, PlayerEvent.stateChanged, event -> {
@@ -310,6 +459,27 @@ public class PlayerFragment extends DebugFragment {
         mPlayer.addListener(this, OttEvent.OttEventType.Concurrency, event ->
                 Toast.makeText(requireContext(), "Concurrency event", Toast.LENGTH_LONG).show()
         );
+    }
+
+    private void startFireKeepAliveService() {
+        if (scheduler != null) {
+            Log.d(TAG,"startFireKeepAliveService");
+            scheduler.scheduleAtFixedRate
+                    (new Runnable() {
+                        public void run() {
+                            fireKeepAliveHeaderUrl(keepAliveURL);
+                        }
+                    }, 0, 10, TimeUnit.SECONDS);
+        }
+
+    }
+
+    private void cancelFireKeepAliveService() {
+        if(scheduler!=null) {
+            Log.d(TAG,"CancelFireKeepAliveService");
+            scheduler.shutdown();
+        }
+
     }
 
     private void initSubtitles(List<TextTrack> tracks, TextTrack selected) {
@@ -529,6 +699,9 @@ public class PlayerFragment extends DebugFragment {
         super.onDestroyView();
         Utils.hideKeyboard(getView());
         PhoenixApiManager.cancelAll();
+        if(scheduler!=null) {
+            scheduler.shutdown();
+        }
     }
 
     @Override
@@ -556,5 +729,8 @@ public class PlayerFragment extends DebugFragment {
         if (mPlayerControls != null) {
             mPlayerControls.resume();
         }
+    }
+    public interface KeepAliveUrlResultListener{
+        void onResult(boolean status,String url);
     }
 }
