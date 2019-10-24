@@ -90,7 +90,9 @@ import java.util.concurrent.TimeUnit;
 public class PlayerFragment extends DebugFragment {
 
     private static final String ARG_ASSET = "extra_asset";
+    private static final String ARG_KEEP_ALIVE = "extra_keep_alive";
     private static final String ARG_RECORDING = "extra_recording";
+    private static final long KEEP_ALIVE_CYCLE = 10000;
     private final static String TAG = PlayerFragment.class.getCanonicalName();
 
     private SwitchCompat mLike;
@@ -109,13 +111,17 @@ public class PlayerFragment extends DebugFragment {
     private PKMediaEntry mediaEntry;
     private String keepAliveURL="";
     private int mParentalRuleId;
+    private boolean mIsKeepAlive;
+
 
     Handler scheduler = null;
 
-    public static PlayerFragment newInstance(Asset asset) {
+    public static PlayerFragment newInstance(Asset asset, boolean isKeepAlive) {
+
         PlayerFragment likeFragment = new PlayerFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_ASSET, asset);
+        bundle.putBoolean(ARG_KEEP_ALIVE, isKeepAlive);
         likeFragment.setArguments(bundle);
         return likeFragment;
     }
@@ -143,6 +149,7 @@ public class PlayerFragment extends DebugFragment {
         Bundle savedState = getArguments();
         if (savedState != null) {
             mAsset = (Asset) savedState.getSerializable(ARG_ASSET);
+            mIsKeepAlive = savedState.getBoolean(ARG_KEEP_ALIVE);
             mRecording = (Recording) savedState.getSerializable(ARG_RECORDING);
         }
 
@@ -329,7 +336,7 @@ public class PlayerFragment extends DebugFragment {
             mPlayerControls.setPlayer(mPlayer);
         }
 
-        if (false) {
+        if (mIsKeepAlive) {
             PKMediaConfig mediaConfig = new PKMediaConfig().setMediaEntry(mediaEntry);
             if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Live)) {
                 mPlayerControls.setAsset(mAsset);
@@ -481,18 +488,18 @@ public class PlayerFragment extends DebugFragment {
     private void startFireKeepAliveService() {
         cancelFireKeepAliveService();
         fireKeepAliveHeaderUrl(keepAliveURL);
-        scheduler.postDelayed(fireKeepAliveCallsRunnable,10*1000);
+        scheduler.postDelayed(fireKeepAliveCallsRunnable,KEEP_ALIVE_CYCLE);
     }
 
     private void cancelFireKeepAliveService() {
         if (scheduler != null) {
-            scheduler.removeCallbacks(null);
+            scheduler.removeCallbacksAndMessages(null);
         }
 
     }
 
     private void initSubtitles(List<TextTrack> tracks, TextTrack selected) {
-        List<String> languages = new ArrayList<>(); 
+        List<String> languages = new ArrayList<>();
         for (TextTrack textTrack : tracks) {
             if (textTrack != null && textTrack.getLanguage() != null)
                 languages.add(textTrack.getLanguage());

@@ -27,6 +27,7 @@ import com.kaltura.client.types.Asset;
 import com.kaltura.client.types.BookmarkFilter;
 import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.types.ProductPriceFilter;
+import com.kaltura.client.types.Recording;
 import com.kaltura.client.types.UserAssetRule;
 import com.kaltura.client.types.UserAssetRuleFilter;
 import com.kaltura.client.utils.request.MultiRequestBuilder;
@@ -45,6 +46,8 @@ import java.util.List;
  */
 public class MediaPageFragment extends DebugFragment implements View.OnClickListener {
 
+    private static final String ARG_KEEP_ALIVE = "extra_keep_alive";
+
     private TextInputEditText mMediaId;
     private TextInputEditText mPin;
     private AppCompatButton mPlay;
@@ -57,6 +60,15 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
     private TextInputLayout mPinInputLayout;
     private Asset mAsset;
     private int mParentalRuleId;
+    private boolean mIsKeepAlive;
+
+    public static MediaPageFragment newInstance(boolean isKeepAlive) {
+        MediaPageFragment mediaPageFragment = new MediaPageFragment();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ARG_KEEP_ALIVE, isKeepAlive);
+        mediaPageFragment.setArguments(bundle);
+        return mediaPageFragment;
+    }
 
     @Nullable
     @Override
@@ -68,6 +80,11 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ((MainActivity) requireActivity()).getSupportActionBar().setTitle("Media page");
+
+        Bundle savedState = getArguments();
+        if (savedState != null) {
+            mIsKeepAlive = savedState.getBoolean(ARG_KEEP_ALIVE);
+        }
 
         mMediaId = getView().findViewById(R.id.id);
         mPlay = getView().findViewById(R.id.play_asset);
@@ -273,7 +290,7 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
     }
 
     private void playAsset() {
-        PlayerFragment assetListFragment = PlayerFragment.newInstance(mAsset);
+        PlayerFragment assetListFragment = PlayerFragment.newInstance(mAsset, mIsKeepAlive);
         requireActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, assetListFragment)
                 .addToBackStack(null)

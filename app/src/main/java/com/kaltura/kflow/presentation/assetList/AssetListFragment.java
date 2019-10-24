@@ -63,7 +63,7 @@ public class AssetListFragment extends Fragment implements AssetListAdapter.OnAs
 
     @Override
     public void onAssetClicked(Asset asset) {
-        PlayerFragment playerFragment = PlayerFragment.newInstance(asset);
+        PlayerFragment playerFragment = PlayerFragment.newInstance(asset, false);
         requireActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, playerFragment)
                 .addToBackStack(null)
