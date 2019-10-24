@@ -110,7 +110,7 @@ public class PlayerFragment extends DebugFragment {
     private String keepAliveURL="";
     private int mParentalRuleId;
 
-    ScheduledExecutorService scheduler = null;
+    Handler scheduler = null;
 
     public static PlayerFragment newInstance(Asset asset) {
         PlayerFragment likeFragment = new PlayerFragment();
@@ -146,10 +146,27 @@ public class PlayerFragment extends DebugFragment {
             mRecording = (Recording) savedState.getSerializable(ARG_RECORDING);
         }
 
-        scheduler =  Executors.newSingleThreadScheduledExecutor();
+        initKeepAliveScheduler();
+
         if (mAsset == null && mRecording != null) loadAsset(mRecording.getAssetId());
         else onAssetLoaded();
     }
+
+    private void initKeepAliveScheduler() {
+        if (scheduler == null) {
+            scheduler = new Handler();
+        }
+        scheduler.removeCallbacksAndMessages(null);
+    }
+
+    private Runnable fireKeepAliveCallsRunnable = new Runnable() {
+        @Override
+        public void run() {
+
+            fireKeepAliveHeaderUrl(keepAliveURL);
+
+        }
+    };
 
     private void initUI() {
         mLike = getView().findViewById(R.id.like);
@@ -462,22 +479,14 @@ public class PlayerFragment extends DebugFragment {
     }
 
     private void startFireKeepAliveService() {
-        if (scheduler != null) {
-            Log.d(TAG,"startFireKeepAliveService");
-            scheduler.scheduleAtFixedRate
-                    (new Runnable() {
-                        public void run() {
-                            fireKeepAliveHeaderUrl(keepAliveURL);
-                        }
-                    }, 0, 10, TimeUnit.SECONDS);
-        }
-
+        cancelFireKeepAliveService();
+        fireKeepAliveHeaderUrl(keepAliveURL);
+        scheduler.postDelayed(fireKeepAliveCallsRunnable,10*1000);
     }
 
     private void cancelFireKeepAliveService() {
-        if(scheduler!=null) {
-            Log.d(TAG,"CancelFireKeepAliveService");
-            scheduler.shutdown();
+        if (scheduler != null) {
+            scheduler.removeCallbacks(null);
         }
 
     }
@@ -699,9 +708,6 @@ public class PlayerFragment extends DebugFragment {
         super.onDestroyView();
         Utils.hideKeyboard(getView());
         PhoenixApiManager.cancelAll();
-        if(scheduler!=null) {
-            scheduler.shutdown();
-        }
     }
 
     @Override
