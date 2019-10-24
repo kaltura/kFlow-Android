@@ -78,6 +78,7 @@ import java.util.List;
 public class PlayerFragment extends DebugFragment {
 
     private static final String ARG_ASSET = "extra_asset";
+    private static final String ARG_KEEP_ALIVE = "extra_keep_alive";
     private static final String ARG_RECORDING = "extra_recording";
 
     private SwitchCompat mLike;
@@ -95,11 +96,13 @@ public class PlayerFragment extends DebugFragment {
     private String mLikeId = "";
     private PKMediaEntry mediaEntry;
     private int mParentalRuleId;
+    private boolean mIsKeepAlive;
 
-    public static PlayerFragment newInstance(Asset asset) {
+    public static PlayerFragment newInstance(Asset asset, boolean isKeepAlive) {
         PlayerFragment likeFragment = new PlayerFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_ASSET, asset);
+        bundle.putBoolean(ARG_KEEP_ALIVE, isKeepAlive);
         likeFragment.setArguments(bundle);
         return likeFragment;
     }
@@ -127,6 +130,7 @@ public class PlayerFragment extends DebugFragment {
         Bundle savedState = getArguments();
         if (savedState != null) {
             mAsset = (Asset) savedState.getSerializable(ARG_ASSET);
+            mIsKeepAlive = savedState.getBoolean(ARG_KEEP_ALIVE);
             mRecording = (Recording) savedState.getSerializable(ARG_RECORDING);
         }
 
@@ -313,7 +317,7 @@ public class PlayerFragment extends DebugFragment {
     }
 
     private void initSubtitles(List<TextTrack> tracks, TextTrack selected) {
-        List<String> languages = new ArrayList<>(); 
+        List<String> languages = new ArrayList<>();
         for (TextTrack textTrack : tracks) {
             if (textTrack != null && textTrack.getLanguage() != null)
                 languages.add(textTrack.getLanguage());
