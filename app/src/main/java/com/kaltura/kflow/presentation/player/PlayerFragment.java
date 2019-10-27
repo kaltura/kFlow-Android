@@ -226,7 +226,11 @@ public class PlayerFragment extends DebugFragment {
                 requireActivity().runOnUiThread(() -> {
                     if (response.getResponse() != null) {
                         mediaEntry = response.getResponse();
-                        onMediaLoaded();
+                        if(mIsKeepAlive){
+                            onMediaLoadedKeepAlive();
+                        }else{
+                            onMediaLoaded();
+                        }
                     } else {
                         Toast.makeText(requireContext(), "failed to fetch media data: " + (response.getError() != null ? response.getError().getMessage() : ""), Toast.LENGTH_LONG).show();
                     }
@@ -272,8 +276,7 @@ public class PlayerFragment extends DebugFragment {
         else return APIDefines.AssetReferenceType.Npvr;
     }
 
-    private void onMediaLoaded() {
-
+    private void loadPlayerSettings(){
         if (mPlayer == null) {
 
             mPlayer = PlayKitManager.loadPlayer(requireContext(), new PKPluginConfigs());
@@ -291,56 +294,60 @@ public class PlayerFragment extends DebugFragment {
 
             mPlayerControls.setPlayer(mPlayer);
         }
+    }
 
-        if (!mIsKeepAlive) {
-            PKMediaConfig mediaConfig = new PKMediaConfig().setMediaEntry(mediaEntry);
-            if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Live)) {
-                mPlayerControls.setAsset(mAsset);
-                mPlayerControls.disableControllersForLive();
-            } else {
-                mediaConfig.setStartPosition(0L);
-            }
-            mPlayer.prepare(mediaConfig);
-            mPlayer.play();
+    private void onMediaLoadedKeepAlive() {
 
-        } else {
-            String sourceUrl = "";
-            List<PKMediaSource> sources =  mediaEntry.getSources();
-            for (PKMediaSource pkms: sources) {
-                if(pkms.getMediaFormat().equals(PKMediaFormat.dash)){
-                    sourceUrl = pkms.getUrl();
-                }
-            }
+        loadPlayerSettings();
 
-            try {
-                URL url = new URL(sourceUrl);
-                getKeepAliveHeaderUrl(url, new KeepAliveUrlResultListener() {
-                    @Override
-                    public void onResult(boolean status, String url) {
-
-                        if (mediaEntry.getSources() != null && !mediaEntry.getSources().isEmpty()) {
-                            Log.d(TAG,"The KeepAlive Url is : "+url);
-                            keepAliveURL = url;
-                            mediaEntry.getSources().get(0).setUrl(url);
-                        }
-
-                        PKMediaConfig mediaConfig = new PKMediaConfig().setMediaEntry(mediaEntry);
-                        if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Live)) {
-                            mPlayerControls.setAsset(mAsset);
-                            mPlayerControls.disableControllersForLive();
-                        } else {
-                            mediaConfig.setStartPosition(0L);
-                        }
-
-                        mPlayer.prepare(mediaConfig);
-                        mPlayer.play();
-                    }
-                });
-            } catch (MalformedURLException e) {
-                Log.d(TAG,"The KeepAlive Url is : "+e.getMessage());
-                e.printStackTrace();
+        String sourceUrl = "";
+        List<PKMediaSource> sources =  mediaEntry.getSources();
+        for (PKMediaSource pkms: sources) {
+            if(pkms.getMediaFormat().equals(PKMediaFormat.dash)){
+                sourceUrl = pkms.getUrl();
             }
         }
+
+        try {
+            URL url = new URL(sourceUrl);
+            getKeepAliveHeaderUrl(url, new KeepAliveUrlResultListener() {
+                @Override
+                public void onResult(boolean status, String url) {
+
+                    if (mediaEntry.getSources() != null && !mediaEntry.getSources().isEmpty()) {
+                        Log.d(TAG,"The KeepAlive Url is : "+url);
+                        keepAliveURL = url;
+                        mediaEntry.getSources().get(0).setUrl(url);
+                    }
+
+                    setMediaEntry();
+                }
+            });
+        } catch (MalformedURLException e) {
+            Log.d(TAG,"The KeepAlive Url is : "+e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void onMediaLoaded() {
+        loadPlayerSettings();
+        setMediaEntry();
+    }
+
+    private void setMediaEntry() {
+
+        PKMediaConfig mediaConfig = new PKMediaConfig().setMediaEntry(mediaEntry);
+        if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Live)) {
+            mediaEntry.setMediaType(PKMediaEntry.MediaEntryType.DvrLive);
+            mPlayerControls.setAsset(mAsset);
+//            mPlayerControls.disableControllersForLive();
+        } else {
+            mediaConfig.setStartPosition(0L);
+        }
+
+        mPlayer.prepare(mediaConfig);
+        mPlayer.play();
+
     }
 
     private void getPlayerBufferLenfgth() {
