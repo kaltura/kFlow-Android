@@ -1,8 +1,6 @@
 package com.kaltura.kflow.presentation.player;
 
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,7 +36,6 @@ import com.kaltura.client.types.ProgramAsset;
 import com.kaltura.client.types.Recording;
 import com.kaltura.client.types.SocialAction;
 import com.kaltura.client.types.SocialActionFilter;
-import com.kaltura.client.types.Tag;
 import com.kaltura.client.types.UserAssetRule;
 import com.kaltura.client.types.UserAssetRuleFilter;
 import com.kaltura.client.utils.request.MultiRequestBuilder;
@@ -90,10 +87,8 @@ public class PlayerFragment extends DebugFragment {
     private static final String ARG_ASSET = "extra_asset";
     private static final String ARG_KEEP_ALIVE = "extra_keep_alive";
     private static final String ARG_RECORDING = "extra_recording";
-    private static final long KEEP_ALIVE_CYCLE = 10000l;
     private final static String TAG = PlayerFragment.class.getCanonicalName();
     private static int PK_BUFFER_LENGTH = 0;
-    private static int PAUSE_BUFFER_LENGTH = 0;
 
     private SwitchCompat mLike;
     private SwitchCompat mFavorite;
@@ -109,12 +104,9 @@ public class PlayerFragment extends DebugFragment {
     private Recording mRecording;
     private String mLikeId = "";
     private PKMediaEntry mediaEntry;
-    private String keepAliveURL="";
     private int mParentalRuleId;
     private boolean mIsKeepAlive;
-
-
-    Handler scheduler = null;
+    private PlayerKeepAliveService playerKeepAliveService;
 
     public static PlayerFragment newInstance(Asset asset, boolean isKeepAlive) {
 
@@ -153,7 +145,7 @@ public class PlayerFragment extends DebugFragment {
             mRecording = (Recording) savedState.getSerializable(ARG_RECORDING);
         }
 
-        initKeepAliveScheduler();
+        playerKeepAliveService = new PlayerKeepAliveService(() -> mPlayer.isPlaying());
 
         if (mAsset == null && mRecording != null) loadAsset(mRecording.getAssetId());
         else onAssetLoaded();
@@ -226,9 +218,9 @@ public class PlayerFragment extends DebugFragment {
                 requireActivity().runOnUiThread(() -> {
                     if (response.getResponse() != null) {
                         mediaEntry = response.getResponse();
-                        if(mIsKeepAlive){
+                        if (mIsKeepAlive) {
                             onMediaLoadedKeepAlive();
-                        }else{
+                        } else {
                             onMediaLoaded();
                         }
                     } else {
@@ -276,7 +268,7 @@ public class PlayerFragment extends DebugFragment {
         else return APIDefines.AssetReferenceType.Npvr;
     }
 
-    private void loadPlayerSettings(){
+    private void loadPlayerSettings() {
         if (mPlayer == null) {
 
             mPlayer = PlayKitManager.loadPlayer(requireContext(), new PKPluginConfigs());
@@ -285,7 +277,7 @@ public class PlayerFragment extends DebugFragment {
             mPlayer.getSettings().setAllowCrossProtocolRedirect(true);
             mPlayer.getSettings().setCea608CaptionsEnabled(true); // default is false
 
-            getPlayerBufferLenfgth();
+            getPlayerBufferLength();
 
             addPlayerListeners();
 
@@ -301,30 +293,25 @@ public class PlayerFragment extends DebugFragment {
         loadPlayerSettings();
 
         String sourceUrl = "";
-        List<PKMediaSource> sources =  mediaEntry.getSources();
-        for (PKMediaSource pkms: sources) {
-            if(pkms.getMediaFormat().equals(PKMediaFormat.dash)){
+        List<PKMediaSource> sources = mediaEntry.getSources();
+        for (PKMediaSource pkms : sources) {
+            if (pkms.getMediaFormat().equals(PKMediaFormat.dash)) {
                 sourceUrl = pkms.getUrl();
             }
         }
 
         try {
-            URL url = new URL(sourceUrl);
-            getKeepAliveHeaderUrl(url, new KeepAliveUrlResultListener() {
-                @Override
-                public void onResult(boolean status, String url) {
-
-                    if (mediaEntry.getSources() != null && !mediaEntry.getSources().isEmpty()) {
-                        Log.d(TAG,"The KeepAlive Url is : "+url);
-                        keepAliveURL = url;
-                        mediaEntry.getSources().get(0).setUrl(url);
-                    }
-
-                    setMediaEntry();
+            getKeepAliveHeaderUrl(new URL(sourceUrl), (status, url) -> {
+                if (mediaEntry.getSources() != null && !mediaEntry.getSources().isEmpty()) {
+                    Log.d(TAG, "The KeepAlive Url is : " + url);
+                    playerKeepAliveService.setKeepAliveURL(url);
+                    mediaEntry.getSources().get(0).setUrl(url);
                 }
+
+                setMediaEntry();
             });
         } catch (MalformedURLException e) {
-            Log.d(TAG,"The KeepAlive Url is : "+e.getMessage());
+            Log.d(TAG, "The KeepAlive Url is : " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -350,63 +337,33 @@ public class PlayerFragment extends DebugFragment {
 
     }
 
-    private void getPlayerBufferLenfgth() {
+    private void getPlayerBufferLength() {
         LoadControlBuffers lcb = new LoadControlBuffers();
         PK_BUFFER_LENGTH = lcb.getMaxPlayerBufferMs();
-        Log.d(TAG,"The BufferLenfgth is : "+PK_BUFFER_LENGTH);
+        Log.d(TAG, "The BufferLenfgth is : " + PK_BUFFER_LENGTH);
     }
 
-    public void getKeepAliveHeaderUrl(final URL url, final KeepAliveUrlResultListener listener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                try {
-                    HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-                    conn.setInstanceFollowRedirects(false);
-                    final String keepAliveURL = conn.getHeaderField("Location");
-                    final boolean isSucsess = !TextUtils.isEmpty(keepAliveURL) && conn.getResponseCode() == 307;
-                    if(isSucsess){
-                        requireActivity().runOnUiThread(() -> {
-                            listener.onResult(true,keepAliveURL);
-                        });
-                    }else {
-                        URL url = new URL(keepAliveURL);
-                        getKeepAliveHeaderUrl(url,listener);
-                    }
-
-                } catch (Exception e) {
-                    listener.onResult(false,"Failed to retreive Location header : "+e.getMessage());
-                    e.printStackTrace();
+    private void getKeepAliveHeaderUrl(final URL url, final KeepAliveUrlResultListener listener) {
+        new Thread(() -> {
+            try {
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setInstanceFollowRedirects(false);
+                final String keepAliveURL = conn.getHeaderField("Location");
+                final boolean isSuccess = !TextUtils.isEmpty(keepAliveURL) && conn.getResponseCode() == 307;
+                if (isSuccess) {
+                    requireActivity().runOnUiThread(() -> {
+                        listener.onResult(true, keepAliveURL);
+                    });
+                } else {
+                    URL url1 = new URL(keepAliveURL);
+                    getKeepAliveHeaderUrl(url1, listener);
                 }
 
+            } catch (Exception e) {
+                listener.onResult(false, "Failed to retreive Location header : " + e.getMessage());
+                e.printStackTrace();
             }
-        }).start();
 
-    }
-
-    public void fireKeepAliveHeaderUrl(final String url) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                try {
-                    String keepAliveStr = url + "/"+"keepalive";
-                    URL firedKAURL = new URL(keepAliveStr);
-                    HttpURLConnection conn = (HttpURLConnection)firedKAURL.openConnection();
-                    conn.setInstanceFollowRedirects(false);
-                    final boolean isSucsess = conn.getResponseCode() == 204;
-                    if(isSucsess) {
-                        Log.d(TAG, "Firing KeepAliveURL : " + firedKAURL);
-                    }else {
-                        Log.d(TAG, "Firing KeepAliveURL failed : " + firedKAURL);
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
         }).start();
 
     }
@@ -427,11 +384,11 @@ public class PlayerFragment extends DebugFragment {
         );
 
         mPlayer.addListener(this, PlayerEvent.pause, event -> {
-            startFireKeepAliveService();
+            if (mIsKeepAlive) playerKeepAliveService.startFireKeepAliveService();
         });
 
         mPlayer.addListener(this, PlayerEvent.play, event ->
-                PAUSE_BUFFER_LENGTH = PK_BUFFER_LENGTH
+                playerKeepAliveService.setPauseBufferLength(PK_BUFFER_LENGTH)
         );
 
         mPlayer.addListener(this, PlayerEvent.stateChanged, event -> {
@@ -452,25 +409,6 @@ public class PlayerFragment extends DebugFragment {
         mPlayer.addListener(this, OttEvent.OttEventType.Concurrency, event ->
                 Toast.makeText(requireContext(), "Concurrency event", Toast.LENGTH_LONG).show()
         );
-    }
-
-    private void startFireKeepAliveService() {
-        if (mIsKeepAlive) {
-            if (scheduler != null) {
-                cancelFireKeepAliveService();
-                fireKeepAliveHeaderUrl(keepAliveURL);
-                scheduler.postDelayed(fireKeepAliveCallsRunnable,KEEP_ALIVE_CYCLE);
-            }
-        }
-    }
-
-    private void cancelFireKeepAliveService() {
-        if (mIsKeepAlive) {
-            if (scheduler != null) {
-                scheduler.removeCallbacksAndMessages(null);
-            }
-        }
-
     }
 
     private void initSubtitles(List<TextTrack> tracks, TextTrack selected) {
@@ -688,10 +626,9 @@ public class PlayerFragment extends DebugFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mIsKeepAlive = false;
+        if (mIsKeepAlive) playerKeepAliveService.cancelFireKeepAliveService();
         Utils.hideKeyboard(getView());
         PhoenixApiManager.cancelAll();
-        cancelFireKeepAliveService();
     }
 
     @Override
@@ -721,33 +658,7 @@ public class PlayerFragment extends DebugFragment {
         }
     }
 
-    private void initKeepAliveScheduler() {
-        if (scheduler == null) {
-            scheduler = new Handler();
-        }
-        scheduler.removeCallbacksAndMessages(null);
-    }
-
-    private Runnable fireKeepAliveCallsRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (mIsKeepAlive) {
-                if (!mPlayer.isPlaying()) {
-                    startFireKeepAliveService();
-                } else {
-                    if (PAUSE_BUFFER_LENGTH <= 0) {
-                        cancelFireKeepAliveService();
-                    }else {
-                        startFireKeepAliveService();
-                        PAUSE_BUFFER_LENGTH = PAUSE_BUFFER_LENGTH - (int)KEEP_ALIVE_CYCLE;
-                        Log.d(TAG,"PAUSE_BUFFER_LENGTH is "+PAUSE_BUFFER_LENGTH);
-                    }
-                }
-            }
-        }
-    };
-
-    public interface KeepAliveUrlResultListener{
-        void onResult(boolean status,String url);
+    public interface KeepAliveUrlResultListener {
+        void onResult(boolean status, String url);
     }
 }
