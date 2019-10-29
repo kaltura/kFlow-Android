@@ -26,7 +26,7 @@ class PlayerKeepAliveService {
         if (scheduler == null) {
             scheduler = new Handler();
         }
-        scheduler.removeCallbacksAndMessages(null);
+        scheduler.removeCallbacks(fireKeepAliveCallsRunnable);
     }
 
     void startFireKeepAliveService() {
@@ -39,7 +39,7 @@ class PlayerKeepAliveService {
 
     void cancelFireKeepAliveService() {
         if (scheduler != null) {
-            scheduler.removeCallbacksAndMessages(null);
+            scheduler.removeCallbacks(fireKeepAliveCallsRunnable);
         }
     }
 
