@@ -626,7 +626,10 @@ public class PlayerFragment extends DebugFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (mIsKeepAlive) playerKeepAliveService.cancelFireKeepAliveService();
+        if (mIsKeepAlive) {
+            playerKeepAliveService.cancelFireKeepAliveService();
+            mIsKeepAlive = false;
+        }
         Utils.hideKeyboard(getView());
         PhoenixApiManager.cancelAll();
     }
