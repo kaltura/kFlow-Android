@@ -62,6 +62,7 @@ import com.kaltura.playkit.plugins.SamplePlugin;
 import com.kaltura.playkit.plugins.ads.AdEvent;
 import com.kaltura.playkit.plugins.kava.KavaAnalyticsPlugin;
 import com.kaltura.playkit.plugins.ott.OttEvent;
+import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsConfig;
 import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsPlugin;
 import com.kaltura.playkit.plugins.youbora.YouboraPlugin;
 import com.kaltura.playkit.providers.MediaEntryProvider;
@@ -244,6 +245,20 @@ public class PlayerFragment extends DebugFragment {
         PlayKitManager.registerPlugins(requireContext(), PhoenixAnalyticsPlugin.factory);
     }
 
+    private void configurePlugins(PKPluginConfigs pluginConfigs) {
+
+        addPhoenixAnalyticsPluginConfig(pluginConfigs);
+
+    }
+
+    private void addPhoenixAnalyticsPluginConfig(PKPluginConfigs config) {
+        String ks = PhoenixApiManager.getClient().getKs();
+        int pId = PreferenceManager.getInstance(requireContext()).getPartnerId();
+        String baseUrl = PreferenceManager.getInstance(requireContext()).getBaseUrl() + "/api_v3/";
+        PhoenixAnalyticsConfig phoenixAnalyticsConfig = new PhoenixAnalyticsConfig(pId, baseUrl, ks, 30);
+        config.setPluginConfig(PhoenixAnalyticsPlugin.factory.getName(), phoenixAnalyticsConfig);
+    }
+
     private void startOttMediaLoading(final OnMediaLoadCompletion completion) {
         MediaEntryProvider mediaProvider = new PhoenixMediaProvider()
                 .setSessionProvider(new SimpleSessionProvider(PreferenceManager.getInstance(requireContext()).getBaseUrl() + "/api_v3/", PreferenceManager.getInstance(requireContext()).getPartnerId(), PhoenixApiManager.getClient().getKs()))
@@ -283,8 +298,9 @@ public class PlayerFragment extends DebugFragment {
 
     private void loadPlayerSettings() {
         if (mPlayer == null) {
-
-            mPlayer = PlayKitManager.loadPlayer(requireContext(), new PKPluginConfigs());
+            PKPluginConfigs pluginConfig = new PKPluginConfigs();
+            configurePlugins(pluginConfig);
+            mPlayer = PlayKitManager.loadPlayer(requireContext(), pluginConfig);
 
             mPlayer.getSettings().setSecureSurface(false);
             mPlayer.getSettings().setAllowCrossProtocolRedirect(true);
