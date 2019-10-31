@@ -9,12 +9,11 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.google.android.exoplayer2.C;
 import com.kaltura.client.types.Asset;
 import com.kaltura.kflow.R;
 import com.kaltura.playkit.PKLog;
-import com.kaltura.playkit.Player;
 import com.kaltura.playkit.PlayerState;
+import com.kaltura.tvplayer.KalturaPlayer;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,7 +29,7 @@ public class PlaybackControlsView extends LinearLayout implements View.OnClickLi
     private static final PKLog log = PKLog.get("PlaybackControlsView");
     private static final int PROGRESS_BAR_MAX = 100;
 
-    private Player player;
+    private KalturaPlayer player;
     private PlayerState playerState;
     private Asset asset;
 
@@ -99,21 +98,14 @@ public class PlaybackControlsView extends LinearLayout implements View.OnClickLi
     }
 
     private void updateVodProgress() {
-        long duration = C.TIME_UNSET;
-        long position = C.POSITION_UNSET;
-        long bufferedPosition = 0;
-        if (player != null) {
-            duration = player.getDuration();
-            position = player.getCurrentPosition();
-            bufferedPosition = player.getBufferedPosition();
-        }
+        long duration = player.getDuration();
+        long position = player.getCurrentPosition();
+        long bufferedPosition = player.getBufferedPosition();
 
-        if (duration != C.TIME_UNSET) {
-            log.d("updateProgress Set Duration:" + duration);
-            tvTime.setText(stringForTime(duration));
-        }
+        log.d("updateProgress Set Duration:" + duration);
+        tvTime.setText(stringForTime(duration));
 
-        if (!dragging && position != C.POSITION_UNSET && duration != C.TIME_UNSET) {
+        if (!dragging) {
             log.d("updateProgress Set Position:" + position);
             tvCurTime.setText(stringForTime(position));
             seekBar.setProgress(progressBarValue(position));
@@ -162,7 +154,7 @@ public class PlaybackControlsView extends LinearLayout implements View.OnClickLi
                 : formatter.format("%02d:%02d", minutes, seconds).toString();
     }
 
-    public void setPlayer(Player player) {
+    public void setPlayer(KalturaPlayer player) {
         this.player = player;
     }
 
