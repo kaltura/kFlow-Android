@@ -58,8 +58,12 @@ import com.kaltura.playkit.PlayerState;
 import com.kaltura.playkit.player.LoadControlBuffers;
 import com.kaltura.playkit.player.PKTracks;
 import com.kaltura.playkit.player.TextTrack;
+import com.kaltura.playkit.plugins.SamplePlugin;
 import com.kaltura.playkit.plugins.ads.AdEvent;
+import com.kaltura.playkit.plugins.kava.KavaAnalyticsPlugin;
 import com.kaltura.playkit.plugins.ott.OttEvent;
+import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsPlugin;
+import com.kaltura.playkit.plugins.youbora.YouboraPlugin;
 import com.kaltura.playkit.providers.MediaEntryProvider;
 import com.kaltura.playkit.providers.api.SimpleSessionProvider;
 import com.kaltura.playkit.providers.api.phoenix.APIDefines;
@@ -213,6 +217,7 @@ public class PlayerFragment extends DebugFragment {
     }
 
     private void initPlayer() {
+        registerPlugins();
         startOttMediaLoading(response -> {
             if (isAdded()) {
                 requireActivity().runOnUiThread(() -> {
@@ -229,6 +234,14 @@ public class PlayerFragment extends DebugFragment {
                 });
             }
         });
+    }
+
+    private void registerPlugins() {
+        PlayKitManager.registerPlugins(requireContext(), SamplePlugin.factory);
+//		PlayKitManager.registerPlugins(requireContext(), KalturaStatsPlugin.factory);
+        PlayKitManager.registerPlugins(requireContext(), KavaAnalyticsPlugin.factory);
+        PlayKitManager.registerPlugins(requireContext(), YouboraPlugin.factory);
+        PlayKitManager.registerPlugins(requireContext(), PhoenixAnalyticsPlugin.factory);
     }
 
     private void startOttMediaLoading(final OnMediaLoadCompletion completion) {
