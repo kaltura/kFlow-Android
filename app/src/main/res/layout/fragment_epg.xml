@@ -17,24 +17,46 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/epg_channel_id"
+                android:id="@+id/linear_media_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:hint="Epg channel id"
+                android:hint="Linear media id"
                 android:imeOptions="actionDone"
                 android:singleLine="true" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/get"
+            android:id="@+id/yesterday"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginBottom="5dp"
             android:backgroundTint="@color/colorAccent"
             android:gravity="center"
-            android:text="Get"
+            android:text="Yesterday"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/today"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginBottom="5dp"
+            android:backgroundTint="@color/colorAccent"
+            android:gravity="center"
+            android:text="Today"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/tomorrow"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginBottom="5dp"
+            android:backgroundTint="@color/colorAccent"
+            android:gravity="center"
+            android:text="Tomorrow"
             android:textColor="@android:color/white"
             android:textSize="16sp" />
 

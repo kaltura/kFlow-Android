@@ -20,11 +20,14 @@ import com.kaltura.kflow.presentation.assetList.AssetListFragment;
 import com.kaltura.kflow.manager.PhoenixApiManager;
 import com.kaltura.kflow.utils.Utils;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
@@ -34,7 +37,16 @@ import androidx.appcompat.widget.AppCompatButton;
  */
 public class EpgFragment extends DebugFragment implements View.OnClickListener {
 
-    private TextInputEditText mEpgChannelId;
+    private static final int YESTERDAY = 0;
+    private static final int TODAY = 1;
+    private static final int TOMORROW = 2;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({YESTERDAY, TODAY, TOMORROW})
+    @interface DateFilter {
+    }
+
+    private TextInputEditText mLinearMediaId;
     private AppCompatButton mShowChannelButton;
     private ArrayList<Asset> mChannels = new ArrayList<>();
 
@@ -47,15 +59,17 @@ public class EpgFragment extends DebugFragment implements View.OnClickListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((MainActivity) requireActivity()).getSupportActionBar().setTitle("EPG past programs");
+        ((MainActivity) requireActivity()).getSupportActionBar().setTitle("EPG");
 
-        mEpgChannelId = getView().findViewById(R.id.epg_channel_id);
+        mLinearMediaId = getView().findViewById(R.id.linear_media_id);
         mShowChannelButton = getView().findViewById(R.id.show_channel);
 
         mShowChannelButton.setOnClickListener(this);
-        getView().findViewById(R.id.get).setOnClickListener(this);
+        getView().findViewById(R.id.yesterday).setOnClickListener(this);
+        getView().findViewById(R.id.today).setOnClickListener(this);
+        getView().findViewById(R.id.tomorrow).setOnClickListener(this);
 
-        mEpgChannelId.setText("3286");
+        mLinearMediaId.setText("3286");
         mShowChannelButton.setVisibility(mChannels.isEmpty() ? View.GONE : View.VISIBLE);
         mShowChannelButton.setText(getResources().getQuantityString(R.plurals.show_past_programs,
                 mChannels.size(), NumberFormat.getInstance().format(mChannels.size())));
@@ -70,31 +84,62 @@ public class EpgFragment extends DebugFragment implements View.OnClickListener {
                 showChannels();
                 break;
             }
-            case R.id.get: {
-                makeGetChannelsRequest(mEpgChannelId.getText().toString());
+            case R.id.yesterday: {
+                makeGetChannelsRequest(mLinearMediaId.getText().toString(), YESTERDAY);
+                break;
+            }
+            case R.id.today: {
+                makeGetChannelsRequest(mLinearMediaId.getText().toString(), TODAY);
+                break;
+            }
+            case R.id.tomorrow: {
+                makeGetChannelsRequest(mLinearMediaId.getText().toString(), TOMORROW);
                 break;
             }
         }
     }
 
-    private void makeGetChannelsRequest(String epgChannelId) {
+    private void makeGetChannelsRequest(String epgChannelId, @DateFilter int dateFilter) {
         if (Utils.hasInternetConnection(requireContext())) {
 
             mChannels.clear();
             mShowChannelButton.setVisibility(View.GONE);
 
-            Calendar startCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            startCalendar.set(Calendar.MILLISECOND, 0);
-            startCalendar.set(Calendar.SECOND, 0);
-            startCalendar.set(Calendar.MINUTE, 0);
-            startCalendar.set(Calendar.HOUR, 0);
-            long startDate = startCalendar.getTimeInMillis() / 1000;
-            long endDate = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000;
+            long startDate = 0L;
+            long endDate = 0L;
+
+            Calendar todayMidnightCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            todayMidnightCalendar.set(Calendar.MILLISECOND, 0);
+            todayMidnightCalendar.set(Calendar.SECOND, 0);
+            todayMidnightCalendar.set(Calendar.MINUTE, 0);
+            todayMidnightCalendar.set(Calendar.HOUR, 0);
+
+            switch (dateFilter) {
+                case YESTERDAY: {
+                    endDate = todayMidnightCalendar.getTimeInMillis() / 1000;
+                    todayMidnightCalendar.add(Calendar.DAY_OF_YEAR, -1);
+                    startDate = todayMidnightCalendar.getTimeInMillis() / 1000;
+                    break;
+                }
+                case TODAY: {
+                    startDate = todayMidnightCalendar.getTimeInMillis() / 1000;
+                    todayMidnightCalendar.add(Calendar.DAY_OF_YEAR, 1);
+                    endDate = todayMidnightCalendar.getTimeInMillis() / 1000;
+                    break;
+                }
+                case TOMORROW: {
+                    todayMidnightCalendar.add(Calendar.DAY_OF_YEAR, 1);
+                    startDate = todayMidnightCalendar.getTimeInMillis() / 1000;
+                    todayMidnightCalendar.add(Calendar.DAY_OF_YEAR, 1);
+                    endDate = todayMidnightCalendar.getTimeInMillis() / 1000;
+                    break;
+                }
+            }
 
             SearchAssetFilter filter = new SearchAssetFilter();
             filter.setOrderBy(AssetOrderBy.START_DATE_DESC.getValue());
             filter.setTypeIn("0");
-            filter.setKSql("(and epg_channel_id = '" + epgChannelId + "' (and start_date < '" + endDate + "' end_date > '" + startDate + "' end_date < '" + endDate + "'))");
+            filter.setKSql("(and linear_media_id = '" + epgChannelId + "' (and start_date > '" + startDate + "' end_date < '" + endDate + "'))");
 
             FilterPager filterPager = new FilterPager();
             filterPager.setPageIndex(1);
