@@ -25,9 +25,9 @@
         <item quantity="other">Show %s channels</item>
     </plurals>
 
-    <plurals name="show_past_programs">
-        <item quantity="one">Show %s past program</item>
-        <item quantity="other">Show %s past programs</item>
+    <plurals name="show_programs">
+        <item quantity="one">Show %s program</item>
+        <item quantity="other">Show %s programs</item>
     </plurals>
 
     <plurals name="favorite_count">

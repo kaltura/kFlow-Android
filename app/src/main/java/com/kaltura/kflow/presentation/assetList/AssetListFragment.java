@@ -9,6 +9,7 @@ import com.kaltura.client.types.Asset;
 import com.kaltura.kflow.R;
 import com.kaltura.kflow.presentation.player.PlayerFragment;
 import com.kaltura.kflow.presentation.main.MainActivity;
+import com.kaltura.kflow.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -63,10 +64,12 @@ public class AssetListFragment extends Fragment implements AssetListAdapter.OnAs
 
     @Override
     public void onAssetClicked(Asset asset) {
-        PlayerFragment playerFragment = PlayerFragment.newInstance(asset, false);
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, playerFragment)
-                .addToBackStack(null)
-                .commit();
+        if (!Utils.isProgramInFuture(asset)) {
+            PlayerFragment playerFragment = PlayerFragment.newInstance(asset, false);
+            requireActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, playerFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 }

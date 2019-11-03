@@ -66,8 +66,8 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.MyVi
 
         void bind(final Asset asset, final AssetListAdapter.OnAssetClickListener clickListener) {
             StringBuilder title = new StringBuilder(asset.getName());
-            if (asset instanceof ProgramAsset && Utils.isProgramIsPast(asset)) {
-                SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.US);
+            if (asset instanceof ProgramAsset) {
+                SimpleDateFormat format = new SimpleDateFormat("d MMM, HH:mm", Locale.US);
                 Calendar startDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
                 startDayCalendar.setTimeInMillis(Utils.utcToLocal(asset.getStartDate() * 1000));
                 Calendar endDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));

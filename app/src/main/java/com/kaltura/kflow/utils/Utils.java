@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
-import android.text.format.Time;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -156,7 +155,11 @@ public class Utils {
         return utcTime + TimeZone.getDefault().getOffset(utcTime);
     }
 
-    public static boolean isProgramIsPast(Asset asset) {
+    public static boolean isProgramInPast(Asset asset) {
         return asset.getEndDate() < Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000;
+    }
+
+    public static boolean isProgramInFuture(Asset asset) {
+        return asset.getStartDate() > Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000;
     }
 }

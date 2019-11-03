@@ -279,13 +279,13 @@ public class PlayerFragment extends DebugFragment {
 
     private APIDefines.KalturaAssetType getAssetType() {
         if (mRecording != null) return APIDefines.KalturaAssetType.Recording;
-        else if (mAsset instanceof ProgramAsset && Utils.isProgramIsPast(mAsset))
+        else if (mAsset instanceof ProgramAsset && Utils.isProgramInPast(mAsset))
             return APIDefines.KalturaAssetType.Epg;
         else return APIDefines.KalturaAssetType.Media;
     }
 
     private APIDefines.PlaybackContextType getPlaybackContextType() {
-        if (mRecording == null && mAsset instanceof ProgramAsset && Utils.isProgramIsPast(mAsset))
+        if (mRecording == null && mAsset instanceof ProgramAsset && Utils.isProgramInPast(mAsset))
             return APIDefines.PlaybackContextType.Catchup;
         else return APIDefines.PlaybackContextType.Playback;
     }

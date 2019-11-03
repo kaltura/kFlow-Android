@@ -69,9 +69,8 @@ public class EpgFragment extends DebugFragment implements View.OnClickListener {
         getView().findViewById(R.id.today).setOnClickListener(this);
         getView().findViewById(R.id.tomorrow).setOnClickListener(this);
 
-        mLinearMediaId.setText("3286");
         mShowChannelButton.setVisibility(mChannels.isEmpty() ? View.GONE : View.VISIBLE);
-        mShowChannelButton.setText(getResources().getQuantityString(R.plurals.show_past_programs,
+        mShowChannelButton.setText(getResources().getQuantityString(R.plurals.show_programs,
                 mChannels.size(), NumberFormat.getInstance().format(mChannels.size())));
     }
 
@@ -112,7 +111,7 @@ public class EpgFragment extends DebugFragment implements View.OnClickListener {
             todayMidnightCalendar.set(Calendar.MILLISECOND, 0);
             todayMidnightCalendar.set(Calendar.SECOND, 0);
             todayMidnightCalendar.set(Calendar.MINUTE, 0);
-            todayMidnightCalendar.set(Calendar.HOUR, 0);
+            todayMidnightCalendar.set(Calendar.HOUR_OF_DAY, 0);
 
             switch (dateFilter) {
                 case YESTERDAY: {
@@ -141,17 +140,13 @@ public class EpgFragment extends DebugFragment implements View.OnClickListener {
             filter.setTypeIn("0");
             filter.setKSql("(and linear_media_id = '" + epgChannelId + "' (and start_date > '" + startDate + "' end_date < '" + endDate + "'))");
 
-            FilterPager filterPager = new FilterPager();
-            filterPager.setPageIndex(1);
-            filterPager.setPageSize(10);
-
-            RequestBuilder requestBuilder = AssetService.list(filter, filterPager)
+            RequestBuilder requestBuilder = AssetService.list(filter)
                     .setCompletion(result -> {
                         if (result.isSuccess()) {
                             if (result.results.getObjects() != null)
                                 mChannels.addAll(result.results.getObjects());
 
-                            mShowChannelButton.setText(getResources().getQuantityString(R.plurals.show_past_programs,
+                            mShowChannelButton.setText(getResources().getQuantityString(R.plurals.show_programs,
                                     mChannels.size(), NumberFormat.getInstance().format(mChannels.size())));
                             mShowChannelButton.setVisibility(View.VISIBLE);
                         }
