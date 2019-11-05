@@ -69,14 +69,14 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.MyVi
             if (asset instanceof ProgramAsset) {
                 SimpleDateFormat format = new SimpleDateFormat("d MMM, HH:mm", Locale.US);
                 Calendar startDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                startDayCalendar.setTimeInMillis(Utils.utcToLocal(asset.getStartDate() * 1000));
+                startDayCalendar.setTimeInMillis(asset.getStartDate() * 1000);
                 Calendar endDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                endDayCalendar.setTimeInMillis(Utils.utcToLocal(asset.getEndDate() * 1000));
+                endDayCalendar.setTimeInMillis(asset.getEndDate() * 1000);
                 title.append(" (")
                         .append(format.format(startDayCalendar.getTime()))
                         .append(" - ")
                         .append(format.format(endDayCalendar.getTime()))
-                        .append(")");
+                        .append(" UTC)");
             }
             mName.setText(title);
             mId.setText("Asset ID: " + asset.getId());
