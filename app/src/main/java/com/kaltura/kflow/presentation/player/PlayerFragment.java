@@ -278,21 +278,25 @@ public class PlayerFragment extends DebugFragment {
     }
 
     private APIDefines.KalturaAssetType getAssetType() {
-        if (mRecording != null) return APIDefines.KalturaAssetType.Recording;
-        else if (mAsset instanceof ProgramAsset && Utils.isProgramInPast(mAsset))
+        if (mAsset instanceof ProgramAsset && Utils.isProgramInPast(mAsset))
             return APIDefines.KalturaAssetType.Epg;
+        else if (mAsset instanceof ProgramAsset && Utils.isProgramInLive(mAsset))
+            return APIDefines.KalturaAssetType.Epg;
+        else if (mRecording != null) return APIDefines.KalturaAssetType.Recording;
         else return APIDefines.KalturaAssetType.Media;
     }
 
     private APIDefines.PlaybackContextType getPlaybackContextType() {
-        if (mRecording == null && mAsset instanceof ProgramAsset && Utils.isProgramInPast(mAsset))
+        if (mAsset instanceof ProgramAsset && Utils.isProgramInPast(mAsset))
             return APIDefines.PlaybackContextType.Catchup;
-        else return APIDefines.PlaybackContextType.Playback;
+        else if (mAsset instanceof ProgramAsset && Utils.isProgramInLive(mAsset))
+            return APIDefines.PlaybackContextType.StartOver;
+        else
+            return APIDefines.PlaybackContextType.Playback;
     }
 
     private APIDefines.AssetReferenceType getAssetReferenceType() {
-        if (mRecording == null && getPlaybackContextType() == APIDefines.PlaybackContextType.Playback)
-            return APIDefines.AssetReferenceType.Media;
+        if (mRecording == null) return APIDefines.AssetReferenceType.Media;
         else return APIDefines.AssetReferenceType.Npvr;
     }
 

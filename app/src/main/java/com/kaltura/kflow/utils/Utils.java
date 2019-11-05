@@ -162,4 +162,10 @@ public class Utils {
     public static boolean isProgramInFuture(Asset asset) {
         return asset.getStartDate() > Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000;
     }
+
+    public static boolean isProgramInLive(Asset asset) {
+        long currentTimeMs = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000;
+        return currentTimeMs > asset.getStartDate()
+                && currentTimeMs < asset.getEndDate();
+    }
 }
