@@ -174,16 +174,23 @@ public class PlayerFragment extends DebugFragment {
             if (mFavorite.isPressed()) actionFavorite();
         });
         mPlayerControls.setOnStartOverClickListener(view1 -> {
-            if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Vod)) {
+            if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Vod))
                 mPlayer.replay();
-            }
+            else if (mAsset instanceof ProgramAsset && Utils.isProgramInPast(mAsset))
+                initPlayer(APIDefines.PlaybackContextType.Catchup);
+            else if (mAsset instanceof ProgramAsset && Utils.isProgramInLive(mAsset))
+                initPlayer(APIDefines.PlaybackContextType.StartOver);
         });
 
-        mCheckAll.setOnClickListener(view1 -> {
+        mCheckAll.setOnClickListener(view1 ->
+
+        {
             Utils.hideKeyboard(getView());
             checkAllTogetherRequest();
         });
-        mInsertPin.setOnClickListener(view1 -> {
+        mInsertPin.setOnClickListener(view1 ->
+
+        {
             Utils.hideKeyboard(getView());
             if (mPinInputLayout.getVisibility() == View.GONE) {
                 showPinInput();
@@ -212,14 +219,14 @@ public class PlayerFragment extends DebugFragment {
     private void onAssetLoaded() {
         ((AppCompatTextView) getView().findViewById(R.id.asset_title)).setText(mAsset.getName());
 
-        initPlayer();
+        registerPlugins();
+        initPlayer(getPlaybackContextType());
         getLikeList();
         getFavoriteList();
     }
 
-    private void initPlayer() {
-        registerPlugins();
-        startOttMediaLoading(response -> {
+    private void initPlayer(APIDefines.PlaybackContextType playbackContextType) {
+        startOttMediaLoading(playbackContextType, response -> {
             if (isAdded()) {
                 requireActivity().runOnUiThread(() -> {
                     if (response.getResponse() != null) {
@@ -259,13 +266,13 @@ public class PlayerFragment extends DebugFragment {
         config.setPluginConfig(PhoenixAnalyticsPlugin.factory.getName(), phoenixAnalyticsConfig);
     }
 
-    private void startOttMediaLoading(final OnMediaLoadCompletion completion) {
+    private void startOttMediaLoading(APIDefines.PlaybackContextType playbackContextType, final OnMediaLoadCompletion completion) {
         MediaEntryProvider mediaProvider = new PhoenixMediaProvider()
                 .setSessionProvider(new SimpleSessionProvider(PreferenceManager.getInstance(requireContext()).getBaseUrl() + "/api_v3/", PreferenceManager.getInstance(requireContext()).getPartnerId(), PhoenixApiManager.getClient().getKs()))
                 .setAssetId(getAssetIdByFlowType())
                 .setProtocol(PhoenixMediaProvider.HttpProtocol.All)
-                .setContextType(getPlaybackContextType())
-                .setAssetReferenceType(getAssetReferenceType())
+                .setContextType(playbackContextType)
+                .setAssetReferenceType(getAssetReferenceType(playbackContextType))
                 .setAssetType(getAssetType())
                 .setFormats(PreferenceManager.getInstance(requireContext()).getMediaFileFormat());
 
@@ -290,14 +297,14 @@ public class PlayerFragment extends DebugFragment {
         if (mAsset instanceof ProgramAsset && Utils.isProgramInPast(mAsset))
             return APIDefines.PlaybackContextType.Catchup;
         else if (mAsset instanceof ProgramAsset && Utils.isProgramInLive(mAsset))
-            return APIDefines.PlaybackContextType.StartOver;
+            return APIDefines.PlaybackContextType.Playback;
         else
             return APIDefines.PlaybackContextType.Playback;
     }
 
-    private APIDefines.AssetReferenceType getAssetReferenceType() {
-        if (getPlaybackContextType() == APIDefines.PlaybackContextType.StartOver
-                || getPlaybackContextType() == APIDefines.PlaybackContextType.Catchup)
+    private APIDefines.AssetReferenceType getAssetReferenceType(APIDefines.PlaybackContextType playbackContextType) {
+        if (playbackContextType == APIDefines.PlaybackContextType.StartOver
+                || playbackContextType == APIDefines.PlaybackContextType.Catchup)
             return APIDefines.AssetReferenceType.InternalEpg;
         else if (mRecording == null) return APIDefines.AssetReferenceType.Media;
         else return APIDefines.AssetReferenceType.Npvr;
