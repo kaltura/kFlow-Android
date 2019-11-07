@@ -296,7 +296,10 @@ public class PlayerFragment extends DebugFragment {
     }
 
     private APIDefines.AssetReferenceType getAssetReferenceType() {
-        if (mRecording == null) return APIDefines.AssetReferenceType.Media;
+        if (getPlaybackContextType() == APIDefines.PlaybackContextType.StartOver
+                || getPlaybackContextType() == APIDefines.PlaybackContextType.Catchup)
+            return APIDefines.AssetReferenceType.InternalEpg;
+        else if (mRecording == null) return APIDefines.AssetReferenceType.Media;
         else return APIDefines.AssetReferenceType.Npvr;
     }
 
