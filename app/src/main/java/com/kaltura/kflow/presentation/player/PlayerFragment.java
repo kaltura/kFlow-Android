@@ -285,7 +285,7 @@ public class PlayerFragment extends DebugFragment {
                 .setProtocol(PhoenixMediaProvider.HttpProtocol.All)
                 .setContextType(playbackContextType)
                 .setAssetReferenceType(getAssetReferenceType(playbackContextType))
-                .setAssetType(getAssetType())
+                .setAssetType(getAssetType(playbackContextType))
                 .setFormats(PreferenceManager.getInstance(requireContext()).getMediaFileFormat());
 
         mediaProvider.load(completion);
@@ -296,10 +296,9 @@ public class PlayerFragment extends DebugFragment {
         else return String.valueOf(mRecording.getId());
     }
 
-    private APIDefines.KalturaAssetType getAssetType() {
-        if (mAsset instanceof ProgramAsset && Utils.isProgramInPast(mAsset))
-            return APIDefines.KalturaAssetType.Epg;
-        else if (mAsset instanceof ProgramAsset && Utils.isProgramInLive(mAsset))
+    private APIDefines.KalturaAssetType getAssetType(APIDefines.PlaybackContextType playbackContextType) {
+        if (playbackContextType == APIDefines.PlaybackContextType.StartOver
+                || playbackContextType == APIDefines.PlaybackContextType.Catchup)
             return APIDefines.KalturaAssetType.Epg;
         else if (mRecording != null) return APIDefines.KalturaAssetType.Recording;
         else return APIDefines.KalturaAssetType.Media;
