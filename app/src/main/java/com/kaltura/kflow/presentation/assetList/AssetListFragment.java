@@ -6,10 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kaltura.client.types.Asset;
+import com.kaltura.client.types.ProgramAsset;
 import com.kaltura.kflow.R;
 import com.kaltura.kflow.presentation.player.PlayerFragment;
 import com.kaltura.kflow.presentation.main.MainActivity;
 import com.kaltura.kflow.utils.Utils;
+import com.kaltura.playkit.PKMediaEntry;
+import com.kaltura.playkit.providers.api.phoenix.APIDefines;
 
 import java.util.ArrayList;
 
@@ -63,9 +66,18 @@ public class AssetListFragment extends Fragment implements AssetListAdapter.OnAs
     }
 
     @Override
-    public void onAssetClicked(Asset asset) {
+    public void onVodAssetClicked(Asset asset) {
+        PlayerFragment playerFragment = PlayerFragment.newInstance(asset, false);
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, playerFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onProgramAssetClicked(Asset asset, APIDefines.PlaybackContextType contextType) {
         if (!Utils.isProgramInFuture(asset)) {
-            PlayerFragment playerFragment = PlayerFragment.newInstance(asset, false);
+            PlayerFragment playerFragment = PlayerFragment.newInstance(asset, false, contextType);
             requireActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, playerFragment)
                     .addToBackStack(null)

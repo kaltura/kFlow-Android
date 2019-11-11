@@ -92,6 +92,7 @@ public class PlayerFragment extends DebugFragment {
     private static final String ARG_ASSET = "extra_asset";
     private static final String ARG_KEEP_ALIVE = "extra_keep_alive";
     private static final String ARG_RECORDING = "extra_recording";
+    private static final String ARG_PLAYBACK_CONTEXT_TYPE = "extra_playback_context_type";
     private final static String TAG = PlayerFragment.class.getCanonicalName();
     private static int PK_BUFFER_LENGTH = 0;
 
@@ -112,13 +113,23 @@ public class PlayerFragment extends DebugFragment {
     private int mParentalRuleId;
     private boolean mIsKeepAlive;
     private PlayerKeepAliveService playerKeepAliveService;
+    private APIDefines.PlaybackContextType initialPlaybackContextType;
 
     public static PlayerFragment newInstance(Asset asset, boolean isKeepAlive) {
-
         PlayerFragment likeFragment = new PlayerFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_ASSET, asset);
         bundle.putBoolean(ARG_KEEP_ALIVE, isKeepAlive);
+        likeFragment.setArguments(bundle);
+        return likeFragment;
+    }
+
+    public static PlayerFragment newInstance(Asset asset, boolean isKeepAlive, APIDefines.PlaybackContextType playbackContextType) {
+        PlayerFragment likeFragment = new PlayerFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_ASSET, asset);
+        bundle.putBoolean(ARG_KEEP_ALIVE, isKeepAlive);
+        bundle.putSerializable(ARG_PLAYBACK_CONTEXT_TYPE, playbackContextType);
         likeFragment.setArguments(bundle);
         return likeFragment;
     }
@@ -148,6 +159,7 @@ public class PlayerFragment extends DebugFragment {
             mAsset = (Asset) savedState.getSerializable(ARG_ASSET);
             mIsKeepAlive = savedState.getBoolean(ARG_KEEP_ALIVE);
             mRecording = (Recording) savedState.getSerializable(ARG_RECORDING);
+            initialPlaybackContextType = (APIDefines.PlaybackContextType) savedState.getSerializable(ARG_PLAYBACK_CONTEXT_TYPE);
         }
 
         playerKeepAliveService = new PlayerKeepAliveService(() -> mPlayer.isPlaying());
@@ -294,6 +306,8 @@ public class PlayerFragment extends DebugFragment {
     }
 
     private APIDefines.PlaybackContextType getPlaybackContextType() {
+        if (initialPlaybackContextType != null) return initialPlaybackContextType;
+
         if (mAsset instanceof ProgramAsset && Utils.isProgramInPast(mAsset))
             return APIDefines.PlaybackContextType.Catchup;
         else if (mAsset instanceof ProgramAsset && Utils.isProgramInLive(mAsset))
