@@ -136,11 +136,15 @@ public class EpgFragment extends DebugFragment implements View.OnClickListener {
             }
 
             SearchAssetFilter filter = new SearchAssetFilter();
-            filter.setOrderBy(AssetOrderBy.START_DATE_DESC.getValue());
+            filter.setOrderBy(AssetOrderBy.START_DATE_ASC.getValue());
             filter.setTypeIn("0");
             filter.setKSql("(and linear_media_id = '" + epgChannelId + "' (and start_date > '" + startDate + "' end_date < '" + endDate + "'))");
 
-            RequestBuilder requestBuilder = AssetService.list(filter)
+            FilterPager filterPager = new FilterPager();
+            filterPager.setPageSize(100);
+            filterPager.setPageIndex(1);
+
+            RequestBuilder requestBuilder = AssetService.list(filter, filterPager)
                     .setCompletion(result -> {
                         if (result.isSuccess()) {
                             if (result.results.getObjects() != null)
