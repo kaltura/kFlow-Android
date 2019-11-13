@@ -292,7 +292,9 @@ public class PlayerFragment extends DebugFragment {
     }
 
     private String getAssetIdByFlowType() {
-        if (mRecording == null) return String.valueOf(mAsset.getId());
+        if (mAsset instanceof ProgramAsset)
+            return String.valueOf(((ProgramAsset) mAsset).getLinearAssetId());
+        else if (mRecording == null) return String.valueOf(mAsset.getId());
         else return String.valueOf(mRecording.getId());
     }
 
