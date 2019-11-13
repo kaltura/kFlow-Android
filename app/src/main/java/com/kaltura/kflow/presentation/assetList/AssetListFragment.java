@@ -29,11 +29,21 @@ import androidx.recyclerview.widget.RecyclerView;
 public class AssetListFragment extends Fragment implements AssetListAdapter.OnAssetClickListener {
 
     private static final String ARG_ASSETS = "extra_assets";
+    private static final String ARG_SCROLL_TO_LIVE = "extra_scroll_to_live";
 
     public static AssetListFragment newInstance(ArrayList<Asset> assets) {
         AssetListFragment assetListFragment = new AssetListFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_ASSETS, assets);
+        assetListFragment.setArguments(bundle);
+        return assetListFragment;
+    }
+
+    public static AssetListFragment newInstance(ArrayList<Asset> assets, boolean scrollToLive) {
+        AssetListFragment assetListFragment = new AssetListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_ASSETS, assets);
+        bundle.putBoolean(ARG_SCROLL_TO_LIVE, scrollToLive);
         assetListFragment.setArguments(bundle);
         return assetListFragment;
     }
@@ -60,9 +70,25 @@ public class AssetListFragment extends Fragment implements AssetListAdapter.OnAs
 
         Bundle savedState = getArguments();
         ArrayList<Asset> assets = savedState != null ? (ArrayList<Asset>) savedState.getSerializable(ARG_ASSETS) : null;
+        boolean scrollToLive = savedState != null && savedState.getBoolean(ARG_SCROLL_TO_LIVE);
 
         AssetListAdapter adapter = new AssetListAdapter(assets, this);
         list.setAdapter(adapter);
+
+        if (scrollToLive && assets != null) {
+            int liveAssetPosition = 0;
+            for (Asset asset : assets) {
+                if (asset instanceof ProgramAsset && Utils.isProgramInLive(asset)) {
+                    liveAssetPosition = assets.indexOf(asset);
+                    break;
+                }
+            }
+
+            if (liveAssetPosition > 2)
+                liveAssetPosition -= 3; // minus 3 items from the top, to move live asset to the middle of the screen
+
+            list.scrollToPosition(liveAssetPosition);
+        }
     }
 
     @Override
