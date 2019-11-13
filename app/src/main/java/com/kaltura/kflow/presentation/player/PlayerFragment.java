@@ -95,6 +95,7 @@ public class PlayerFragment extends DebugFragment {
     private static final String ARG_RECORDING = "extra_recording";
     private final static String TAG = PlayerFragment.class.getCanonicalName();
     private static int PK_BUFFER_LENGTH = 0;
+    public static final int DEFAULT_KAVA_PARTNER_ID = 2504201;
 
     private SwitchCompat mLike;
     private SwitchCompat mFavorite;
@@ -237,11 +238,11 @@ public class PlayerFragment extends DebugFragment {
          */
 
         PhoenixTVPlayerParams phoenixTVPlayerParams = new PhoenixTVPlayerParams();
-        phoenixTVPlayerParams.analyticsUrl = "https://analytics.kaltura.com";
-        phoenixTVPlayerParams.ovpPartnerId = 1774581;
+//        phoenixTVPlayerParams.analyticsUrl = "https://analytics.kaltura.com";
+        phoenixTVPlayerParams.ovpPartnerId = DEFAULT_KAVA_PARTNER_ID;
         phoenixTVPlayerParams.partnerId = PreferenceManager.getInstance(requireContext()).getPartnerId();
         phoenixTVPlayerParams.serviceUrl = PreferenceManager.getInstance(requireContext()).getBaseUrl();
-        phoenixTVPlayerParams.ovpServiceUrl = "http://cdnapi.kaltura.com/";
+//        phoenixTVPlayerParams.ovpServiceUrl = "http://cdnapi.kaltura.com/";
         playerInitOptions.tvPlayerParams = phoenixTVPlayerParams;
 
         mPlayer = KalturaOttPlayer.create(requireContext(), playerInitOptions);
