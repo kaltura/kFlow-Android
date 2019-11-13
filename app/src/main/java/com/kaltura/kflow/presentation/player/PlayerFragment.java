@@ -292,7 +292,7 @@ public class PlayerFragment extends DebugFragment {
     }
 
     private String getAssetIdByFlowType() {
-        if (mAsset instanceof ProgramAsset)
+        if (mAsset instanceof ProgramAsset && getPlaybackContextType() == APIDefines.PlaybackContextType.Playback)
             return String.valueOf(((ProgramAsset) mAsset).getLinearAssetId());
         else if (mRecording == null) return String.valueOf(mAsset.getId());
         else return String.valueOf(mRecording.getId());
