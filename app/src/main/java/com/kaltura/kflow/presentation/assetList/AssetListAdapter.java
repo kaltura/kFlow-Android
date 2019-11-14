@@ -58,6 +58,7 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.MyVi
     class MyViewHolder extends RecyclerView.ViewHolder {
 
         private AppCompatTextView mName;
+        private AppCompatTextView mTime;
         private AppCompatTextView mId;
         private AppCompatButton mPlayback;
         private AppCompatButton mStartover;
@@ -66,6 +67,7 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.MyVi
         MyViewHolder(View v) {
             super(v);
             mName = v.findViewById(R.id.asset_name);
+            mTime = v.findViewById(R.id.asset_time);
             mId = v.findViewById(R.id.asset_id);
             mPlayback = v.findViewById(R.id.playback);
             mStartover = v.findViewById(R.id.startover);
@@ -73,20 +75,22 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.MyVi
         }
 
         void bind(final Asset asset, final AssetListAdapter.OnAssetClickListener clickListener) {
-            StringBuilder title = new StringBuilder(asset.getName());
             if (asset instanceof ProgramAsset) {
-                SimpleDateFormat format = new SimpleDateFormat("d MMM, HH:mm", Locale.US);
+                StringBuilder time = new StringBuilder();
+                SimpleDateFormat startFormat = new SimpleDateFormat("d MMM, HH:mm", Locale.US);
+                SimpleDateFormat endFormat = new SimpleDateFormat("HH:mm", Locale.US);
                 Calendar startDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
                 startDayCalendar.setTimeInMillis(asset.getStartDate() * 1000);
                 Calendar endDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
                 endDayCalendar.setTimeInMillis(asset.getEndDate() * 1000);
-                title.append(" (")
-                        .append(format.format(startDayCalendar.getTime()))
+                time.append(startFormat.format(startDayCalendar.getTime()))
                         .append(" - ")
-                        .append(format.format(endDayCalendar.getTime()))
-                        .append(" UTC)");
-            }
-            mName.setText(title);
+                        .append(endFormat.format(endDayCalendar.getTime()));
+                mTime.setText(time);
+                mTime.setVisibility(View.VISIBLE);
+            } else mTime.setVisibility(View.GONE);
+
+            mName.setText(asset.getName());
             mId.setText("Asset ID: " + asset.getId());
 
             if (asset instanceof ProgramAsset && Utils.isProgramInPast(asset)) {

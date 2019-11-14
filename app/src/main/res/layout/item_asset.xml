@@ -18,10 +18,18 @@
         android:textSize="18sp" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/asset_id"
+        android:id="@+id/asset_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/asset_name"
+        android:layout_toStartOf="@+id/actions"
+        android:textSize="15sp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/asset_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/asset_time"
         android:layout_toStartOf="@+id/actions"
         android:textSize="15sp" />
 
