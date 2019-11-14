@@ -94,7 +94,6 @@ public class PlayerFragment extends DebugFragment {
     private static final String ARG_RECORDING = "extra_recording";
     private static final String ARG_PLAYBACK_CONTEXT_TYPE = "extra_playback_context_type";
     private final static String TAG = PlayerFragment.class.getCanonicalName();
-    private static int PK_BUFFER_LENGTH = 0;
 
     private SwitchCompat mLike;
     private SwitchCompat mFavorite;
@@ -162,7 +161,7 @@ public class PlayerFragment extends DebugFragment {
             initialPlaybackContextType = (APIDefines.PlaybackContextType) savedState.getSerializable(ARG_PLAYBACK_CONTEXT_TYPE);
         }
 
-        playerKeepAliveService = new PlayerKeepAliveService(() -> mPlayer.isPlaying());
+        playerKeepAliveService = new PlayerKeepAliveService();
 
         if (mAsset == null && mRecording != null) loadAsset(mRecording.getAssetId());
         else onAssetLoaded();
@@ -335,8 +334,6 @@ public class PlayerFragment extends DebugFragment {
             mPlayer.getSettings().setAllowCrossProtocolRedirect(true);
             mPlayer.getSettings().setCea608CaptionsEnabled(true); // default is false
 
-            getPlayerBufferLength();
-
             addPlayerListeners();
 
             FrameLayout layout = getView().findViewById(R.id.player_layout);
@@ -395,12 +392,6 @@ public class PlayerFragment extends DebugFragment {
 
     }
 
-    private void getPlayerBufferLength() {
-        LoadControlBuffers lcb = new LoadControlBuffers();
-        PK_BUFFER_LENGTH = lcb.getMaxPlayerBufferMs();
-        Log.d(TAG, "The BufferLenfgth is : " + PK_BUFFER_LENGTH);
-    }
-
     private void getKeepAliveHeaderUrl(final URL url, final KeepAliveUrlResultListener listener) {
         new Thread(() -> {
             try {
@@ -442,12 +433,12 @@ public class PlayerFragment extends DebugFragment {
         );
 
         mPlayer.addListener(this, PlayerEvent.pause, event -> {
-            if (mIsKeepAlive) playerKeepAliveService.startFireKeepAliveService();
+
         });
 
-        mPlayer.addListener(this, PlayerEvent.play, event ->
-                playerKeepAliveService.setPauseBufferLength(PK_BUFFER_LENGTH)
-        );
+        mPlayer.addListener(this, PlayerEvent.play, event -> {
+            if (mIsKeepAlive) playerKeepAliveService.startFireKeepAliveService();
+        });
 
         mPlayer.addListener(this, PlayerEvent.stateChanged, event -> {
             if (mPlayerControls != null) {
