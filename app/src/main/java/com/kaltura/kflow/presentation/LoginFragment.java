@@ -43,6 +43,9 @@ public class LoginFragment extends DebugFragment implements View.OnClickListener
         mUsername = getView().findViewById(R.id.username);
         mPassword = getView().findViewById(R.id.password);
         getView().findViewById(R.id.login).setOnClickListener(this);
+
+        mUsername.setText(PreferenceManager.getInstance(requireContext()).getAuthUser());
+        mPassword.setText(PreferenceManager.getInstance(requireContext()).getAuthPassword());
     }
 
     @Override
@@ -59,6 +62,8 @@ public class LoginFragment extends DebugFragment implements View.OnClickListener
                         if (result.isSuccess()) {
                             PreferenceManager.getInstance(requireContext()).saveKs(result.results.getLoginSession().getKs());
                             PhoenixApiManager.getClient().setKs(result.results.getLoginSession().getKs());
+                            PreferenceManager.getInstance(requireContext()).saveAuthUser(email);
+                            PreferenceManager.getInstance(requireContext()).saveAuthPassword(password);
                         }
                     });
             clearDebugView();

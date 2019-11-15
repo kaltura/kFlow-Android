@@ -12,6 +12,8 @@ public class PreferenceManager {
     private String KEY_PARTNER_ID = "prefs_partner_id";
     private String KEY_MAIN_MEDIA_FILE_FORMAT = "prefs_main_media_file_format";
     private String KEY_KS = "prefs_ks";
+    private String KEY_AUTH_USER = "prefs_auth_user";
+    private String KEY_AUTH_PASSWORD = "prefs_auth_password";
 
     private static PreferenceManager sInstance = null;
     private SharedPreferences prefs;
@@ -23,6 +25,22 @@ public class PreferenceManager {
     public static PreferenceManager getInstance(Context context) {
         if (sInstance == null) sInstance = new PreferenceManager(context);
         return sInstance;
+    }
+
+    public void saveAuthUser(String username) {
+        prefs.edit().putString(KEY_AUTH_USER, username).apply();
+    }
+
+    public String getAuthUser() {
+        return prefs.getString(KEY_AUTH_USER, "");
+    }
+
+    public void saveAuthPassword(String password) {
+        prefs.edit().putString(KEY_AUTH_PASSWORD, password).apply();
+    }
+
+    public String getAuthPassword() {
+        return prefs.getString(KEY_AUTH_PASSWORD, "");
     }
 
     public void saveBaseUrl(String baseUrl) {
