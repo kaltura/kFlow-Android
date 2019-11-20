@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.kaltura.client.enums.TransactionType;
 import com.kaltura.client.services.TransactionService;
@@ -94,7 +95,9 @@ public class CheckReceiptFragment extends DebugFragment implements View.OnClickL
                 Toast.makeText(requireContext(), "Wrong input", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss",view -> {})
+                    .show();
         }
     }
 

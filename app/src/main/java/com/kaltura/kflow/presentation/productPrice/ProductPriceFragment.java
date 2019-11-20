@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.kaltura.client.enums.AssetReferenceType;
 import com.kaltura.client.services.AssetService;
@@ -108,7 +108,9 @@ public class ProductPriceFragment extends DebugFragment implements ProductPriceL
             clearDebugView();
             PhoenixApiManager.execute(requestBuilder);
         } else {
-            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss",view -> {})
+                    .show();
         }
     }
 
@@ -140,7 +142,9 @@ public class ProductPriceFragment extends DebugFragment implements ProductPriceL
             clearDebugView();
             PhoenixApiManager.execute(requestBuilder);
         } else {
-            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss",view -> {})
+                    .show();
         }
     }
 
