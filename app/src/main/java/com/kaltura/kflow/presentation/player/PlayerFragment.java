@@ -47,13 +47,9 @@ import com.kaltura.kflow.presentation.debug.DebugFragment;
 import com.kaltura.kflow.presentation.main.MainActivity;
 import com.kaltura.kflow.manager.PhoenixApiManager;
 import com.kaltura.kflow.utils.Utils;
-import com.kaltura.playkit.PKMediaConfig;
 import com.kaltura.playkit.PKMediaEntry;
 import com.kaltura.playkit.PKMediaFormat;
 import com.kaltura.playkit.PKMediaSource;
-import com.kaltura.playkit.PKPluginConfigs;
-import com.kaltura.playkit.PlayKitManager;
-import com.kaltura.playkit.Player;
 import com.kaltura.playkit.PlayerEvent;
 import com.kaltura.playkit.PlayerState;
 import com.kaltura.playkit.player.LoadControlBuffers;
@@ -61,10 +57,7 @@ import com.kaltura.playkit.player.PKTracks;
 import com.kaltura.playkit.player.TextTrack;
 import com.kaltura.playkit.plugins.ads.AdEvent;
 import com.kaltura.playkit.plugins.ott.OttEvent;
-import com.kaltura.playkit.providers.MediaEntryProvider;
-import com.kaltura.playkit.providers.api.SimpleSessionProvider;
 import com.kaltura.playkit.providers.api.phoenix.APIDefines;
-import com.kaltura.playkit.providers.base.OnMediaLoadCompletion;
 import com.kaltura.playkit.providers.ott.PhoenixMediaProvider;
 import com.kaltura.tvplayer.KalturaOttPlayer;
 import com.kaltura.tvplayer.KalturaPlayer;
@@ -257,8 +250,6 @@ public class PlayerFragment extends DebugFragment {
                     mediaEntry = entry;
                     if (mIsKeepAlive) {
                         onMediaLoadedKeepAlive();
-                    } else {
-//                        onMediaLoaded();
                     }
                 } else {
                     Toast.makeText(requireContext(), "failed to fetch media data: " + loadError.getMessage(), Toast.LENGTH_LONG).show();
@@ -285,38 +276,6 @@ public class PlayerFragment extends DebugFragment {
         return ottMediaOptions;
     }
 
-//    private void initPlayer() {
-//        startOttMediaLoading(response -> {
-//            if (isAdded()) {
-//                requireActivity().runOnUiThread(() -> {
-//                    if (response.getResponse() != null) {
-//                        mediaEntry = response.getResponse();
-//                        if (mIsKeepAlive) {
-//                            onMediaLoadedKeepAlive();
-//                        } else {
-//                            onMediaLoaded();
-//                        }
-//                    } else {
-//                        Toast.makeText(requireContext(), "failed to fetch media data: " + (response.getError() != null ? response.getError().getMessage() : ""), Toast.LENGTH_LONG).show();
-//                    }
-//                });
-//            }
-//        });
-//    }
-
-//    private void startOttMediaLoading(final OnMediaLoadCompletion completion) {
-//        MediaEntryProvider mediaProvider = new PhoenixMediaProvider()
-//                .setSessionProvider(new SimpleSessionProvider(PreferenceManager.getInstance(requireContext()).getBaseUrl() + "/api_v3/", PreferenceManager.getInstance(requireContext()).getPartnerId(), PhoenixApiManager.getClient().getKs()))
-//                .setAssetId(getAssetIdByFlowType())
-//                .setProtocol(PhoenixMediaProvider.HttpProtocol.All)
-//                .setContextType(getPlaybackContextType())
-//                .setAssetReferenceType(getAssetReferenceType())
-//                .setAssetType(getAssetType())
-//                .setFormats(PreferenceManager.getInstance(requireContext()).getMediaFileFormat());
-//
-//        mediaProvider.load(completion);
-//    }
-
     private String getAssetIdByFlowType() {
         if (mRecording == null) return String.valueOf(mAsset.getId());
         else return String.valueOf(mRecording.getId());
@@ -341,26 +300,6 @@ public class PlayerFragment extends DebugFragment {
         else return APIDefines.AssetReferenceType.Npvr;
     }
 
-//    private void loadPlayerSettings() {
-//        if (mPlayer == null) {
-//
-//            mPlayer = PlayKitManager.loadPlayer(requireContext(), new PKPluginConfigs());
-//
-//            mPlayer.getSettings().setSecureSurface(false);
-//            mPlayer.getSettings().setAllowCrossProtocolRedirect(true);
-//            mPlayer.getSettings().setCea608CaptionsEnabled(true); // default is false
-//
-//            getPlayerBufferLength();
-//
-//            addPlayerListeners();
-//
-//            FrameLayout layout = getView().findViewById(R.id.player_layout);
-//            layout.addView(mPlayer.getView());
-//
-//            mPlayerControls.setPlayer(mPlayer);
-//        }
-//    }
-
     private void onMediaLoadedKeepAlive() {
 
         getPlayerBufferLength();
@@ -380,35 +319,12 @@ public class PlayerFragment extends DebugFragment {
                     playerKeepAliveService.setKeepAliveURL(url);
                     mediaEntry.getSources().get(0).setUrl(url);
                 }
-
-//                setMediaEntry();
             });
         } catch (MalformedURLException e) {
             Log.d(TAG, "The KeepAlive Url is : " + e.getMessage());
             e.printStackTrace();
         }
     }
-
-//    private void onMediaLoaded() {
-////        loadPlayerSettings();
-//        setMediaEntry();
-//    }
-
-//    private void setMediaEntry() {
-//
-//        PKMediaConfig mediaConfig = new PKMediaConfig().setMediaEntry(mediaEntry);
-//        if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Live)) {
-//            mediaEntry.setMediaType(PKMediaEntry.MediaEntryType.DvrLive);
-//            mPlayerControls.setAsset(mAsset);
-////            mPlayerControls.disableControllersForLive();
-//        } else {
-//            mediaConfig.setStartPosition(0L);
-//        }
-//
-//        mPlayer.prepare(mediaConfig);
-//        mPlayer.play();
-//
-//    }
 
     private void getPlayerBufferLength() {
         LoadControlBuffers lcb = new LoadControlBuffers();
