@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.kaltura.client.enums.AssetReferenceType;
@@ -27,7 +28,6 @@ import com.kaltura.client.types.Asset;
 import com.kaltura.client.types.BookmarkFilter;
 import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.types.ProductPriceFilter;
-import com.kaltura.client.types.Recording;
 import com.kaltura.client.types.UserAssetRule;
 import com.kaltura.client.types.UserAssetRuleFilter;
 import com.kaltura.client.utils.request.MultiRequestBuilder;
@@ -167,7 +167,9 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
             clearDebugView();
             PhoenixApiManager.execute(requestBuilder);
         } else {
-            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss",view -> {})
+                    .show();
         }
     }
 
@@ -181,7 +183,9 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
             clearDebugView();
             PhoenixApiManager.execute(requestBuilder);
         } else {
-            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss",view -> {})
+                    .show();
         }
     }
 
@@ -196,7 +200,9 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
             clearDebugView();
             PhoenixApiManager.execute(requestBuilder);
         } else {
-            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss",view -> {})
+                    .show();
         }
     }
 
@@ -222,7 +228,9 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
                 Toast.makeText(requireContext(), "Wrong input", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss",view -> {})
+                    .show();
         }
     }
 
@@ -264,7 +272,9 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
                 Toast.makeText(requireContext(), "Wrong input", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss",view -> {})
+                    .show();
         }
     }
 
@@ -279,7 +289,9 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
                 Toast.makeText(requireContext(), "Wrong input", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss",view -> {})
+                    .show();
         }
     }
 

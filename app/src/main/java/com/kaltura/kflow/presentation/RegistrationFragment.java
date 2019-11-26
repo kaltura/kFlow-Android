@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.kaltura.client.services.OttUserService;
 import com.kaltura.client.types.OTTUser;
@@ -72,7 +72,9 @@ public class RegistrationFragment extends DebugFragment implements View.OnClickL
             clearDebugView();
             PhoenixApiManager.execute(requestBuilder);
         } else {
-            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss",view -> {})
+                    .show();
         }
     }
 

@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.kaltura.client.services.OttUserService;
 import com.kaltura.client.types.LoginResponse;
@@ -43,6 +43,9 @@ public class LoginFragment extends DebugFragment implements View.OnClickListener
         mUsername = getView().findViewById(R.id.username);
         mPassword = getView().findViewById(R.id.password);
         getView().findViewById(R.id.login).setOnClickListener(this);
+
+        mUsername.setText(PreferenceManager.getInstance(requireContext()).getAuthUser());
+        mPassword.setText(PreferenceManager.getInstance(requireContext()).getAuthPassword());
     }
 
     @Override
@@ -59,12 +62,16 @@ public class LoginFragment extends DebugFragment implements View.OnClickListener
                         if (result.isSuccess()) {
                             PreferenceManager.getInstance(requireContext()).saveKs(result.results.getLoginSession().getKs());
                             PhoenixApiManager.getClient().setKs(result.results.getLoginSession().getKs());
+                            PreferenceManager.getInstance(requireContext()).saveAuthUser(email);
+                            PreferenceManager.getInstance(requireContext()).saveAuthPassword(password);
                         }
                     });
             clearDebugView();
             PhoenixApiManager.execute(requestBuilder);
         } else {
-            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss",view -> {})
+                    .show();
         }
     }
 

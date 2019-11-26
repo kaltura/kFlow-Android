@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.kaltura.client.enums.AssetOrderBy;
 import com.kaltura.client.enums.EntityReferenceBy;
@@ -139,7 +140,9 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
             clearDebugView();
             PhoenixApiManager.execute(requestBuilder);
         } else {
-            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss",view -> {})
+                    .show();
         }
     }
 
@@ -159,7 +162,9 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
             clearDebugView();
             PhoenixApiManager.execute(requestBuilder);
         } else {
-            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss",view -> {})
+                    .show();
         }
     }
 
@@ -182,7 +187,9 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
             clearDebugView();
             PhoenixApiManager.execute(requestBuilder);
         } else {
-            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss",view -> {})
+                    .show();
         }
     }
 
@@ -219,7 +226,9 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
             clearDebugView();
             PhoenixApiManager.execute(multiRequestBuilder);
         } else {
-            Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss",view -> {})
+                    .show();
         }
     }
 

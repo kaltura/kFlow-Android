@@ -6,9 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kaltura.client.types.Asset;
+import com.kaltura.client.types.ProgramAsset;
 import com.kaltura.kflow.R;
 import com.kaltura.kflow.presentation.player.PlayerFragment;
 import com.kaltura.kflow.presentation.main.MainActivity;
+import com.kaltura.kflow.utils.Utils;
+import com.kaltura.playkit.PKMediaEntry;
+import com.kaltura.playkit.providers.api.phoenix.APIDefines;
 
 import java.util.ArrayList;
 
@@ -25,11 +29,21 @@ import androidx.recyclerview.widget.RecyclerView;
 public class AssetListFragment extends Fragment implements AssetListAdapter.OnAssetClickListener {
 
     private static final String ARG_ASSETS = "extra_assets";
+    private static final String ARG_SCROLL_TO_LIVE = "extra_scroll_to_live";
 
     public static AssetListFragment newInstance(ArrayList<Asset> assets) {
         AssetListFragment assetListFragment = new AssetListFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_ASSETS, assets);
+        assetListFragment.setArguments(bundle);
+        return assetListFragment;
+    }
+
+    public static AssetListFragment newInstance(ArrayList<Asset> assets, boolean scrollToLive) {
+        AssetListFragment assetListFragment = new AssetListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_ASSETS, assets);
+        bundle.putBoolean(ARG_SCROLL_TO_LIVE, scrollToLive);
         assetListFragment.setArguments(bundle);
         return assetListFragment;
     }
@@ -56,17 +70,44 @@ public class AssetListFragment extends Fragment implements AssetListAdapter.OnAs
 
         Bundle savedState = getArguments();
         ArrayList<Asset> assets = savedState != null ? (ArrayList<Asset>) savedState.getSerializable(ARG_ASSETS) : null;
+        boolean scrollToLive = savedState != null && savedState.getBoolean(ARG_SCROLL_TO_LIVE);
 
         AssetListAdapter adapter = new AssetListAdapter(assets, this);
         list.setAdapter(adapter);
+
+        if (scrollToLive && assets != null) {
+            int liveAssetPosition = 0;
+            for (Asset asset : assets) {
+                if (asset instanceof ProgramAsset && Utils.isProgramInLive(asset)) {
+                    liveAssetPosition = assets.indexOf(asset);
+                    break;
+                }
+            }
+
+            if (liveAssetPosition > 2)
+                liveAssetPosition -= 3; // minus 3 items from the top, to move live asset to the middle of the screen
+
+            list.scrollToPosition(liveAssetPosition);
+        }
     }
 
     @Override
-    public void onAssetClicked(Asset asset) {
+    public void onVodAssetClicked(Asset asset) {
         PlayerFragment playerFragment = PlayerFragment.newInstance(asset, false);
         requireActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, playerFragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    public void onProgramAssetClicked(Asset asset, APIDefines.PlaybackContextType contextType) {
+        if (!Utils.isProgramInFuture(asset)) {
+            PlayerFragment playerFragment = PlayerFragment.newInstance(asset, false, contextType);
+            requireActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, playerFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 }

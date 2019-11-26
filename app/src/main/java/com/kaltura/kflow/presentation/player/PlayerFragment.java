@@ -12,7 +12,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.kaltura.client.enums.AssetReferenceType;
@@ -50,13 +49,19 @@ import com.kaltura.kflow.utils.Utils;
 import com.kaltura.playkit.PKMediaEntry;
 import com.kaltura.playkit.PKMediaFormat;
 import com.kaltura.playkit.PKMediaSource;
+import com.kaltura.playkit.PKPluginConfigs;
+import com.kaltura.playkit.PlayKitManager;
 import com.kaltura.playkit.PlayerEvent;
 import com.kaltura.playkit.PlayerState;
 import com.kaltura.playkit.player.LoadControlBuffers;
 import com.kaltura.playkit.player.PKTracks;
 import com.kaltura.playkit.player.TextTrack;
+import com.kaltura.playkit.plugins.SamplePlugin;
 import com.kaltura.playkit.plugins.ads.AdEvent;
+import com.kaltura.playkit.plugins.kava.KavaAnalyticsPlugin;
 import com.kaltura.playkit.plugins.ott.OttEvent;
+import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsConfig;
+import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsPlugin;
 import com.kaltura.playkit.providers.api.phoenix.APIDefines;
 import com.kaltura.playkit.providers.ott.PhoenixMediaProvider;
 import com.kaltura.tvplayer.KalturaOttPlayer;
@@ -86,9 +91,10 @@ public class PlayerFragment extends DebugFragment {
     private static final String ARG_ASSET = "extra_asset";
     private static final String ARG_KEEP_ALIVE = "extra_keep_alive";
     private static final String ARG_RECORDING = "extra_recording";
+    private static final String ARG_PLAYBACK_CONTEXT_TYPE = "extra_playback_context_type";
     private final static String TAG = PlayerFragment.class.getCanonicalName();
     private static int PK_BUFFER_LENGTH = 0;
-    public static final int DEFAULT_KAVA_PARTNER_ID = 2504201;
+    private static final int DEFAULT_KAVA_PARTNER_ID = 2504201;
 
     private SwitchCompat mLike;
     private SwitchCompat mFavorite;
@@ -107,13 +113,23 @@ public class PlayerFragment extends DebugFragment {
     private int mParentalRuleId;
     private boolean mIsKeepAlive;
     private PlayerKeepAliveService playerKeepAliveService;
+    private APIDefines.PlaybackContextType initialPlaybackContextType;
 
     public static PlayerFragment newInstance(Asset asset, boolean isKeepAlive) {
-
         PlayerFragment likeFragment = new PlayerFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_ASSET, asset);
         bundle.putBoolean(ARG_KEEP_ALIVE, isKeepAlive);
+        likeFragment.setArguments(bundle);
+        return likeFragment;
+    }
+
+    public static PlayerFragment newInstance(Asset asset, boolean isKeepAlive, APIDefines.PlaybackContextType playbackContextType) {
+        PlayerFragment likeFragment = new PlayerFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_ASSET, asset);
+        bundle.putBoolean(ARG_KEEP_ALIVE, isKeepAlive);
+        bundle.putSerializable(ARG_PLAYBACK_CONTEXT_TYPE, playbackContextType);
         likeFragment.setArguments(bundle);
         return likeFragment;
     }
@@ -143,9 +159,10 @@ public class PlayerFragment extends DebugFragment {
             mAsset = (Asset) savedState.getSerializable(ARG_ASSET);
             mIsKeepAlive = savedState.getBoolean(ARG_KEEP_ALIVE);
             mRecording = (Recording) savedState.getSerializable(ARG_RECORDING);
+            initialPlaybackContextType = (APIDefines.PlaybackContextType) savedState.getSerializable(ARG_PLAYBACK_CONTEXT_TYPE);
         }
 
-        playerKeepAliveService = new PlayerKeepAliveService(() -> mPlayer.isPlaying());
+        playerKeepAliveService = new PlayerKeepAliveService();
 
         if (mAsset == null && mRecording != null) loadAsset(mRecording.getAssetId());
         else onAssetLoaded();
@@ -169,9 +186,12 @@ public class PlayerFragment extends DebugFragment {
             if (mFavorite.isPressed()) actionFavorite();
         });
         mPlayerControls.setOnStartOverClickListener(view1 -> {
-            if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Vod)) {
+            if (mediaEntry.getMediaType().equals(PKMediaEntry.MediaEntryType.Vod))
                 mPlayer.replay();
-            }
+            else if (mAsset instanceof ProgramAsset && Utils.isProgramInPast(mAsset))
+                loadPlayer(APIDefines.PlaybackContextType.Catchup);
+            else if (mAsset instanceof ProgramAsset && Utils.isProgramInLive(mAsset))
+                loadPlayer(APIDefines.PlaybackContextType.StartOver);
         });
 
         mCheckAll.setOnClickListener(view1 -> {
@@ -207,12 +227,12 @@ public class PlayerFragment extends DebugFragment {
     private void onAssetLoaded() {
         ((AppCompatTextView) getView().findViewById(R.id.asset_title)).setText(mAsset.getName());
 
-        loadPlaykitPlayer();
+        loadPlayer(getPlaybackContextType());
         getLikeList();
         getFavoriteList();
     }
 
-    private void loadPlaykitPlayer() {
+    private void loadPlayer(APIDefines.PlaybackContextType playbackContextType) {
         PlayerInitOptions playerInitOptions = new PlayerInitOptions(PreferenceManager.getInstance(requireContext()).getPartnerId());
         playerInitOptions.setAutoPlay(true);
         playerInitOptions.setAllowCrossProtocolEnabled(true);
@@ -243,7 +263,7 @@ public class PlayerFragment extends DebugFragment {
         ViewGroup container = getView().findViewById(R.id.player_layout);
         container.addView(mPlayer.getPlayerView());
 
-        OTTMediaOptions ottMediaOptions = buildOttMediaOptions();
+        OTTMediaOptions ottMediaOptions = buildOttMediaOptions(playbackContextType);
         mPlayer.loadMedia(ottMediaOptions, (entry, loadError) -> {
             if (isAdded()) {
                 if (loadError == null) {
@@ -262,41 +282,51 @@ public class PlayerFragment extends DebugFragment {
         addPlayerListeners();
     }
 
-    private OTTMediaOptions buildOttMediaOptions() {
+    private OTTMediaOptions buildOttMediaOptions(APIDefines.PlaybackContextType playbackContextType) {
         OTTMediaOptions ottMediaOptions = new OTTMediaOptions();
         ottMediaOptions.assetId = getAssetIdByFlowType();
-        ottMediaOptions.assetType = getAssetType();
+        ottMediaOptions.assetType = getAssetType(playbackContextType);
         ottMediaOptions.contextType = getPlaybackContextType();
-        ottMediaOptions.assetReferenceType = getAssetReferenceType();
+        ottMediaOptions.assetReferenceType = getAssetReferenceType(playbackContextType);
         ottMediaOptions.protocol = PhoenixMediaProvider.HttpProtocol.All;
         ottMediaOptions.ks = PhoenixApiManager.getClient().getKs();
         ottMediaOptions.startPosition = 0L;
-        ottMediaOptions.formats = new String []{PreferenceManager.getInstance(requireContext()).getMediaFileFormat()};
+        ottMediaOptions.formats = new String[]{PreferenceManager.getInstance(requireContext()).getMediaFileFormat()};
 
         return ottMediaOptions;
     }
 
     private String getAssetIdByFlowType() {
-        if (mRecording == null) return String.valueOf(mAsset.getId());
+        if (mAsset instanceof ProgramAsset && getPlaybackContextType() == APIDefines.PlaybackContextType.Playback)
+            return String.valueOf(((ProgramAsset) mAsset).getLinearAssetId());
+        else if (mRecording == null) return String.valueOf(mAsset.getId());
         else return String.valueOf(mRecording.getId());
     }
 
-    private APIDefines.KalturaAssetType getAssetType() {
-        if (mRecording != null) return APIDefines.KalturaAssetType.Recording;
-        else if (mAsset instanceof ProgramAsset && Utils.isProgramIsPast(mAsset))
+    private APIDefines.KalturaAssetType getAssetType(APIDefines.PlaybackContextType playbackContextType) {
+        if (playbackContextType == APIDefines.PlaybackContextType.StartOver
+                || playbackContextType == APIDefines.PlaybackContextType.Catchup)
             return APIDefines.KalturaAssetType.Epg;
+        else if (mRecording != null) return APIDefines.KalturaAssetType.Recording;
         else return APIDefines.KalturaAssetType.Media;
     }
 
     private APIDefines.PlaybackContextType getPlaybackContextType() {
-        if (mRecording == null && mAsset instanceof ProgramAsset && Utils.isProgramIsPast(mAsset))
+        if (initialPlaybackContextType != null) return initialPlaybackContextType;
+
+        if (mAsset instanceof ProgramAsset && Utils.isProgramInPast(mAsset))
             return APIDefines.PlaybackContextType.Catchup;
-        else return APIDefines.PlaybackContextType.Playback;
+        else if (mAsset instanceof ProgramAsset && Utils.isProgramInLive(mAsset))
+            return APIDefines.PlaybackContextType.Playback;
+        else
+            return APIDefines.PlaybackContextType.Playback;
     }
 
-    private APIDefines.AssetReferenceType getAssetReferenceType() {
-        if (mRecording == null && getPlaybackContextType() == APIDefines.PlaybackContextType.Playback)
-            return APIDefines.AssetReferenceType.Media;
+    private APIDefines.AssetReferenceType getAssetReferenceType(APIDefines.PlaybackContextType playbackContextType) {
+        if (playbackContextType == APIDefines.PlaybackContextType.StartOver
+                || playbackContextType == APIDefines.PlaybackContextType.Catchup)
+            return APIDefines.AssetReferenceType.InternalEpg;
+        else if (mRecording == null) return APIDefines.AssetReferenceType.Media;
         else return APIDefines.AssetReferenceType.Npvr;
     }
 
@@ -373,12 +403,11 @@ public class PlayerFragment extends DebugFragment {
         );
 
         mPlayer.addListener(this, PlayerEvent.pause, event -> {
-            if (mIsKeepAlive) playerKeepAliveService.startFireKeepAliveService();
         });
 
-        mPlayer.addListener(this, PlayerEvent.play, event ->
-                playerKeepAliveService.setPauseBufferLength(PK_BUFFER_LENGTH)
-        );
+        mPlayer.addListener(this, PlayerEvent.play, event -> {
+            if (mIsKeepAlive) playerKeepAliveService.startFireKeepAliveService();
+        });
 
         mPlayer.addListener(this, PlayerEvent.stateChanged, event -> {
             if (mPlayerControls != null) {

@@ -9,7 +9,7 @@ public enum Feature {
     ANONYMOUS_LOGIN("Anonymous login"),
     REGISTRATION("Registration"),
     VOD("VOD gallery"),
-    EPG("EPG (past programs)"),
+    EPG("EPG"),
     LIVE("Live TV"),
     FAVORITES("Favorites"),
     SEARCH("Search"),

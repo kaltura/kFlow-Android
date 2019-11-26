@@ -4,13 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.kaltura.client.enums.RecordingStatus;
 import com.kaltura.client.services.RecordingService;
 import com.kaltura.client.types.Recording;
@@ -111,7 +111,9 @@ public class RecordingsFragment extends DebugFragment implements View.OnClickLis
                 clearDebugView();
                 PhoenixApiManager.execute(requestBuilder);
             } else {
-                Toast.makeText(requireContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+                Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
+                        .setAction("Dismiss",view -> {})
+                        .show();
             }
         } else {
             filterRecordings();

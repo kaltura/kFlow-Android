@@ -14,14 +14,10 @@ class PlayerKeepAliveService {
     private final static String TAG = PlayerKeepAliveService.class.getCanonicalName();
 
     private final long KEEP_ALIVE_CYCLE = 10000L;
-    private int pauseBufferLength;
     private Handler scheduler = null;
     private String keepAliveURL;
-    private IPlayerState isPlayingState;
 
-    PlayerKeepAliveService(IPlayerState isPlayingState) {
-        this.isPlayingState = isPlayingState;
-        pauseBufferLength = 0;
+    PlayerKeepAliveService() {
         keepAliveURL = "";
         if (scheduler == null) {
             scheduler = new Handler();
@@ -41,10 +37,6 @@ class PlayerKeepAliveService {
         if (scheduler != null) {
             scheduler.removeCallbacks(fireKeepAliveCallsRunnable);
         }
-    }
-
-    void setPauseBufferLength(int length) {
-        pauseBufferLength = length;
     }
 
     void setKeepAliveURL(String url) {
@@ -72,21 +64,5 @@ class PlayerKeepAliveService {
         }).start();
     }
 
-    private Runnable fireKeepAliveCallsRunnable = () -> {
-        if (!isPlayingState.isPlaying()) {
-            startFireKeepAliveService();
-        } else {
-            if (pauseBufferLength <= 0) {
-                cancelFireKeepAliveService();
-            } else {
-                startFireKeepAliveService();
-                pauseBufferLength = pauseBufferLength - (int) KEEP_ALIVE_CYCLE;
-                Log.d(TAG, "PAUSE_BUFFER_LENGTH is " + pauseBufferLength);
-            }
-        }
-    };
-
-    interface IPlayerState {
-        boolean isPlaying();
-    }
+    private Runnable fireKeepAliveCallsRunnable = this::startFireKeepAliveService;
 }
