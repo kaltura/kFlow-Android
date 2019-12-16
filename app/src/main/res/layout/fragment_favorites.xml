@@ -13,7 +13,7 @@
         android:paddingEnd="16dp">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/get_favorites"
+            android:id="@+id/getFavorites"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginBottom="5dp"
@@ -24,7 +24,7 @@
             android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/favorite_count"
+            android:id="@+id/favoriteCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -34,7 +34,7 @@
             android:visibility="gone" />
 
         <com.kaltura.kflow.presentation.debug.DebugView
-            android:id="@+id/debug_view"
+            android:id="@+id/debugView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
