@@ -51,7 +51,7 @@ public class SubscriptionListAdapter extends ExpandableRecyclerAdapter<Subscript
     @Override
     public void onBindParentViewHolder(PackageViewHolder packageViewHolder, int position, ParentListItem parentListItem) {
         ParentRecyclerViewItem item = (ParentRecyclerViewItem) parentListItem;
-        packageViewHolder.bind((Asset) item.getParent(), !item.getChildItemList().isEmpty(), mListener);
+        packageViewHolder.bind((Asset) item.getParent(), !item.getChildren().isEmpty(), mListener);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class SubscriptionListAdapter extends ExpandableRecyclerAdapter<Subscript
             Value baseId = ((Asset) parentRecyclerViewItem.getParent()).getMetas().get("Base ID");
             if (baseId != null && ((DoubleValue) baseId).getValue().equals(packageBaseId)) {
                 expandParent(item);
-                parentRecyclerViewItem.getChildItemList().addAll(subscriptions);
+                parentRecyclerViewItem.getChildren().addAll(subscriptions);
                 notifyChildItemRangeInserted(getParentItemList().indexOf(item), 0, subscriptions.size());
             }
         }

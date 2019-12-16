@@ -1,10 +1,9 @@
-package com.kaltura.kflow.presentation.main;
+package com.kaltura.kflow.presentation.main
 
 /**
  * Created by alex_lytvynenko on 11/18/18.
  */
-public enum Feature {
-
+enum class Feature(val text: String) {
     LOGIN("Login"),
     ANONYMOUS_LOGIN("Anonymous login"),
     REGISTRATION("Registration"),
@@ -21,14 +20,4 @@ public enum Feature {
     TRANSACTION_HISTORY("Transaction history"),
     RECORDINGS("Recordings"),
     SETTINGS("Settings");
-
-    private String text;
-
-    Feature(String text) {
-        this.text = text;
-    }
-
-    public String getText() {
-        return text;
-    }
 }

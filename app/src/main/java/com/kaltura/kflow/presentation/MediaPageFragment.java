@@ -46,7 +46,7 @@ import java.util.List;
  */
 public class MediaPageFragment extends DebugFragment implements View.OnClickListener {
 
-    private static final String ARG_KEEP_ALIVE = "extra_keep_alive";
+    public static final String ARG_KEEP_ALIVE = "extra_keep_alive";
 
     private TextInputEditText mMediaId;
     private TextInputEditText mPin;
