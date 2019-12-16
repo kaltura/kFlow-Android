@@ -28,8 +28,8 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class AssetListFragment extends Fragment implements AssetListAdapter.OnAssetClickListener {
 
-    private static final String ARG_ASSETS = "extra_assets";
-    private static final String ARG_SCROLL_TO_LIVE = "extra_scroll_to_live";
+    public static final String ARG_ASSETS = "extra_assets";
+    public static final String ARG_SCROLL_TO_LIVE = "extra_scroll_to_live";
 
     public static AssetListFragment newInstance(ArrayList<Asset> assets) {
         AssetListFragment assetListFragment = new AssetListFragment();

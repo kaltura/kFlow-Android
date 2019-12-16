@@ -12,21 +12,21 @@
         android:textColor="@android:color/black" />
 
     <RelativeLayout
-        android:id="@+id/request_container"
+        android:id="@+id/requestContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:drawable/editbox_background_normal">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/request_body"
+            android:id="@+id/requestBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@+id/request_sort"
+            android:layout_toStartOf="@+id/requestSort"
             android:textIsSelectable="true"
             tools:text="Request" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/request_sort"
+            android:id="@+id/requestSort"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_alignParentEnd="true"
@@ -43,21 +43,21 @@
         android:textColor="@android:color/black" />
 
     <RelativeLayout
-        android:id="@+id/response_container"
+        android:id="@+id/responseContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:drawable/editbox_background_normal">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/response_body"
+            android:id="@+id/responseBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@+id/response_sort"
+            android:layout_toStartOf="@+id/responseSort"
             android:textIsSelectable="true"
             tools:text="Response" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/response_sort"
+            android:id="@+id/responseSort"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_alignParentEnd="true"

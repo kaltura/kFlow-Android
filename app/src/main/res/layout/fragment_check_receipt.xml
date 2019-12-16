@@ -17,13 +17,13 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/receipt_id"
+                android:id="@+id/receiptId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:hint="Receipt ID"
-                android:nextFocusDown="@id/product_type"
                 android:imeOptions="actionNext"
+                android:nextFocusDown="@id/productType"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -32,13 +32,13 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/product_type"
+                android:id="@+id/productType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:nextFocusDown="@id/product_id"
                 android:hint="Product type"
                 android:imeOptions="actionNext"
+                android:nextFocusDown="@id/productId"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -47,14 +47,14 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/product_id"
+                android:id="@+id/productId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:nextFocusDown="@id/content_id"
-                android:inputType="number"
                 android:hint="Product ID"
                 android:imeOptions="actionNext"
+                android:inputType="number"
+                android:nextFocusDown="@id/contentId"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -63,13 +63,13 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/content_id"
+                android:id="@+id/contentId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:inputType="number"
                 android:hint="Content ID"
                 android:imeOptions="actionDone"
+                android:inputType="number"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -85,7 +85,7 @@
             android:textSize="16sp" />
 
         <com.kaltura.kflow.presentation.debug.DebugView
-            android:id="@+id/debug_view"
+            android:id="@+id/debugView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>

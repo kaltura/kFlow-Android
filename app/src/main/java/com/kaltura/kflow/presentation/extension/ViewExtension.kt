@@ -6,6 +6,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.PluralsRes
 
 /**
  * Created by alex_litvinenko
@@ -44,3 +45,5 @@ fun View.obtainAttrs(set: AttributeSet?, attrs: IntArray, f: (a: TypedArray) -> 
 fun View.getColor(@ColorRes id: Int) = ContextCompat.getColor(context, id)
 
 fun View.getDrawable(@DrawableRes id: Int) = ContextCompat.getDrawable(context, id)
+
+fun View.getQuantityString(@PluralsRes id: Int, count: Int): String = context.getQuantityString(id, count)

@@ -17,13 +17,13 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/linear_media_id"
+                android:id="@+id/linearMediaId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:inputType="number"
                 android:hint="Linear media id"
                 android:imeOptions="actionDone"
+                android:inputType="number"
                 android:singleLine="true" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -62,18 +62,18 @@
             android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/show_channel"
+            android:id="@+id/showChannel"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:text="Show"
             android:layout_marginBottom="5dp"
             android:backgroundTint="@color/colorAccent"
             android:gravity="center"
+            android:text="Show"
             android:textColor="@android:color/white"
             android:textSize="16sp" />
 
         <com.kaltura.kflow.presentation.debug.DebugView
-            android:id="@+id/debug_view"
+            android:id="@+id/debugView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
