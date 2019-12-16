@@ -17,7 +17,7 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ksql_request"
+                android:id="@+id/ksqlRequest"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -39,7 +39,7 @@
             android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/show_assets"
+            android:id="@+id/showAssets"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginBottom="5dp"
@@ -49,7 +49,7 @@
             android:textSize="16sp" />
 
         <com.kaltura.kflow.presentation.debug.DebugView
-            android:id="@+id/debug_view"
+            android:id="@+id/debugView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
