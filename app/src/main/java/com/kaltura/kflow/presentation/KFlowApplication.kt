@@ -9,14 +9,14 @@ import com.kaltura.kflow.manager.PreferenceManager
  * Created by alex_lytvynenko on 2019-06-25.
  */
 class KFlowApplication : Application() {
+
     override fun onCreate() {
         super.onCreate()
         initApiClient()
     }
 
     private fun initApiClient() {
-        val config = Configuration()
-        config.endpoint = PreferenceManager.getInstance(this).baseUrl
+        val config = Configuration().apply { endpoint = PreferenceManager.getInstance(this@KFlowApplication).baseUrl }
         PhoenixApiManager.getClient().connectionConfiguration = config
         PhoenixApiManager.getClient().ks = PreferenceManager.getInstance(this).ks
     }
