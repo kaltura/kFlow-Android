@@ -17,7 +17,7 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/channel_name"
+                android:id="@+id/channelName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -39,18 +39,18 @@
             android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/show_channel"
+            android:id="@+id/showChannel"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:text="Show"
             android:layout_marginBottom="5dp"
             android:backgroundTint="@color/colorAccent"
             android:gravity="center"
+            android:text="Show"
             android:textColor="@android:color/white"
             android:textSize="16sp" />
 
         <com.kaltura.kflow.presentation.debug.DebugView
-            android:id="@+id/debug_view"
+            android:id="@+id/debugView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
