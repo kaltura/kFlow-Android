@@ -25,7 +25,7 @@ import java.util.ArrayList;
  */
 public class RecordingListFragment extends Fragment implements RecordingListAdapter.OnRecordingClickListener {
 
-    private static final String ARG_RECORDINGS = "extra_recordings";
+    public static final String ARG_RECORDINGS = "extra_recordings";
 
     public static RecordingListFragment newInstance(ArrayList<Recording> recordings) {
         RecordingListFragment recordingListFragment = new RecordingListFragment();

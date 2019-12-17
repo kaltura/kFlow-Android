@@ -13,7 +13,7 @@
         android:paddingEnd="16dp">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/get_recorded"
+            android:id="@+id/getRecorded"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginBottom="5dp"
@@ -24,7 +24,7 @@
             android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/get_on_going"
+            android:id="@+id/getOnGoing"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginBottom="5dp"
@@ -35,7 +35,7 @@
             android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/get_scheduled"
+            android:id="@+id/getScheduled"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginBottom="5dp"
@@ -46,7 +46,7 @@
             android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/show_recordings"
+            android:id="@+id/showRecordings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -56,7 +56,7 @@
             android:visibility="gone" />
 
         <com.kaltura.kflow.presentation.debug.DebugView
-            android:id="@+id/debug_view"
+            android:id="@+id/debugView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
