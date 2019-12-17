@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/asset_container"
+    android:id="@+id/assetContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
@@ -10,7 +10,7 @@
     android:paddingBottom="10dp">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/asset_name"
+        android:id="@+id/assetName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toStartOf="@+id/actions"
@@ -18,7 +18,7 @@
         android:textSize="18sp" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/asset_time"
+        android:id="@+id/assetTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/asset_name"
@@ -26,10 +26,10 @@
         android:textSize="15sp" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/asset_id"
+        android:id="@+id/assetId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/asset_time"
+        android:layout_below="@+id/assetTime"
         android:layout_toStartOf="@+id/actions"
         android:textSize="15sp" />
 
@@ -62,7 +62,7 @@
             android:textSize="12sp" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/catch_up"
+            android:id="@+id/catchUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/colorAccent"
