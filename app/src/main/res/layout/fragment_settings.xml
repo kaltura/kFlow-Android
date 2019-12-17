@@ -10,10 +10,10 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
         android:gravity="center"
-        android:text="Please set here your account details. After changing your account, please re-login to be able to continue work with the app." />
+        android:text="Please set here your account details. After changing your account, please re-login to be able to continue work with the app."
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
@@ -26,7 +26,7 @@
             android:layout_marginBottom="10dp"
             android:hint="END Point URL"
             android:imeOptions="actionNext"
-            android:nextFocusDown="@id/partner_id"
+            android:nextFocusDown="@id/partnerId"
             android:singleLine="true" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -36,14 +36,14 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/partner_id"
+            android:id="@+id/partnerId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:hint="Partner ID"
             android:imeOptions="actionNext"
             android:inputType="number"
-            android:nextFocusDown="@id/media_file_format"
+            android:nextFocusDown="@id/mediaFileFormat"
             android:singleLine="true" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -53,7 +53,7 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/media_file_format"
+            android:id="@+id/mediaFileFormat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
