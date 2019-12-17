@@ -89,10 +89,10 @@ import java.util.List;
  */
 public class PlayerFragment extends DebugFragment {
 
-    private static final String ARG_ASSET = "extra_asset";
-    private static final String ARG_KEEP_ALIVE = "extra_keep_alive";
-    private static final String ARG_RECORDING = "extra_recording";
-    private static final String ARG_PLAYBACK_CONTEXT_TYPE = "extra_playback_context_type";
+    public static final String ARG_ASSET = "extra_asset";
+    public static final String ARG_KEEP_ALIVE = "extra_keep_alive";
+    public static final String ARG_RECORDING = "extra_recording";
+    public static final String ARG_PLAYBACK_CONTEXT_TYPE = "extra_playback_context_type";
     private final static String TAG = PlayerFragment.class.getCanonicalName();
 
     private SwitchCompat mLike;
