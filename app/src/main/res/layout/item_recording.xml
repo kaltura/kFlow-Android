@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/recording_container"
+    android:id="@+id/recordingContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
@@ -10,7 +10,7 @@
     android:paddingBottom="10dp">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/recording_status"
+        android:id="@+id/recordingStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toStartOf="@+id/arrow_icon"
@@ -18,15 +18,15 @@
         android:textSize="18sp" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/recording_id"
+        android:id="@+id/recordingId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/recording_status"
-        android:layout_toStartOf="@+id/arrow_icon"
+        android:layout_below="@+id/recordingStatus"
+        android:layout_toStartOf="@+id/arrowIcon"
         android:textSize="15sp" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/arrow_icon"
+        android:id="@+id/arrowIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
