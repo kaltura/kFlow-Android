@@ -17,7 +17,7 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/package_asset_type"
+                android:id="@+id/packageAssetType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -29,7 +29,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/get_packages"
+            android:id="@+id/getPackages"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginBottom="5dp"
@@ -40,7 +40,7 @@
             android:textSize="16sp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/package_list"
+            android:id="@+id/packageList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -48,7 +48,7 @@
             android:visibility="gone" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/show_assets"
+            android:id="@+id/showAssets"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginBottom="5dp"
@@ -58,7 +58,7 @@
             android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/get_entitlements"
+            android:id="@+id/getEntitlements"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginBottom="5dp"
@@ -69,7 +69,7 @@
             android:textSize="16sp" />
 
         <com.kaltura.kflow.presentation.debug.DebugView
-            android:id="@+id/debug_view"
+            android:id="@+id/debugView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>

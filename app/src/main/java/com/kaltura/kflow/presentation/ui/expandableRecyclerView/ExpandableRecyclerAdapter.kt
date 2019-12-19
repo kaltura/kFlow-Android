@@ -114,7 +114,7 @@ abstract class ExpandableRecyclerAdapter<PVH : ParentViewHolder, CVH : ChildView
      * @return A `PVH` corresponding to the [ParentListItem] with
      * the `ViewGroup` parentViewGroup
      */
-    abstract fun onCreateParentViewHolder(parentViewGroup: ViewGroup?): PVH
+    abstract fun onCreateParentViewHolder(parentViewGroup: ViewGroup): PVH
 
     /**
      * Callback called from [.onCreateViewHolder] when
@@ -125,7 +125,7 @@ abstract class ExpandableRecyclerAdapter<PVH : ParentViewHolder, CVH : ChildView
      * @return A `CVH` corresponding to the child list item with the
      * `ViewGroup` childViewGroup
      */
-    abstract fun onCreateChildViewHolder(childViewGroup: ViewGroup?): CVH
+    abstract fun onCreateChildViewHolder(childViewGroup: ViewGroup): CVH
 
     /**
      * Callback called from onBindViewHolder(RecyclerView.ViewHolder, int)
@@ -139,7 +139,7 @@ abstract class ExpandableRecyclerAdapter<PVH : ParentViewHolder, CVH : ChildView
      * @param parentListItem The [ParentListItem] which holds the data to
      * be bound to the `PVH`
      */
-    abstract fun onBindParentViewHolder(parentViewHolder: PVH, position: Int, parentListItem: ParentListItem?)
+    abstract fun onBindParentViewHolder(parentViewHolder: PVH, position: Int, parentListItem: ParentListItem)
 
     /**
      * Callback called from onBindViewHolder(RecyclerView.ViewHolder, int)

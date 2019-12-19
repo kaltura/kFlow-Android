@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/asset_container"
+    android:id="@+id/subsContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
@@ -10,7 +10,7 @@
     android:paddingBottom="10dp">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/asset_name"
+        android:id="@+id/subsName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toStartOf="@+id/arrow"
@@ -18,18 +18,18 @@
         android:textSize="18sp" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/asset_id"
+        android:id="@+id/subsId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/asset_name"
+        android:layout_below="@+id/subsName"
         android:layout_toStartOf="@+id/arrow"
         android:textSize="15sp" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/channel_ids"
+        android:id="@+id/channelIds"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/asset_id"
+        android:layout_below="@+id/subsId"
         android:layout_toStartOf="@+id/arrow"
         android:textSize="15sp" />
 
