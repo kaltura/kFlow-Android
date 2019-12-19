@@ -15,7 +15,7 @@
         android:paddingEnd="16dp">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/asset_title"
+            android:id="@+id/assetTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
@@ -23,33 +23,33 @@
             tools:text="Asset title" />
 
         <RelativeLayout
-            android:id="@+id/player_container"
+            android:id="@+id/playerContainer"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:background="@android:color/darker_gray">
 
             <ProgressBar
-                android:id="@+id/progress_bar"
+                android:id="@+id/progressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true" />
 
             <FrameLayout
-                android:id="@+id/player_layout"
+                android:id="@+id/playerLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp" />
 
             <com.kaltura.kflow.presentation.player.PlaybackControlsView
-                android:id="@+id/player_controls"
+                android:id="@+id/playerControls"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true" />
         </RelativeLayout>
 
         <LinearLayout
-            android:id="@+id/subtitles_layout"
+            android:id="@+id/subtitlesLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -87,7 +87,7 @@
             app:switchPadding="10dp" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/check_all"
+            android:id="@+id/checkAll"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginBottom="5dp"
@@ -98,7 +98,7 @@
             android:textSize="16sp" />
 
         <LinearLayout
-            android:id="@+id/pin_layout"
+            android:id="@+id/pinLayout"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginBottom="5dp"
@@ -108,7 +108,7 @@
             android:weightSum="1">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/pin_input_layout"
+                android:id="@+id/pinInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.4"
@@ -126,7 +126,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/insert_pin"
+                android:id="@+id/insertPin"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.6"
@@ -139,7 +139,7 @@
         </LinearLayout>
 
         <com.kaltura.kflow.presentation.debug.DebugView
-            android:id="@+id/debug_view"
+            android:id="@+id/debugView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
