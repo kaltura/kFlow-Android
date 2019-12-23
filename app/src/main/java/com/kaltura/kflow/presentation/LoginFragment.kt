@@ -29,21 +29,21 @@ class LoginFragment : DebugFragment(R.layout.fragment_login) {
             Utils.hideKeyboard(view)
             makeLoginRequest(username.string, password.string)
         }
-        username.string = PreferenceManager.getInstance(requireContext()).authUser
-        password.string = PreferenceManager.getInstance(requireContext()).authPassword
+        username.string = PreferenceManager.with(requireContext()).authUser
+        password.string = PreferenceManager.with(requireContext()).authPassword
     }
 
     private fun makeLoginRequest(email: String, password: String) {
         withInternetConnection {
             clearDebugView()
-            PhoenixApiManager.execute(OttUserService.login(PreferenceManager.getInstance(requireContext()).partnerId, email, password,
+            PhoenixApiManager.execute(OttUserService.login(PreferenceManager.with(requireContext()).partnerId, email, password,
                     null, Utils.getUUID(requireContext()))
                     .setCompletion {
                         if (it.isSuccess) {
-                            PreferenceManager.getInstance(requireContext()).saveKs(it.results.loginSession.ks)
+                            PreferenceManager.with(requireContext()).ks = it.results.loginSession.ks
                             PhoenixApiManager.getClient().ks = it.results.loginSession.ks
-                            PreferenceManager.getInstance(requireContext()).saveAuthUser(email)
-                            PreferenceManager.getInstance(requireContext()).saveAuthPassword(password)
+                            PreferenceManager.with(requireContext()).authUser = email
+                            PreferenceManager.with(requireContext()).authPassword = password
                         }
                     })
         }

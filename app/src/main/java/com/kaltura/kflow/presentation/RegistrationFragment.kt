@@ -41,7 +41,7 @@ class RegistrationFragment : DebugFragment(R.layout.fragment_registration) {
             }
 
             clearDebugView()
-            PhoenixApiManager.execute(OttUserService.register(PreferenceManager.getInstance(requireContext()).partnerId, ottUser, password))
+            PhoenixApiManager.execute(OttUserService.register(PreferenceManager.with(requireContext()).partnerId, ottUser, password))
         }
     }
 

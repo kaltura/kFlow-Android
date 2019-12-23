@@ -16,8 +16,8 @@ class KFlowApplication : Application() {
     }
 
     private fun initApiClient() {
-        val config = Configuration().apply { endpoint = PreferenceManager.getInstance(this@KFlowApplication).baseUrl }
+        val config = Configuration().apply { endpoint = PreferenceManager.with(this@KFlowApplication).baseUrl }
         PhoenixApiManager.getClient().connectionConfiguration = config
-        PhoenixApiManager.getClient().ks = PreferenceManager.getInstance(this).ks
+        PhoenixApiManager.getClient().ks = PreferenceManager.with(this).ks
     }
 }

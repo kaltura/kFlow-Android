@@ -157,21 +157,21 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     private fun addPhoenixAnalyticsPluginConfig(config: PKPluginConfigs) {
         val ks = PhoenixApiManager.getClient().ks
-        val pId = PreferenceManager.getInstance(requireContext()).partnerId
-        val baseUrl = PreferenceManager.getInstance(requireContext()).baseUrl + "/api_v3/"
+        val pId = PreferenceManager.with(requireContext()).partnerId
+        val baseUrl = PreferenceManager.with(requireContext()).baseUrl + "/api_v3/"
         val phoenixAnalyticsConfig = PhoenixAnalyticsConfig(pId, baseUrl, ks, 30)
         config.setPluginConfig(PhoenixAnalyticsPlugin.factory.name, phoenixAnalyticsConfig)
     }
 
     private fun startOttMediaLoading(playbackContextType: APIDefines.PlaybackContextType, completion: OnMediaLoadCompletion) {
         val mediaProvider: MediaEntryProvider = PhoenixMediaProvider()
-                .setSessionProvider(SimpleSessionProvider(PreferenceManager.getInstance(requireContext()).baseUrl + "/api_v3/", PreferenceManager.getInstance(requireContext()).partnerId, PhoenixApiManager.getClient().ks))
+                .setSessionProvider(SimpleSessionProvider(PreferenceManager.with(requireContext()).baseUrl + "/api_v3/", PreferenceManager.with(requireContext()).partnerId, PhoenixApiManager.getClient().ks))
                 .setAssetId(getAssetIdByFlowType())
                 .setProtocol(PhoenixMediaProvider.HttpProtocol.All)
                 .setContextType(playbackContextType)
                 .setAssetReferenceType(getAssetReferenceType(playbackContextType))
                 .setAssetType(getAssetType(playbackContextType))
-                .setFormats(PreferenceManager.getInstance(requireContext()).mediaFileFormat)
+                .setFormats(PreferenceManager.with(requireContext()).mediaFileFormat)
         mediaProvider.load(completion)
     }
 

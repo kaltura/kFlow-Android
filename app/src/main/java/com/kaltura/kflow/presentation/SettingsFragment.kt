@@ -29,30 +29,30 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     }
 
     private fun initUI() {
-        url.string = PreferenceManager.getInstance(requireContext()).baseUrl
-        partnerId.string = PreferenceManager.getInstance(requireContext()).partnerId.toString()
-        mediaFileFormat.string = PreferenceManager.getInstance(requireContext()).mediaFileFormat
+        url.string = PreferenceManager.with(requireContext()).baseUrl
+        partnerId.string = PreferenceManager.with(requireContext()).partnerId.toString()
+        mediaFileFormat.string = PreferenceManager.with(requireContext()).mediaFileFormat
     }
 
     private fun save(baseUrl: String, partnerId: String, mediaFileFormat: String) {
         if (baseUrl.isNotEmpty()) {
-            PreferenceManager.getInstance(requireContext()).clearKs()
-            PreferenceManager.getInstance(requireContext()).saveBaseUrl(baseUrl)
+            PreferenceManager.with(requireContext()).clearKs()
+            PreferenceManager.with(requireContext()).baseUrl = baseUrl
 
-            val config = Configuration().apply { endpoint = PreferenceManager.getInstance(requireContext()).baseUrl }
+            val config = Configuration().apply { endpoint = PreferenceManager.with(requireContext()).baseUrl }
             PhoenixApiManager.getClient().connectionConfiguration = config
             PhoenixApiManager.getClient().ks = null
         } else {
             toast("END Point URL is empty")
         }
         if (partnerId.isNotEmpty() && TextUtils.isDigitsOnly(partnerId)) {
-            PreferenceManager.getInstance(requireContext()).clearKs()
-            PreferenceManager.getInstance(requireContext()).savePartnerId(partnerId.toInt())
+            PreferenceManager.with(requireContext()).clearKs()
+            PreferenceManager.with(requireContext()).partnerId = partnerId.toInt()
             PhoenixApiManager.getClient().ks = null
         } else {
             toast("Parthner ID is missing or invalid")
         }
-        if (mediaFileFormat.isNotEmpty()) PreferenceManager.getInstance(requireContext()).saveMediaFileFormat(mediaFileFormat)
+        if (mediaFileFormat.isNotEmpty()) PreferenceManager.with(requireContext()).mediaFileFormat = mediaFileFormat
         else toast("Media File Format is missing")
 
         toast("Saved")

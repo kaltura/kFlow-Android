@@ -36,10 +36,10 @@ class AnonymousLoginFragment : DebugFragment(R.layout.fragment_anonymous_login) 
         withInternetConnection {
             clearDebugView()
             PhoenixApiManager.execute(
-                    OttUserService.anonymousLogin(PreferenceManager.getInstance(requireContext()).partnerId, Utils.getUUID(requireContext()))
+                    OttUserService.anonymousLogin(PreferenceManager.with(requireContext()).partnerId, Utils.getUUID(requireContext()))
                             .setCompletion {
                                 if (it.isSuccess) {
-                                    PreferenceManager.getInstance(requireContext()).saveKs(it.results.ks)
+                                    PreferenceManager.with(requireContext()).ks = it.results.ks
                                     PhoenixApiManager.getClient().ks = it.results.ks
                                     //generateAppToken();
                                 }
