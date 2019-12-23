@@ -14,7 +14,6 @@ import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.MainActivity
-import com.kaltura.kflow.utils.Utils
 import kotlinx.android.synthetic.main.fragment_live.*
 
 /**
@@ -31,11 +30,11 @@ class LiveTvFragment : DebugFragment(R.layout.fragment_live) {
         (requireActivity() as MainActivity).supportActionBar?.title = "Live TV"
 
         showChannel.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             replaceFragment(instanceOf<AssetListFragment>(AssetListFragment.ARG_ASSETS to channels), addToBackStack = true)
         }
         get.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             makeGetChannelsRequest(channelName.string)
         }
         channelName.string = "Отр"
@@ -71,7 +70,7 @@ class LiveTvFragment : DebugFragment(R.layout.fragment_live) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Utils.hideKeyboard(view)
+        hideKeyboard()
         PhoenixApiManager.cancelAll()
     }
 }

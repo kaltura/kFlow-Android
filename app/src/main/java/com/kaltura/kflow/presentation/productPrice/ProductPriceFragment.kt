@@ -15,7 +15,6 @@ import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.MainActivity
-import com.kaltura.kflow.utils.Utils
 import kotlinx.android.synthetic.main.fragment_product_price.*
 import java.util.*
 
@@ -33,11 +32,11 @@ class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
 
         initList()
         showProductPrices.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             showProductPrices()
         }
         get.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             makeGetAssetRequest(assetId.string)
         }
         assetId.string = "428755"
@@ -105,7 +104,7 @@ class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Utils.hideKeyboard(view)
+        hideKeyboard()
         PhoenixApiManager.cancelAll()
     }
 }

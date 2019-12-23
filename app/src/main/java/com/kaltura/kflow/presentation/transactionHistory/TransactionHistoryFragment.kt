@@ -15,7 +15,6 @@ import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.MainActivity
-import com.kaltura.kflow.utils.Utils
 import kotlinx.android.synthetic.main.fragment_transaction_history.*
 
 /**
@@ -33,11 +32,11 @@ class TransactionHistoryFragment : DebugFragment(R.layout.fragment_transaction_h
 
         initList()
         showTransactions.setOnClickListener {
-            Utils.hideKeyboard(getView())
+            hideKeyboard()
             showTransactions()
         }
         get.setOnClickListener {
-            Utils.hideKeyboard(getView())
+            hideKeyboard()
             makeGetTransactionHistoryRequest()
         }
         showTransactions.visibleOrGone(transactions.isNotEmpty())
@@ -77,7 +76,7 @@ class TransactionHistoryFragment : DebugFragment(R.layout.fragment_transaction_h
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Utils.hideKeyboard(view)
+        hideKeyboard()
         PhoenixApiManager.cancelAll()
     }
 }

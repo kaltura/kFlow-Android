@@ -9,10 +9,10 @@ import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
+import com.kaltura.kflow.presentation.extension.hideKeyboard
 import com.kaltura.kflow.presentation.extension.string
 import com.kaltura.kflow.presentation.extension.withInternetConnection
 import com.kaltura.kflow.presentation.main.MainActivity
-import com.kaltura.kflow.utils.Utils
 import kotlinx.android.synthetic.main.fragment_registration.*
 
 /**
@@ -26,7 +26,7 @@ class RegistrationFragment : DebugFragment(R.layout.fragment_registration) {
         super.onViewCreated(view, savedInstanceState)
         (requireActivity() as MainActivity).supportActionBar?.title = "Registration"
         register.setOnClickListener {
-            Utils.hideKeyboard(getView())
+            hideKeyboard()
             makeRegistrationRequest(firstName.string, lastName.string, username.string, email.string, password.string)
         }
     }
@@ -47,7 +47,7 @@ class RegistrationFragment : DebugFragment(R.layout.fragment_registration) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Utils.hideKeyboard(view)
+        hideKeyboard()
         PhoenixApiManager.cancelAll()
     }
 }

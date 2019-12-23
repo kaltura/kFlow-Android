@@ -21,7 +21,6 @@ import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.MainActivity
 import com.kaltura.kflow.presentation.ui.ProgressDialog
-import com.kaltura.kflow.utils.Utils
 import kotlinx.android.synthetic.main.fragment_subscription.*
 import org.jetbrains.anko.support.v4.toast
 import kotlin.collections.ArrayList
@@ -46,15 +45,15 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
 
         initList()
         showAssets.setOnClickListener {
-            Utils.hideKeyboard(getView())
+            hideKeyboard()
             showPackages()
         }
         getPackages.setOnClickListener {
-            Utils.hideKeyboard(getView())
+            hideKeyboard()
             makeGetPackageListRequest(packageAssetType.string)
         }
         getEntitlements.setOnClickListener {
-            Utils.hideKeyboard(getView())
+            hideKeyboard()
             makeGetEntitlementListRequest()
         }
         showAssets.visibleOrGone(assets.isNotEmpty())
@@ -172,7 +171,7 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Utils.hideKeyboard(view)
+        hideKeyboard()
         PhoenixApiManager.cancelAll()
     }
 

@@ -9,10 +9,10 @@ import com.kaltura.client.types.Asset
 import com.kaltura.client.types.ProgramAsset
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.extension.instanceOf
+import com.kaltura.kflow.presentation.extension.isProgramInLive
 import com.kaltura.kflow.presentation.extension.replaceFragment
 import com.kaltura.kflow.presentation.main.MainActivity
 import com.kaltura.kflow.presentation.player.PlayerFragment
-import com.kaltura.kflow.utils.Utils
 import kotlinx.android.synthetic.main.fragment_vod_list.*
 import java.util.*
 
@@ -50,7 +50,7 @@ class AssetListFragment : Fragment(R.layout.fragment_vod_list) {
             }
         }
         if (scrollToLive && assets.isNotEmpty()) {
-            var liveAssetPosition = assets.indexOfFirst { it is ProgramAsset && Utils.isProgramInLive(it) }
+            var liveAssetPosition = assets.indexOfFirst { it is ProgramAsset && it.isProgramInLive() }
             if (liveAssetPosition < 0) liveAssetPosition = 0
             if (liveAssetPosition > 2) liveAssetPosition -= 3 // minus 3 items from the top, to move live asset to the middle of the screen
             list.scrollToPosition(liveAssetPosition)

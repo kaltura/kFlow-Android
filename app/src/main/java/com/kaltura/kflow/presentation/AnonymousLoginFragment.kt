@@ -11,9 +11,10 @@ import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
+import com.kaltura.kflow.presentation.extension.hideKeyboard
 import com.kaltura.kflow.presentation.extension.withInternetConnection
 import com.kaltura.kflow.presentation.main.MainActivity
-import com.kaltura.kflow.utils.Utils
+import com.kaltura.kflow.utils.getUUID
 import kotlinx.android.synthetic.main.fragment_anonymous_login.*
 
 /**
@@ -27,7 +28,7 @@ class AnonymousLoginFragment : DebugFragment(R.layout.fragment_anonymous_login) 
         super.onViewCreated(view, savedInstanceState)
         (requireActivity() as MainActivity).supportActionBar?.title = "Anonymous login"
         login.setOnClickListener {
-            Utils.hideKeyboard(getView())
+            hideKeyboard()
             makeAnonymousLoginRequest()
         }
     }
@@ -36,7 +37,7 @@ class AnonymousLoginFragment : DebugFragment(R.layout.fragment_anonymous_login) 
         withInternetConnection {
             clearDebugView()
             PhoenixApiManager.execute(
-                    OttUserService.anonymousLogin(PreferenceManager.with(requireContext()).partnerId, Utils.getUUID(requireContext()))
+                    OttUserService.anonymousLogin(PreferenceManager.with(requireContext()).partnerId, getUUID(requireContext()))
                             .setCompletion {
                                 if (it.isSuccess) {
                                     PreferenceManager.with(requireContext()).ks = it.results.ks
@@ -59,7 +60,7 @@ class AnonymousLoginFragment : DebugFragment(R.layout.fragment_anonymous_login) 
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Utils.hideKeyboard(view)
+        hideKeyboard()
         PhoenixApiManager.cancelAll()
     }
 }

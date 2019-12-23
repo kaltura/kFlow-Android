@@ -12,7 +12,6 @@ import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.MainActivity
 import com.kaltura.kflow.presentation.recordingList.RecordingListFragment
-import com.kaltura.kflow.utils.Utils
 import kotlinx.android.synthetic.main.fragment_media_page.debugView
 import kotlinx.android.synthetic.main.fragment_recordings.*
 
@@ -38,23 +37,23 @@ class RecordingsFragment : DebugFragment(R.layout.fragment_recordings) {
         (requireActivity() as MainActivity).supportActionBar?.title = "Recordings"
 
         showRecordings.setOnClickListener {
-            Utils.hideKeyboard(getView())
+            hideKeyboard()
             if (filteredRecordings.isNotEmpty()) {
                 replaceFragment(instanceOf<RecordingListFragment>(RecordingListFragment.ARG_RECORDINGS to filteredRecordings), addToBackStack = true)
             }
         }
         getRecorded.setOnClickListener {
-            Utils.hideKeyboard(getView())
+            hideKeyboard()
             recordingFilter = RecordingsFilter.RECORDED_FILTER
             recordingsRequest()
         }
         getOnGoing.setOnClickListener {
-            Utils.hideKeyboard(getView())
+            hideKeyboard()
             recordingFilter = RecordingsFilter.ON_GOING_FILTER
             recordingsRequest()
         }
         getScheduled.setOnClickListener {
-            Utils.hideKeyboard(getView())
+            hideKeyboard()
             recordingFilter = RecordingsFilter.SCHEDULED_FILTER
             recordingsRequest()
         }
@@ -113,7 +112,7 @@ class RecordingsFragment : DebugFragment(R.layout.fragment_recordings) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Utils.hideKeyboard(view)
+        hideKeyboard()
         PhoenixApiManager.cancelAll()
     }
 }

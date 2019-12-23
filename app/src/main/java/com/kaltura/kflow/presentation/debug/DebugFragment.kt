@@ -9,7 +9,8 @@ import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.kaltura.kflow.R
 import com.kaltura.kflow.manager.PhoenixApiManager
-import com.kaltura.kflow.utils.Utils
+import com.kaltura.kflow.presentation.extension.shareFile
+import com.kaltura.kflow.utils.saveToFile
 import org.json.JSONObject
 
 /**
@@ -71,8 +72,8 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : Fragment(content
     }
 
     private fun share() {
-        val file = Utils.saveToFile(requireContext(), debugView().sharedData)
-        Utils.shareFile(requireActivity(), file)
+        val file = saveToFile(requireContext(), debugView().sharedData)
+        requireActivity().shareFile(file)
     }
 
     protected fun clearDebugView() {

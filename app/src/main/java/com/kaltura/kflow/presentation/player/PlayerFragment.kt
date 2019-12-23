@@ -16,11 +16,8 @@ import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
-import com.kaltura.kflow.presentation.extension.string
-import com.kaltura.kflow.presentation.extension.visible
-import com.kaltura.kflow.presentation.extension.withInternetConnection
+import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.MainActivity
-import com.kaltura.kflow.utils.Utils
 import com.kaltura.playkit.*
 import com.kaltura.playkit.PlayerEvent.StateChanged
 import com.kaltura.playkit.PlayerEvent.TracksAvailable
@@ -93,15 +90,15 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         }
         playerControls.setOnStartOverClickListener(View.OnClickListener {
             if (mediaEntry.mediaType == PKMediaEntry.MediaEntryType.Vod) player?.replay()
-            else if (asset is ProgramAsset && Utils.isProgramInPast(asset)) initPlayer(APIDefines.PlaybackContextType.Catchup)
-            else if (asset is ProgramAsset && Utils.isProgramInLive(asset)) initPlayer(APIDefines.PlaybackContextType.StartOver)
+            else if (asset is ProgramAsset && (asset as ProgramAsset).isProgramInPast()) initPlayer(APIDefines.PlaybackContextType.Catchup)
+            else if (asset is ProgramAsset && (asset as ProgramAsset).isProgramInLive()) initPlayer(APIDefines.PlaybackContextType.StartOver)
         })
         checkAll.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             checkAllTogetherRequest()
         }
         insertPin.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             if (pinInputLayout.isGone) showPinInput()
             else checkPinRequest(pin.string)
         }
@@ -189,8 +186,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     private fun getPlaybackContextType(): APIDefines.PlaybackContextType = when {
         initialPlaybackContextType != null -> initialPlaybackContextType!!
-        asset is ProgramAsset && Utils.isProgramInPast(asset) -> APIDefines.PlaybackContextType.Catchup
-        asset is ProgramAsset && Utils.isProgramInLive(asset) -> APIDefines.PlaybackContextType.Playback
+        asset is ProgramAsset && (asset as ProgramAsset).isProgramInPast() -> APIDefines.PlaybackContextType.Catchup
+        asset is ProgramAsset && (asset as ProgramAsset).isProgramInLive() -> APIDefines.PlaybackContextType.Playback
         else -> APIDefines.PlaybackContextType.Playback
     }
 
@@ -466,7 +463,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     private fun showPinInput() {
         pinInputLayout.visible()
         insertPin.text = "Check pin"
-        Utils.showKeyboard(pin)
+        showKeyboard(pin)
     }
 
     override fun onDestroyView() {
@@ -475,7 +472,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             playerKeepAliveService.cancelFireKeepAliveService()
             isKeepAlive = false
         }
-        Utils.hideKeyboard(view)
+        hideKeyboard()
         PhoenixApiManager.cancelAll()
     }
 

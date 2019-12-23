@@ -19,7 +19,6 @@ import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.MainActivity
 import com.kaltura.kflow.presentation.player.PlayerFragment
-import com.kaltura.kflow.utils.Utils
 import kotlinx.android.synthetic.main.fragment_media_page.*
 import org.jetbrains.anko.support.v4.toast
 
@@ -45,27 +44,27 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
         arguments?.let { isKeepAlive = it.getBoolean(ARG_KEEP_ALIVE) }
 
         playAsset.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             replaceFragment(instanceOf<PlayerFragment>(PlayerFragment.ARG_ASSET to asset!!, PlayerFragment.ARG_KEEP_ALIVE to isKeepAlive), addToBackStack = true)
         }
         getProductPrice.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             getProductPriceRequest(mediaId.string)
         }
         getBookmark.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             getBookmarkRequest(mediaId.string)
         }
         getAssetRules.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             getAssetRulesRequest(mediaId.string)
         }
         checkAll.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             checkAllTogetherRequest(mediaId.string)
         }
         insertPin.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             if (pinInputLayout.isGone) {
                 showPinInput()
             } else {
@@ -73,7 +72,7 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
             }
         }
         get.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             getAssetRequest(mediaId.string)
         }
         validateButtons()
@@ -185,7 +184,7 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
     private fun showPinInput() {
         pinInputLayout.visible()
         insertPin.text = "Check pin"
-        Utils.showKeyboard(pin)
+        showKeyboard(pin)
     }
 
     private fun validateButtons() {
@@ -219,7 +218,7 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Utils.hideKeyboard(view)
+        hideKeyboard()
         PhoenixApiManager.cancelAll()
     }
 }

@@ -1,5 +1,6 @@
 package com.kaltura.kflow.presentation.extension
 
+import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.PluralsRes
@@ -8,13 +9,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import com.google.android.material.snackbar.Snackbar
 import com.kaltura.kflow.R
-import com.kaltura.kflow.utils.Utils
+import com.kaltura.kflow.utils.hasInternetConnection
 
 /**
  * Created by alex_litvinenko
  */
 
-inline fun <reified T : Fragment> instanceOf(vararg params: Pair<String, Any>) = T::class.java.newInstance().apply {
+inline fun <reified T : Fragment> instanceOf(vararg params: Pair<String, Any>): T = T::class.java.newInstance().apply {
     arguments = bundleOf(*params)
 }
 
@@ -26,7 +27,7 @@ fun Fragment.getColor(@ColorRes id: Int) = ContextCompat.getColor(requireContext
 fun Fragment.getDrawable(@DrawableRes id: Int) = ContextCompat.getDrawable(requireContext(), id)
 
 fun Fragment.withInternetConnection(doBlock: () -> Unit) {
-    if (Utils.hasInternetConnection(requireContext())) {
+    if (hasInternetConnection(requireContext())) {
         doBlock()
     } else {
         Snackbar.make(view!!, "No Internet connection", Snackbar.LENGTH_LONG)
@@ -36,3 +37,14 @@ fun Fragment.withInternetConnection(doBlock: () -> Unit) {
 }
 
 fun Fragment.getQuantityString(@PluralsRes id: Int, count: Int): String = requireContext().getQuantityString(id, count)
+
+fun Fragment.hideKeyboard() {
+    view?.let {
+        it.context.inputManager?.hideSoftInputFromWindow(it.rootView.windowToken, 0)
+    }
+}
+
+fun Fragment.showKeyboard(view: View) {
+    view.requestFocus()
+    view.context.inputManager?.showSoftInput(view, 0)
+}

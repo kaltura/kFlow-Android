@@ -14,7 +14,6 @@ import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.MainActivity
-import com.kaltura.kflow.utils.Utils
 import kotlinx.android.synthetic.main.fragment_vod.*
 
 /**
@@ -31,11 +30,11 @@ class GetVodFragment : DebugFragment(R.layout.fragment_vod) {
         (requireActivity() as MainActivity).supportActionBar?.title = "VOD"
 
         showAssets.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             replaceFragment(instanceOf<AssetListFragment>(AssetListFragment.ARG_ASSETS to assets), addToBackStack = true)
         }
         get.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             makeGetVodRequest(ksqlRequest.string)
         }
         ksqlRequest.string = "(or name~\'Bigg Boss S12\')"
@@ -69,7 +68,7 @@ class GetVodFragment : DebugFragment(R.layout.fragment_vod) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Utils.hideKeyboard(view)
+        hideKeyboard()
         PhoenixApiManager.cancelAll()
     }
 }

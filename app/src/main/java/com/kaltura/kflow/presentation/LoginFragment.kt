@@ -8,10 +8,11 @@ import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
+import com.kaltura.kflow.presentation.extension.hideKeyboard
 import com.kaltura.kflow.presentation.extension.string
 import com.kaltura.kflow.presentation.extension.withInternetConnection
 import com.kaltura.kflow.presentation.main.MainActivity
-import com.kaltura.kflow.utils.Utils
+import com.kaltura.kflow.utils.getUUID
 import kotlinx.android.synthetic.main.fragment_login.*
 
 /**
@@ -26,7 +27,7 @@ class LoginFragment : DebugFragment(R.layout.fragment_login) {
         (requireActivity() as MainActivity).supportActionBar?.title = "Login"
 
         login.setOnClickListener {
-            Utils.hideKeyboard(view)
+            hideKeyboard()
             makeLoginRequest(username.string, password.string)
         }
         username.string = PreferenceManager.with(requireContext()).authUser
@@ -37,7 +38,7 @@ class LoginFragment : DebugFragment(R.layout.fragment_login) {
         withInternetConnection {
             clearDebugView()
             PhoenixApiManager.execute(OttUserService.login(PreferenceManager.with(requireContext()).partnerId, email, password,
-                    null, Utils.getUUID(requireContext()))
+                    null, getUUID(requireContext()))
                     .setCompletion {
                         if (it.isSuccess) {
                             PreferenceManager.with(requireContext()).ks = it.results.loginSession.ks
@@ -51,7 +52,7 @@ class LoginFragment : DebugFragment(R.layout.fragment_login) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Utils.hideKeyboard(view)
+        hideKeyboard()
         PhoenixApiManager.cancelAll()
     }
 }

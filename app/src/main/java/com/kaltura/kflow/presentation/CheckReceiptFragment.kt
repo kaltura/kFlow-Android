@@ -10,10 +10,10 @@ import com.kaltura.kflow.R
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
+import com.kaltura.kflow.presentation.extension.hideKeyboard
 import com.kaltura.kflow.presentation.extension.string
 import com.kaltura.kflow.presentation.extension.withInternetConnection
 import com.kaltura.kflow.presentation.main.MainActivity
-import com.kaltura.kflow.utils.Utils
 import kotlinx.android.synthetic.main.fragment_check_receipt.*
 import org.jetbrains.anko.support.v4.toast
 
@@ -28,7 +28,7 @@ class CheckReceiptFragment : DebugFragment(R.layout.fragment_check_receipt) {
         super.onViewCreated(view, savedInstanceState)
         (requireActivity() as MainActivity).supportActionBar?.title = "Check receipt"
         validate.setOnClickListener {
-            Utils.hideKeyboard(getView())
+            hideKeyboard()
             checkReceiptRequest(receiptId.string, productType.string, productId.string, contentId.string)
         }
     }
@@ -61,7 +61,7 @@ class CheckReceiptFragment : DebugFragment(R.layout.fragment_check_receipt) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Utils.hideKeyboard(view)
+        hideKeyboard()
         PhoenixApiManager.cancelAll()
     }
 }

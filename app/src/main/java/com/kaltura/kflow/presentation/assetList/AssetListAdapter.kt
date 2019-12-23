@@ -6,10 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kaltura.client.types.Asset
 import com.kaltura.client.types.ProgramAsset
 import com.kaltura.kflow.R
-import com.kaltura.kflow.presentation.extension.gone
-import com.kaltura.kflow.presentation.extension.inflate
-import com.kaltura.kflow.presentation.extension.visible
-import com.kaltura.kflow.utils.Utils
+import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.playkit.providers.api.phoenix.APIDefines
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_asset.*
@@ -50,15 +47,15 @@ class AssetListAdapter(private val assets: ArrayList<Asset>) : RecyclerView.Adap
 
             assetName.text = asset.name
             assetId.text = "Asset ID: ${asset.id}"
-            if (asset is ProgramAsset && Utils.isProgramInPast(asset)) {
+            if (asset is ProgramAsset && asset.isProgramInPast()) {
                 playback.gone()
                 startover.gone()
                 catchUp.visible()
-            } else if (asset is ProgramAsset && Utils.isProgramInLive(asset)) {
+            } else if (asset is ProgramAsset && asset.isProgramInLive()) {
                 playback.visible()
                 startover.visible()
                 catchUp.gone()
-            } else if (asset is ProgramAsset && Utils.isProgramInFuture(asset)) {
+            } else if (asset is ProgramAsset && asset.isProgramInFuture()) {
                 playback.gone()
                 startover.gone()
                 catchUp.gone()

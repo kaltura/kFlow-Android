@@ -13,7 +13,6 @@ import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.MainActivity
-import com.kaltura.kflow.utils.Utils
 import kotlinx.android.synthetic.main.fragment_search.*
 
 /**
@@ -33,15 +32,15 @@ class SearchFragment : DebugFragment(R.layout.fragment_search) {
         showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
 
         getSearchHistory.setOnClickListener {
-            Utils.hideKeyboard(getView())
+            hideKeyboard()
             searchHistoryRequest()
         }
         search.setOnClickListener {
-            Utils.hideKeyboard(getView())
+            hideKeyboard()
             searchRequest(typeIn.string, searchText.string)
         }
         showAssets.setOnClickListener {
-            Utils.hideKeyboard(getView())
+            hideKeyboard()
             replaceFragment(instanceOf<AssetListFragment>(AssetListFragment.ARG_ASSETS to assets), addToBackStack = true)
         }
     }
@@ -93,7 +92,7 @@ class SearchFragment : DebugFragment(R.layout.fragment_search) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Utils.hideKeyboard(view)
+        hideKeyboard()
         PhoenixApiManager.cancelAll()
     }
 }
