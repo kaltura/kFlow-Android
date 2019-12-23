@@ -22,10 +22,10 @@ object PhoenixApiManager {
     }
 
     fun execute(requestBuilder: BaseRequestBuilder<*, *>) {
-        AndroidAPIRequestsExecutor.getExecutor().queue(requestBuilder.build(client))
+        AndroidAPIRequestsExecutor.queue(requestBuilder.build(client))
     }
 
     fun cancelAll() {
-        AndroidAPIRequestsExecutor.getExecutor().clearRequests()
+        AndroidAPIRequestsExecutor.clearRequests()
     }
 }
