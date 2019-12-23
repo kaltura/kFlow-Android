@@ -40,15 +40,15 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             PreferenceManager.with(requireContext()).baseUrl = baseUrl
 
             val config = Configuration().apply { endpoint = PreferenceManager.with(requireContext()).baseUrl }
-            PhoenixApiManager.getClient().connectionConfiguration = config
-            PhoenixApiManager.getClient().ks = null
+            PhoenixApiManager.client.connectionConfiguration = config
+            PhoenixApiManager.client.ks = null
         } else {
             toast("END Point URL is empty")
         }
         if (partnerId.isNotEmpty() && TextUtils.isDigitsOnly(partnerId)) {
             PreferenceManager.with(requireContext()).clearKs()
             PreferenceManager.with(requireContext()).partnerId = partnerId.toInt()
-            PhoenixApiManager.getClient().ks = null
+            PhoenixApiManager.client.ks = null
         } else {
             toast("Parthner ID is missing or invalid")
         }

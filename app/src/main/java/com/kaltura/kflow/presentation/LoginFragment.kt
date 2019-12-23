@@ -41,7 +41,7 @@ class LoginFragment : DebugFragment(R.layout.fragment_login) {
                     .setCompletion {
                         if (it.isSuccess) {
                             PreferenceManager.with(requireContext()).ks = it.results.loginSession.ks
-                            PhoenixApiManager.getClient().ks = it.results.loginSession.ks
+                            PhoenixApiManager.client.ks = it.results.loginSession.ks
                             PreferenceManager.with(requireContext()).authUser = email
                             PreferenceManager.with(requireContext()).authPassword = password
                         }

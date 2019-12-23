@@ -40,7 +40,7 @@ class AnonymousLoginFragment : DebugFragment(R.layout.fragment_anonymous_login) 
                             .setCompletion {
                                 if (it.isSuccess) {
                                     PreferenceManager.with(requireContext()).ks = it.results.ks
-                                    PhoenixApiManager.getClient().ks = it.results.ks
+                                    PhoenixApiManager.client.ks = it.results.ks
                                     //generateAppToken();
                                 }
                             })
