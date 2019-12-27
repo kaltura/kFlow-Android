@@ -6,12 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.kflow.R
-import com.kaltura.kflow.presentation.*
-import com.kaltura.kflow.presentation.extension.instanceOf
-import com.kaltura.kflow.presentation.extension.replaceFragment
-import com.kaltura.kflow.presentation.productPrice.ProductPriceFragment
-import com.kaltura.kflow.presentation.subscription.SubscriptionFragment
-import com.kaltura.kflow.presentation.transactionHistory.TransactionHistoryFragment
+import com.kaltura.kflow.presentation.extension.navigate
 import kotlinx.android.synthetic.main.fragment_main.*
 
 /**
@@ -35,24 +30,24 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         list.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         val adapter = FeatureAdapter(features)
         adapter.clickListener = {
-            replaceFragment(when (it) {
-                Feature.LOGIN -> LoginFragment()
-                Feature.ANONYMOUS_LOGIN -> AnonymousLoginFragment()
-                Feature.REGISTRATION -> RegistrationFragment()
-                Feature.VOD -> GetVodFragment()
-                Feature.EPG -> EpgFragment()
-                Feature.LIVE -> LiveTvFragment()
-                Feature.FAVORITES -> FavoritesFragment()
-                Feature.SEARCH -> SearchFragment()
-                Feature.KEEP_ALIVE -> instanceOf<MediaPageFragment>(MediaPageFragment.ARG_KEEP_ALIVE to true)
-                Feature.MEDIA_PAGE -> instanceOf<MediaPageFragment>(MediaPageFragment.ARG_KEEP_ALIVE to false)
-                Feature.SUBSCRIPTION -> SubscriptionFragment()
-                Feature.PRODUCT_PRICE -> ProductPriceFragment()
-                Feature.CHECK_RECEIPT -> CheckReceiptFragment()
-                Feature.TRANSACTION_HISTORY -> TransactionHistoryFragment()
-                Feature.RECORDINGS -> RecordingsFragment()
-                Feature.SETTINGS -> SettingsFragment()
-            }, addToBackStack = true)
+            navigate(when (it) {
+                Feature.LOGIN -> MainFragmentDirections.navigateToLogin()
+                Feature.ANONYMOUS_LOGIN -> MainFragmentDirections.navigateToAnonymousLogin()
+                Feature.REGISTRATION -> MainFragmentDirections.navigateToRegistration()
+                Feature.VOD -> MainFragmentDirections.navigateToVod()
+                Feature.EPG -> MainFragmentDirections.navigateToEpg()
+                Feature.LIVE -> MainFragmentDirections.navigateToLiveTv()
+                Feature.FAVORITES -> MainFragmentDirections.navigateToFavorites()
+                Feature.SEARCH -> MainFragmentDirections.navigateToSearch()
+                Feature.KEEP_ALIVE -> MainFragmentDirections.navigateToKeepAlive()
+                Feature.MEDIA_PAGE -> MainFragmentDirections.navigateToMediaPage()
+                Feature.SUBSCRIPTION -> MainFragmentDirections.navigateToSubscription()
+                Feature.PRODUCT_PRICE -> MainFragmentDirections.navigateToProductPrice()
+                Feature.CHECK_RECEIPT -> MainFragmentDirections.navigateToCheckReceipt()
+                Feature.TRANSACTION_HISTORY -> MainFragmentDirections.navigateToTransactionHistory()
+                Feature.RECORDINGS -> MainFragmentDirections.navigateToRecordings()
+                Feature.SETTINGS -> MainFragmentDirections.navigateToSettings()
+            })
         }
         list.adapter = adapter
     }

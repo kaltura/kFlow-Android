@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/main">
+
+    <fragment
+        android:id="@+id/main"
+        android:name="com.kaltura.kflow.presentation.main.MainFragment"
+        android:label="K-Flow"
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/navigate_to_login"
+            app:destination="@id/login" />
+        <action
+            android:id="@+id/navigate_to_anonymous_login"
+            app:destination="@id/anonymous_login" />
+        <action
+            android:id="@+id/navigate_to_registration"
+            app:destination="@id/registration" />
+        <action
+            android:id="@+id/navigate_to_vod"
+            app:destination="@id/vod" />
+        <action
+            android:id="@+id/navigate_to_epg"
+            app:destination="@id/epg" />
+        <action
+            android:id="@+id/navigate_to_live_tv"
+            app:destination="@id/live_tv" />
+        <action
+            android:id="@+id/navigate_to_favorites"
+            app:destination="@id/favorites" />
+        <action
+            android:id="@+id/navigate_to_search"
+            app:destination="@id/search" />
+        <action
+            android:id="@+id/navigate_to_keep_alive"
+            app:destination="@id/media_page">
+            <argument
+                android:name="isKeepAlive"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
+        <action
+            android:id="@+id/navigate_to_media_page"
+            app:destination="@id/media_page">
+            <argument
+                android:name="isKeepAlive"
+                android:defaultValue="false"
+                app:argType="boolean" />
+        </action>
+        <action
+            android:id="@+id/navigate_to_subscription"
+            app:destination="@id/subscription" />
+        <action
+            android:id="@+id/navigate_to_product_price"
+            app:destination="@id/product_price" />
+        <action
+            android:id="@+id/navigate_to_check_receipt"
+            app:destination="@id/check_receipt" />
+        <action
+            android:id="@+id/navigate_to_transaction_history"
+            app:destination="@id/transaction_history" />
+        <action
+            android:id="@+id/navigate_to_recordings"
+            app:destination="@id/recordings" />
+        <action
+            android:id="@+id/navigate_to_settings"
+            app:destination="@id/settings" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/login"
+        android:name="com.kaltura.kflow.presentation.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login" />
+
+    <fragment
+        android:id="@+id/anonymous_login"
+        android:name="com.kaltura.kflow.presentation.AnonymousLoginFragment"
+        android:label="Anonymous login"
+        tools:layout="@layout/fragment_anonymous_login" />
+
+    <fragment
+        android:id="@+id/check_receipt"
+        android:name="com.kaltura.kflow.presentation.CheckReceiptFragment"
+        android:label="Check receipt"
+        tools:layout="@layout/fragment_check_receipt" />
+
+    <fragment
+        android:id="@+id/epg"
+        android:name="com.kaltura.kflow.presentation.EpgFragment"
+        android:label="EPG"
+        tools:layout="@layout/fragment_epg">
+        <action
+            android:id="@+id/navigate_to_asset_list"
+            app:destination="@id/asset_list">
+            <argument
+                android:name="isScrollToLive"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/favorites"
+        android:name="com.kaltura.kflow.presentation.FavoritesFragment"
+        android:label="Favorites"
+        tools:layout="@layout/fragment_favorites" />
+
+    <fragment
+        android:id="@+id/vod"
+        android:name="com.kaltura.kflow.presentation.GetVodFragment"
+        android:label="VOD"
+        tools:layout="@layout/fragment_vod">
+        <action
+            android:id="@+id/navigate_to_asset_list"
+            app:destination="@id/asset_list" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/live_tv"
+        android:name="com.kaltura.kflow.presentation.LiveTvFragment"
+        android:label="Live TV"
+        tools:layout="@layout/fragment_live">
+        <action
+            android:id="@+id/navigate_to_asset_list"
+            app:destination="@id/asset_list" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/media_page"
+        android:name="com.kaltura.kflow.presentation.MediaPageFragment"
+        android:label="Media page"
+        tools:layout="@layout/fragment_media_page">
+        <argument
+            android:name="isKeepAlive"
+            app:argType="boolean" />
+        <action
+            android:id="@+id/navigate_to_player"
+            app:destination="@id/player" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/recordings"
+        android:name="com.kaltura.kflow.presentation.RecordingsFragment"
+        android:label="Recordings"
+        tools:layout="@layout/fragment_recordings">
+        <action
+            android:id="@+id/navigate_to_recording_list"
+            app:destination="@id/recording_list" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registration"
+        android:name="com.kaltura.kflow.presentation.RegistrationFragment"
+        android:label="Registration"
+        tools:layout="@layout/fragment_registration" />
+
+    <fragment
+        android:id="@+id/search"
+        android:name="com.kaltura.kflow.presentation.SearchFragment"
+        android:label="Search"
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/navigate_to_asset_list"
+            app:destination="@id/asset_list" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/subscription"
+        android:name="com.kaltura.kflow.presentation.subscription.SubscriptionFragment"
+        android:label="Subscription"
+        tools:layout="@layout/fragment_subscription">
+        <action
+            android:id="@+id/navigate_to_asset_list"
+            app:destination="@id/asset_list" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/product_price"
+        android:name="com.kaltura.kflow.presentation.productPrice.ProductPriceFragment"
+        android:label="Product price"
+        tools:layout="@layout/fragment_product_price">
+        <action
+            android:id="@+id/navigate_to_asset_list"
+            app:destination="@id/asset_list" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/transaction_history"
+        android:name="com.kaltura.kflow.presentation.transactionHistory.TransactionHistoryFragment"
+        android:label="Transaction history"
+        tools:layout="@layout/fragment_transaction_history" />
+
+    <fragment
+        android:id="@+id/settings"
+        android:name="com.kaltura.kflow.presentation.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/asset_list"
+        android:name="com.kaltura.kflow.presentation.assetList.AssetListFragment"
+        android:label="Asset list"
+        tools:layout="@layout/fragment_vod_list">
+        <argument
+            android:name="isScrollToLive"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <action
+            android:id="@+id/navigate_to_player"
+            app:destination="@id/player" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/recording_list"
+        android:name="com.kaltura.kflow.presentation.recordingList.RecordingListFragment"
+        android:label="Recording list"
+        tools:layout="@layout/fragment_recording_list">
+        <action
+            android:id="@+id/navigate_to_player"
+            app:destination="@id/player" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/player"
+        android:name="com.kaltura.kflow.presentation.player.PlayerFragment"
+        android:label="Player"
+        tools:layout="@layout/fragment_player">
+        <argument
+            android:name="isKeepAlive"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <argument
+            android:name="asset"
+            android:defaultValue="@null"
+            app:argType="com.kaltura.client.types.Asset"
+            app:nullable="true" />
+        <argument
+            android:name="recording"
+            android:defaultValue="@null"
+            app:argType="com.kaltura.client.types.Recording"
+            app:nullable="true" />
+    </fragment>
+</navigation>

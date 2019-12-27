@@ -8,10 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.enums.RecordingStatus
 import com.kaltura.client.types.Recording
 import com.kaltura.kflow.R
-import com.kaltura.kflow.presentation.extension.instanceOf
-import com.kaltura.kflow.presentation.extension.replaceFragment
-import com.kaltura.kflow.presentation.main.MainActivity
-import com.kaltura.kflow.presentation.player.PlayerFragment
+import com.kaltura.kflow.presentation.extension.navigate
 import kotlinx.android.synthetic.main.fragment_recording_list.*
 import java.util.*
 
@@ -26,7 +23,6 @@ class RecordingListFragment : Fragment(R.layout.fragment_recording_list) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as MainActivity).supportActionBar?.title = "Recording list"
         initList()
     }
 
@@ -38,7 +34,7 @@ class RecordingListFragment : Fragment(R.layout.fragment_recording_list) {
         list.adapter = RecordingListAdapter(recordings).apply {
             recordingClickListener = {
                 if (it.status == RecordingStatus.RECORDED)
-                    replaceFragment(instanceOf<PlayerFragment>(PlayerFragment.ARG_RECORDING to it), addToBackStack = true)
+                    navigate(RecordingListFragmentDirections.navigateToPlayer(recording = it))
             }
         }
     }

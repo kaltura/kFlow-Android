@@ -11,7 +11,6 @@ import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.hideKeyboard
 import com.kaltura.kflow.presentation.extension.string
 import com.kaltura.kflow.presentation.extension.withInternetConnection
-import com.kaltura.kflow.presentation.main.MainActivity
 import com.kaltura.kflow.utils.getUUID
 import kotlinx.android.synthetic.main.fragment_login.*
 
@@ -24,7 +23,6 @@ class LoginFragment : DebugFragment(R.layout.fragment_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as MainActivity).supportActionBar?.title = "Login"
 
         login.setOnClickListener {
             hideKeyboard()

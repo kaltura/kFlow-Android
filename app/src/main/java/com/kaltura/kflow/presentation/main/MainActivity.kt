@@ -1,39 +1,24 @@
 package com.kaltura.kflow.presentation.main
 
 import android.os.Bundle
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentManager
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.kaltura.kflow.R
-import com.kaltura.kflow.presentation.extension.replaceFragment
 
-class MainActivity : AppCompatActivity(R.layout.activity_main), FragmentManager.OnBackStackChangedListener {
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
+
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportFragmentManager.addOnBackStackChangedListener(this)
-        supportActionBar?.setDisplayHomeAsUpEnabled(supportFragmentManager.backStackEntryCount > 0)
-        if (savedInstanceState == null) {
-            replaceFragment(MainFragment())
-        }
+        val navController = findNavController(R.id.fragmentContainer)
+        appBarConfiguration = AppBarConfiguration(navController.graph)
+        setupActionBarWithNavController(navController, appBarConfiguration)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        android.R.id.home -> {
-            onBackPressed()
-            true
-        }
-        else -> super.onOptionsItemSelected(item)
-    }
-
-    override fun onBackStackChanged() {
-        val isRoot = supportFragmentManager.backStackEntryCount == 0
-        supportActionBar?.setDisplayHomeAsUpEnabled(!isRoot)
-        if (isRoot) supportActionBar?.setTitle(R.string.app_name)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        supportFragmentManager.removeOnBackStackChangedListener(this)
-    }
+    override fun onSupportNavigateUp() =
+            findNavController(R.id.fragmentContainer).navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
 }

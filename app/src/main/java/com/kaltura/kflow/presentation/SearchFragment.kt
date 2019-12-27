@@ -12,7 +12,6 @@ import com.kaltura.kflow.presentation.assetList.AssetListFragment
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
-import com.kaltura.kflow.presentation.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_search.*
 
 /**
@@ -26,7 +25,6 @@ class SearchFragment : DebugFragment(R.layout.fragment_search) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as MainActivity).supportActionBar?.title = "Search"
 
         showAssets.visibleOrGone(assets.isNotEmpty())
         showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
@@ -39,10 +37,7 @@ class SearchFragment : DebugFragment(R.layout.fragment_search) {
             hideKeyboard()
             searchRequest(typeIn.string, searchText.string)
         }
-        showAssets.setOnClickListener {
-            hideKeyboard()
-            replaceFragment(instanceOf<AssetListFragment>(AssetListFragment.ARG_ASSETS to assets), addToBackStack = true)
-        }
+        showAssets.navigateOnClick(SearchFragmentDirections.navigateToAssetList()) { arrayOf(AssetListFragment.ARG_ASSETS to assets) }
     }
 
     private fun searchRequest(typeInSearch: String, kSqlSearch: String) {

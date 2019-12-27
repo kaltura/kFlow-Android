@@ -12,7 +12,6 @@ import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.hideKeyboard
 import com.kaltura.kflow.presentation.extension.string
 import com.kaltura.kflow.presentation.extension.withInternetConnection
-import com.kaltura.kflow.presentation.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_registration.*
 
 /**
@@ -24,7 +23,6 @@ class RegistrationFragment : DebugFragment(R.layout.fragment_registration) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as MainActivity).supportActionBar?.title = "Registration"
         register.setOnClickListener {
             hideKeyboard()
             makeRegistrationRequest(firstName.string, lastName.string, username.string, email.string, password.string)

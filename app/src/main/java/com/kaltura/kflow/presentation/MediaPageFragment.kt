@@ -5,6 +5,7 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.isGone
+import androidx.navigation.fragment.navArgs
 import com.kaltura.client.enums.AssetReferenceType
 import com.kaltura.client.enums.AssetType
 import com.kaltura.client.enums.PinType
@@ -18,7 +19,6 @@ import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.MainActivity
-import com.kaltura.kflow.presentation.player.PlayerFragment
 import kotlinx.android.synthetic.main.fragment_media_page.*
 import org.jetbrains.anko.support.v4.toast
 
@@ -27,25 +27,17 @@ import org.jetbrains.anko.support.v4.toast
  */
 class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
 
-    companion object {
-        const val ARG_KEEP_ALIVE = "extra_keep_alive"
-    }
-
-    private var asset: Asset? = null
+    private val args: MediaPageFragmentArgs by navArgs()
     private var parentalRuleId = 0
-    private var isKeepAlive = false
+    private var asset: Asset? = null
 
     override fun debugView(): DebugView = debugView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as MainActivity).supportActionBar?.title = "Media page"
-
-        arguments?.let { isKeepAlive = it.getBoolean(ARG_KEEP_ALIVE) }
 
         playAsset.setOnClickListener {
-            hideKeyboard()
-            replaceFragment(instanceOf<PlayerFragment>(PlayerFragment.ARG_ASSET to asset!!, PlayerFragment.ARG_KEEP_ALIVE to isKeepAlive), addToBackStack = true)
+            navigate(MediaPageFragmentDirections.navigateToPlayer(args.isKeepAlive, asset = asset!!))
         }
         getProductPrice.setOnClickListener {
             hideKeyboard()

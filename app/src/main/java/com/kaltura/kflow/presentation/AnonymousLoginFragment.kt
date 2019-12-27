@@ -13,7 +13,6 @@ import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.hideKeyboard
 import com.kaltura.kflow.presentation.extension.withInternetConnection
-import com.kaltura.kflow.presentation.main.MainActivity
 import com.kaltura.kflow.utils.getUUID
 import kotlinx.android.synthetic.main.fragment_anonymous_login.*
 
@@ -26,7 +25,6 @@ class AnonymousLoginFragment : DebugFragment(R.layout.fragment_anonymous_login) 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as MainActivity).supportActionBar?.title = "Anonymous login"
         login.setOnClickListener {
             hideKeyboard()
             makeAnonymousLoginRequest()

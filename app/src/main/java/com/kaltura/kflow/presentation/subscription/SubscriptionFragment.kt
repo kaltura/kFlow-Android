@@ -19,7 +19,6 @@ import com.kaltura.kflow.presentation.assetList.AssetListFragment
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
-import com.kaltura.kflow.presentation.main.MainActivity
 import com.kaltura.kflow.presentation.ui.ProgressDialog
 import kotlinx.android.synthetic.main.fragment_subscription.*
 import org.jetbrains.anko.support.v4.toast
@@ -41,7 +40,6 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as MainActivity).supportActionBar?.title = "Subscription"
 
         initList()
         showAssets.setOnClickListener {
@@ -149,7 +147,7 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
                     it.results.forEach { assets.addAll((it as ListResponse<Asset>).objects) }
                     hideLoadingDialog()
                     if (assets.isEmpty()) toast("No assets in this subscription")
-                    else replaceFragment(instanceOf<AssetListFragment>(AssetListFragment.ARG_ASSETS to assets), addToBackStack = true)
+                    else navigate(SubscriptionFragmentDirections.navigateToAssetList(), AssetListFragment.ARG_ASSETS to assets)
                 }
             }
             clearDebugView()

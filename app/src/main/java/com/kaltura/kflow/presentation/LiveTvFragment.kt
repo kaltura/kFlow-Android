@@ -13,7 +13,6 @@ import com.kaltura.kflow.presentation.assetList.AssetListFragment
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
-import com.kaltura.kflow.presentation.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_live.*
 
 /**
@@ -27,12 +26,8 @@ class LiveTvFragment : DebugFragment(R.layout.fragment_live) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as MainActivity).supportActionBar?.title = "Live TV"
 
-        showChannel.setOnClickListener {
-            hideKeyboard()
-            replaceFragment(instanceOf<AssetListFragment>(AssetListFragment.ARG_ASSETS to channels), addToBackStack = true)
-        }
+        showChannel.navigateOnClick(LiveTvFragmentDirections.navigateToAssetList()) { arrayOf(AssetListFragment.ARG_ASSETS to channels) }
         get.setOnClickListener {
             hideKeyboard()
             makeGetChannelsRequest(channelName.string)

@@ -13,7 +13,6 @@ import com.kaltura.kflow.presentation.assetList.AssetListFragment
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
-import com.kaltura.kflow.presentation.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_vod.*
 
 /**
@@ -27,12 +26,8 @@ class GetVodFragment : DebugFragment(R.layout.fragment_vod) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as MainActivity).supportActionBar?.title = "VOD"
 
-        showAssets.setOnClickListener {
-            hideKeyboard()
-            replaceFragment(instanceOf<AssetListFragment>(AssetListFragment.ARG_ASSETS to assets), addToBackStack = true)
-        }
+        showAssets.navigateOnClick(GetVodFragmentDirections.navigateToAssetList()) { arrayOf(AssetListFragment.ARG_ASSETS to assets) }
         get.setOnClickListener {
             hideKeyboard()
             makeGetVodRequest(ksqlRequest.string)

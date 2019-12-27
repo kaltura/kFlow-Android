@@ -10,7 +10,6 @@ import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
-import com.kaltura.kflow.presentation.main.MainActivity
 import com.kaltura.kflow.presentation.recordingList.RecordingListFragment
 import kotlinx.android.synthetic.main.fragment_media_page.debugView
 import kotlinx.android.synthetic.main.fragment_recordings.*
@@ -34,12 +33,11 @@ class RecordingsFragment : DebugFragment(R.layout.fragment_recordings) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as MainActivity).supportActionBar?.title = "Recordings"
 
         showRecordings.setOnClickListener {
             hideKeyboard()
             if (filteredRecordings.isNotEmpty()) {
-                replaceFragment(instanceOf<RecordingListFragment>(RecordingListFragment.ARG_RECORDINGS to filteredRecordings), addToBackStack = true)
+                navigate(RecordingsFragmentDirections.navigateToRecordingList(), RecordingListFragment.ARG_RECORDINGS to filteredRecordings)
             }
         }
         getRecorded.setOnClickListener {

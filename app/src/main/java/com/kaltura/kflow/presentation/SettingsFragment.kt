@@ -9,7 +9,6 @@ import com.kaltura.kflow.R
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.extension.string
-import com.kaltura.kflow.presentation.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_settings.*
 import org.jetbrains.anko.support.v4.toast
 
@@ -20,7 +19,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as MainActivity).supportActionBar?.title = "Settings"
 
         save.setOnClickListener {
             save(url.string, partnerId.string, mediaFileFormat.string)

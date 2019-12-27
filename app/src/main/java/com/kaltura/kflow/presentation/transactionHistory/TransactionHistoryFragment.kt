@@ -14,7 +14,6 @@ import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
-import com.kaltura.kflow.presentation.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_transaction_history.*
 
 /**
@@ -28,7 +27,6 @@ class TransactionHistoryFragment : DebugFragment(R.layout.fragment_transaction_h
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as MainActivity).supportActionBar?.title = "Transaction history"
 
         initList()
         showTransactions.setOnClickListener {

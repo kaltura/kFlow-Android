@@ -14,7 +14,6 @@ import com.kaltura.kflow.presentation.assetList.AssetListFragment
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
-import com.kaltura.kflow.presentation.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_product_price.*
 import java.util.*
 
@@ -28,7 +27,6 @@ class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as MainActivity).supportActionBar?.title = "Product price"
 
         initList()
         showProductPrices.setOnClickListener {
@@ -99,7 +97,7 @@ class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
     }
 
     private fun showAssets(assetList: ArrayList<Asset>) {
-        replaceFragment(instanceOf<AssetListFragment>(AssetListFragment.ARG_ASSETS to assetList), addToBackStack = true)
+        navigate(ProductPriceFragmentDirections.navigateToAssetList(), AssetListFragment.ARG_ASSETS to assetList)
     }
 
     override fun onDestroyView() {

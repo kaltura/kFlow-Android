@@ -18,7 +18,7 @@ import org.json.JSONObject
  */
 abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : Fragment(contentLayoutId), DebugListener {
 
-    private lateinit var shareMenuItem: MenuItem
+    private var shareMenuItem: MenuItem? = null
 
     protected abstract fun debugView(): DebugView
 
@@ -31,7 +31,7 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : Fragment(content
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.fragment_menu_items, menu)
         shareMenuItem = menu.findItem(R.id.fragment_menu_share)
-        shareMenuItem.isEnabled = false
+        shareMenuItem?.isEnabled = false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -58,7 +58,7 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : Fragment(content
     }
 
     override fun setRequestBody(jsonObject: JSONObject) {
-        shareMenuItem.isEnabled = true
+        shareMenuItem?.isEnabled = true
         debugView().setRequestBody(jsonObject)
     }
 
@@ -68,7 +68,7 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : Fragment(content
 
     override fun onError() {
         debugView().onUnknownError()
-        shareMenuItem.isEnabled = false
+        shareMenuItem?.isEnabled = false
     }
 
     private fun share() {
@@ -78,6 +78,6 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : Fragment(content
 
     protected fun clearDebugView() {
         debugView().clear()
-        shareMenuItem.isEnabled = false
+        shareMenuItem?.isEnabled = false
     }
 }

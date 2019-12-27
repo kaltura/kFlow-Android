@@ -7,20 +7,24 @@ import androidx.annotation.PluralsRes
 import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import com.kaltura.kflow.R
 import com.kaltura.kflow.utils.hasInternetConnection
 
 /**
  * Created by alex_litvinenko
  */
 
-inline fun <reified T : Fragment> instanceOf(vararg params: Pair<String, Any>): T = T::class.java.newInstance().apply {
-    arguments = bundleOf(*params)
+fun Fragment.navigate(direction: NavDirections, vararg additionalParams: Pair<String, Any>) {
+    if (additionalParams.isNotEmpty()) {
+        val bundle = direction.arguments
+        bundle.putAll(bundleOf(*additionalParams))
+        findNavController().navigate(direction.actionId, bundle)
+    } else {
+        findNavController().navigate(direction)
+    }
 }
-
-fun Fragment.replaceFragment(fragment: Fragment, containerId: Int = R.id.fragmentContainer, addToBackStack: Boolean = false) =
-        requireActivity().replaceFragment(fragment, containerId, addToBackStack)
 
 fun Fragment.getColor(@ColorRes id: Int) = ContextCompat.getColor(requireContext(), id)
 

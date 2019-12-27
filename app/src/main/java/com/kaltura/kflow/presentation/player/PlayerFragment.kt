@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.view.isGone
+import androidx.navigation.fragment.navArgs
 import com.kaltura.client.enums.*
 import com.kaltura.client.services.*
 import com.kaltura.client.types.*
@@ -17,7 +18,6 @@ import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
-import com.kaltura.kflow.presentation.main.MainActivity
 import com.kaltura.playkit.*
 import com.kaltura.playkit.PlayerEvent.StateChanged
 import com.kaltura.playkit.PlayerEvent.TracksAvailable
@@ -48,16 +48,13 @@ import java.net.URL
 class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     companion object {
-        private val TAG = PlayerFragment::class.java.canonicalName
-        const val ARG_ASSET = "extra_asset"
-        const val ARG_KEEP_ALIVE = "extra_keep_alive"
-        const val ARG_RECORDING = "extra_recording"
         const val ARG_PLAYBACK_CONTEXT_TYPE = "extra_playback_context_type"
     }
 
+    private val TAG = PlayerFragment::class.java.canonicalName
+    private val args: PlayerFragmentArgs by navArgs()
     private var player: Player? = null
     private var asset: Asset? = null
-    private var recording: Recording? = null
     private var likeId = ""
     private lateinit var mediaEntry: PKMediaEntry
     private var parentalRuleId = 0
@@ -69,16 +66,12 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as MainActivity).supportActionBar?.title = "Player"
 
         initUI()
-        if (arguments != null) {
-            asset = arguments!!.getSerializable(ARG_ASSET) as Asset
-            isKeepAlive = arguments!!.getBoolean(ARG_KEEP_ALIVE)
-            recording = arguments!!.getSerializable(ARG_RECORDING) as Recording
-            initialPlaybackContextType = arguments!!.getSerializable(ARG_PLAYBACK_CONTEXT_TYPE) as APIDefines.PlaybackContextType
-        }
-        if (asset == null && recording != null) loadAsset(recording!!.assetId) else onAssetLoaded()
+        asset = args.asset
+        isKeepAlive = args.isKeepAlive
+        initialPlaybackContextType = arguments?.getSerializable(ARG_PLAYBACK_CONTEXT_TYPE) as? APIDefines.PlaybackContextType
+        if (asset == null && args.recording != null) loadAsset(args.recording!!.assetId) else onAssetLoaded()
     }
 
     private fun initUI() {
@@ -174,13 +167,13 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     private fun getAssetIdByFlowType(): String = when {
         (asset is ProgramAsset && getPlaybackContextType() == APIDefines.PlaybackContextType.Playback) -> (asset as ProgramAsset).linearAssetId.toString()
-        recording == null -> asset!!.id.toString()
-        else -> recording!!.id.toString()
+        args.recording == null -> asset!!.id.toString()
+        else -> args.recording!!.id.toString()
     }
 
     private fun getAssetType(playbackContextType: APIDefines.PlaybackContextType): KalturaAssetType = when {
         (playbackContextType == APIDefines.PlaybackContextType.StartOver || playbackContextType == APIDefines.PlaybackContextType.Catchup) -> KalturaAssetType.Epg
-        recording != null -> KalturaAssetType.Recording
+        args.recording != null -> KalturaAssetType.Recording
         else -> KalturaAssetType.Media
     }
 
@@ -193,7 +186,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     private fun getAssetReferenceType(playbackContextType: APIDefines.PlaybackContextType): APIDefines.AssetReferenceType = when {
         playbackContextType == APIDefines.PlaybackContextType.StartOver || playbackContextType == APIDefines.PlaybackContextType.Catchup -> APIDefines.AssetReferenceType.InternalEpg
-        recording == null -> APIDefines.AssetReferenceType.Media
+        args.recording == null -> APIDefines.AssetReferenceType.Media
         else -> APIDefines.AssetReferenceType.Npvr
     }
 

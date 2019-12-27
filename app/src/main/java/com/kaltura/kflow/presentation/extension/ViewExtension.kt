@@ -7,10 +7,25 @@ import androidx.core.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.PluralsRes
+import androidx.core.os.bundleOf
+import androidx.navigation.NavDirections
+import androidx.navigation.findNavController
 
 /**
  * Created by alex_litvinenko
  */
+
+fun View.navigateOnClick(navDirections: NavDirections, additionalParams: (() -> Array<Pair<String, Any>>)? = null) {
+    setOnClickListener {
+        if (additionalParams != null) {
+            val bundle = navDirections.arguments
+            bundle.putAll(bundleOf(*additionalParams()))
+            it.findNavController().navigate(navDirections.actionId, bundle)
+        } else {
+            it.findNavController().navigate(navDirections)
+        }
+    }
+}
 
 fun View.visible() {
     this.visibility = View.VISIBLE
