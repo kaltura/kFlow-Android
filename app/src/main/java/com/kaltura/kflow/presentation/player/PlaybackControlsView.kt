@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
-import com.google.android.exoplayer2.C
+import com.kaltura.android.exoplayer2.C
 import com.kaltura.client.types.Asset
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.extension.getColor
