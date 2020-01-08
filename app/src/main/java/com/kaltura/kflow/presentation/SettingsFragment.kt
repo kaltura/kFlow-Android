@@ -8,6 +8,7 @@ import com.kaltura.client.Configuration
 import com.kaltura.kflow.R
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
+import com.kaltura.kflow.presentation.extension.hideKeyboard
 import com.kaltura.kflow.presentation.extension.string
 import kotlinx.android.synthetic.main.fragment_settings.*
 import org.jetbrains.anko.support.v4.toast
@@ -54,5 +55,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         else toast("Media File Format is missing")
 
         toast("Saved")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        hideKeyboard()
     }
 }
