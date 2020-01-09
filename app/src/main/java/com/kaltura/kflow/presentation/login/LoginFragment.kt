@@ -1,7 +1,8 @@
-package com.kaltura.kflow.presentation
+package com.kaltura.kflow.presentation.login
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
 import com.kaltura.client.services.OttUserService
 import com.kaltura.kflow.R
 import com.kaltura.kflow.manager.PhoenixApiManager
@@ -19,6 +20,8 @@ import kotlinx.android.synthetic.main.fragment_login.*
  */
 class LoginFragment : DebugFragment(R.layout.fragment_login) {
 
+    private val viewModel: LoginViewModel by viewModels()
+
     override fun debugView(): DebugView = debugView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -35,16 +38,7 @@ class LoginFragment : DebugFragment(R.layout.fragment_login) {
     private fun makeLoginRequest(email: String, password: String) {
         withInternetConnection {
             clearDebugView()
-            PhoenixApiManager.execute(OttUserService.login(PreferenceManager.with(requireContext()).partnerId, email, password,
-                    null, getUUID(requireContext()))
-                    .setCompletion {
-                        if (it.isSuccess) {
-                            PreferenceManager.with(requireContext()).ks = it.results.loginSession.ks
-                            PhoenixApiManager.client.ks = it.results.loginSession.ks
-                            PreferenceManager.with(requireContext()).authUser = email
-                            PreferenceManager.with(requireContext()).authPassword = password
-                        }
-                    })
+            viewModel.makeLoginRequest(PreferenceManager.with(requireContext()).partnerId, email, password, getUUID(requireContext()))
         }
     }
 

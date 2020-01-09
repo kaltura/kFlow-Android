@@ -72,7 +72,7 @@
 
     <fragment
         android:id="@+id/login"
-        android:name="com.kaltura.kflow.presentation.LoginFragment"
+        android:name="com.kaltura.kflow.presentation.login.LoginFragment"
         android:label="Login"
         tools:layout="@layout/fragment_login" />
 
