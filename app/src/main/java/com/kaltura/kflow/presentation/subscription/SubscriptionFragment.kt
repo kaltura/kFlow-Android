@@ -59,6 +59,8 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
         progressDialog = ProgressDialog(requireContext())
     }
 
+    override fun subscribeUI() {}
+
     private fun initList() {
         packageList.isNestedScrollingEnabled = false
         packageList.layoutManager = LinearLayoutManager(requireContext())
@@ -165,12 +167,6 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
             subscriptionListener = ::onSubscriptionClicked
         }
         packageList.adapter = subscriptionListAdapter
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideKeyboard()
-        PhoenixApiManager.cancelAll()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

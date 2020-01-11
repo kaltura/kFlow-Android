@@ -37,6 +37,8 @@ class GetVodFragment : DebugFragment(R.layout.fragment_vod) {
         showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
     }
 
+    override fun subscribeUI() {}
+
     private fun makeGetVodRequest(kSqlRequest: String) {
         withInternetConnection {
             assets.clear()
@@ -59,11 +61,5 @@ class GetVodFragment : DebugFragment(R.layout.fragment_vod) {
                 }
             })
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideKeyboard()
-        PhoenixApiManager.cancelAll()
     }
 }

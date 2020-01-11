@@ -31,6 +31,8 @@ class AnonymousLoginFragment : DebugFragment(R.layout.fragment_anonymous_login) 
         }
     }
 
+    override fun subscribeUI() {}
+
     private fun makeAnonymousLoginRequest() {
         withInternetConnection {
             clearDebugView()
@@ -54,11 +56,5 @@ class AnonymousLoginFragment : DebugFragment(R.layout.fragment_anonymous_login) 
         val requestBuilder = AppTokenService.add(appToken).setCompletion { }
         PhoenixApiManager.execute(requestBuilder)
         clearDebugView()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideKeyboard()
-        PhoenixApiManager.cancelAll()
     }
 }

@@ -26,6 +26,8 @@ class FavoritesFragment : DebugFragment(R.layout.fragment_favorites) {
         }
     }
 
+    override fun subscribeUI() {}
+
     private fun getFavoritesRequest() {
         withInternetConnection {
             favoriteCount.gone()
@@ -37,11 +39,5 @@ class FavoritesFragment : DebugFragment(R.layout.fragment_favorites) {
                 }
             })
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideKeyboard()
-        PhoenixApiManager.cancelAll()
     }
 }

@@ -9,6 +9,7 @@ import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.kaltura.kflow.R
 import com.kaltura.kflow.manager.PhoenixApiManager
+import com.kaltura.kflow.presentation.base.BaseFragment
 import com.kaltura.kflow.presentation.extension.shareFile
 import com.kaltura.kflow.utils.saveToFile
 import org.json.JSONObject
@@ -16,7 +17,7 @@ import org.json.JSONObject
 /**
  * Created by alex_lytvynenko on 20.11.2018.
  */
-abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : Fragment(contentLayoutId), DebugListener {
+abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(contentLayoutId), DebugListener {
 
     private var shareMenuItem: MenuItem? = null
 

@@ -7,9 +7,13 @@ import androidx.annotation.PluralsRes
 import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.kaltura.client.types.APIException
+import com.kaltura.kflow.utils.Resource
 import com.kaltura.kflow.utils.hasInternetConnection
 
 /**
@@ -24,6 +28,21 @@ fun Fragment.navigate(direction: NavDirections, vararg additionalParams: Pair<St
     } else {
         findNavController().navigate(direction)
     }
+}
+
+inline fun <T> Fragment.observeResource(liveData: LiveData<Resource<T>>,
+                                        crossinline error: (APIException) -> Unit = {},
+                                        crossinline success: (T) -> Unit = {}) {
+    liveData.observe(viewLifecycleOwner, Observer {
+        when (it) {
+            is Resource.Error -> error(it.ex)
+            is Resource.Success -> success(it.data)
+        }
+    })
+}
+
+inline fun <T> Fragment.observeLiveData(liveData: LiveData<T>, crossinline block: (T) -> Unit = {}) {
+    liveData.observe(viewLifecycleOwner, Observer { block(it) })
 }
 
 fun Fragment.getColor(@ColorRes id: Int) = ContextCompat.getColor(requireContext(), id)

@@ -29,6 +29,8 @@ class RegistrationFragment : DebugFragment(R.layout.fragment_registration) {
         }
     }
 
+    override fun subscribeUI() {}
+
     private fun makeRegistrationRequest(firstName: String, lastName: String, userName: String, email: String, password: String) {
         withInternetConnection {
             val ottUser = OTTUser().apply {
@@ -41,11 +43,5 @@ class RegistrationFragment : DebugFragment(R.layout.fragment_registration) {
             clearDebugView()
             PhoenixApiManager.execute(OttUserService.register(PreferenceManager.with(requireContext()).partnerId, ottUser, password))
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideKeyboard()
-        PhoenixApiManager.cancelAll()
     }
 }

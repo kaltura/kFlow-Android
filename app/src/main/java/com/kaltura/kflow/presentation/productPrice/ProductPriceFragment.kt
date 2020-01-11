@@ -49,6 +49,8 @@ class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
         productPriceList.adapter = ProductPriceListAdapter(arrayListOf())
     }
 
+    override fun subscribeUI() {}
+
     private fun makeGetAssetRequest(assetId: String) {
         withInternetConnection {
             productPrices.clear()
@@ -98,11 +100,5 @@ class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
 
     private fun showAssets(assetList: ArrayList<Asset>) {
         navigate(ProductPriceFragmentDirections.navigateToAssetList(), AssetListFragment.ARG_ASSETS to assetList)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideKeyboard()
-        PhoenixApiManager.cancelAll()
     }
 }

@@ -40,6 +40,8 @@ class SearchFragment : DebugFragment(R.layout.fragment_search) {
         showAssets.navigateOnClick(SearchFragmentDirections.navigateToAssetList()) { arrayOf(AssetListFragment.ARG_ASSETS to assets) }
     }
 
+    override fun subscribeUI() {}
+
     private fun searchRequest(typeInSearch: String, kSqlSearch: String) {
         withInternetConnection {
             assets.clear()
@@ -83,11 +85,5 @@ class SearchFragment : DebugFragment(R.layout.fragment_search) {
                 }
             })
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideKeyboard()
-        PhoenixApiManager.cancelAll()
     }
 }

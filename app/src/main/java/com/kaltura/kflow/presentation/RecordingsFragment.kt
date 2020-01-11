@@ -59,6 +59,8 @@ class RecordingsFragment : DebugFragment(R.layout.fragment_recordings) {
         filterRecordings()
     }
 
+    override fun subscribeUI() {}
+
     private fun recordingsRequest() {
         if (allRecordings.isEmpty()) {
             withInternetConnection {
@@ -106,11 +108,5 @@ class RecordingsFragment : DebugFragment(R.layout.fragment_recordings) {
             }
             showRecordings.visible()
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideKeyboard()
-        PhoenixApiManager.cancelAll()
     }
 }

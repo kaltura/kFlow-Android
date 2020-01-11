@@ -97,6 +97,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         }
     }
 
+    override fun subscribeUI() {}
+
     private fun loadAsset(assetId: Long) {
         withInternetConnection {
             PhoenixApiManager.execute(AssetService.get(assetId.toString(), AssetReferenceType.EPG_INTERNAL).setCompletion {
@@ -465,8 +467,6 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             playerKeepAliveService.cancelFireKeepAliveService()
             isKeepAlive = false
         }
-        hideKeyboard()
-        PhoenixApiManager.cancelAll()
     }
 
     override fun onPause() {

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.types.Asset
 import com.kaltura.client.types.ProgramAsset
 import com.kaltura.kflow.R
+import com.kaltura.kflow.presentation.base.BaseFragment
 import com.kaltura.kflow.presentation.extension.isProgramInLive
 import com.kaltura.kflow.presentation.extension.navigate
 import com.kaltura.kflow.presentation.player.PlayerFragment
@@ -18,7 +19,7 @@ import java.util.*
 /**
  * Created by alex_lytvynenko on 30.11.2018.
  */
-class AssetListFragment : Fragment(R.layout.fragment_vod_list) {
+class AssetListFragment : BaseFragment(R.layout.fragment_vod_list) {
 
     companion object {
         const val ARG_ASSETS = "extra_assets"
@@ -52,4 +53,6 @@ class AssetListFragment : Fragment(R.layout.fragment_vod_list) {
             list.scrollToPosition(liveAssetPosition)
         }
     }
+
+    override fun subscribeUI() {}
 }

@@ -37,6 +37,9 @@ class LiveTvFragment : DebugFragment(R.layout.fragment_live) {
         showChannel.text = getQuantityString(R.plurals.show_channels, channels.size)
     }
 
+    override fun subscribeUI() {
+    }
+
     private fun makeGetChannelsRequest(channelName: String) {
         withInternetConnection {
             channels.clear()
@@ -61,11 +64,5 @@ class LiveTvFragment : DebugFragment(R.layout.fragment_live) {
                 }
             })
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideKeyboard()
-        PhoenixApiManager.cancelAll()
     }
 }

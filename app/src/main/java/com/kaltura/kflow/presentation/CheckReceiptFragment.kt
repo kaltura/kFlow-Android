@@ -31,6 +31,8 @@ class CheckReceiptFragment : DebugFragment(R.layout.fragment_check_receipt) {
         }
     }
 
+    override fun subscribeUI() {}
+
     private fun checkReceiptRequest(receiptId: String, productType: String, productId: String, contentId: String) {
         if (receiptId.isEmpty() || productType.isEmpty() || productId.isEmpty() || contentId.isEmpty()) {
             toast("Wrong input, please fill in all the fields")
@@ -55,11 +57,5 @@ class CheckReceiptFragment : DebugFragment(R.layout.fragment_check_receipt) {
                 toast("Wrong input")
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideKeyboard()
-        PhoenixApiManager.cancelAll()
     }
 }

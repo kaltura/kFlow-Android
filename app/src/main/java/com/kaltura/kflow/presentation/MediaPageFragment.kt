@@ -70,6 +70,8 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
         validateButtons()
     }
 
+    override fun subscribeUI() {}
+
     private fun getAssetRequest(assetId: String) {
         withInternetConnection {
             asset = null
@@ -206,11 +208,5 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
                 parentalRuleId = it.id.toInt()
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideKeyboard()
-        PhoenixApiManager.cancelAll()
     }
 }

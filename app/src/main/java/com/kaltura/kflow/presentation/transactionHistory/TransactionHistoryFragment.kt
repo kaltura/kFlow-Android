@@ -41,6 +41,8 @@ class TransactionHistoryFragment : DebugFragment(R.layout.fragment_transaction_h
         showTransactions.text = resources.getQuantityString(R.plurals.show_transactions, transactions.size)
     }
 
+    override fun subscribeUI() {}
+
     private fun initList() {
         transactionsList.isNestedScrollingEnabled = false
         transactionsList.layoutManager = LinearLayoutManager(requireContext())
@@ -70,11 +72,5 @@ class TransactionHistoryFragment : DebugFragment(R.layout.fragment_transaction_h
         transactionsList.visible()
         showTransactions.gone()
         transactionHistoryListAdapter.transactions = transactions
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideKeyboard()
-        PhoenixApiManager.cancelAll()
     }
 }

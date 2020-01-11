@@ -41,6 +41,8 @@ class EpgFragment : DebugFragment(R.layout.fragment_epg) {
         showChannel.text = getQuantityString(R.plurals.show_programs, channels.size)
     }
 
+    override fun subscribeUI() {}
+
     private fun makeGetChannelsRequest(epgChannelId: String, dateFilter: DateFilter) {
         withInternetConnection {
             channels.clear()
@@ -92,11 +94,5 @@ class EpgFragment : DebugFragment(R.layout.fragment_epg) {
                         }
                     })
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideKeyboard()
-        PhoenixApiManager.cancelAll()
     }
 }

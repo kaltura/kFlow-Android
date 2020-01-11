@@ -3,12 +3,11 @@ package com.kaltura.kflow.presentation
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
-import androidx.fragment.app.Fragment
 import com.kaltura.client.Configuration
 import com.kaltura.kflow.R
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
-import com.kaltura.kflow.presentation.extension.hideKeyboard
+import com.kaltura.kflow.presentation.base.BaseFragment
 import com.kaltura.kflow.presentation.extension.string
 import kotlinx.android.synthetic.main.fragment_settings.*
 import org.jetbrains.anko.support.v4.toast
@@ -16,7 +15,7 @@ import org.jetbrains.anko.support.v4.toast
 /**
  * Created by alex_lytvynenko on 2019-06-24.
  */
-class SettingsFragment : Fragment(R.layout.fragment_settings) {
+class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -26,6 +25,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         }
         initUI()
     }
+
+    override fun subscribeUI() {}
 
     private fun initUI() {
         url.string = PreferenceManager.with(requireContext()).baseUrl
@@ -55,10 +56,5 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         else toast("Media File Format is missing")
 
         toast("Saved")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideKeyboard()
     }
 }
