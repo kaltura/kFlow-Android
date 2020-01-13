@@ -7,11 +7,10 @@ import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.view.isGone
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.kaltura.client.enums.*
-import com.kaltura.client.services.*
 import com.kaltura.client.types.*
-import com.kaltura.client.utils.request.MultiRequestBuilder
 import com.kaltura.kflow.R
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
@@ -50,6 +49,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     companion object {
         const val ARG_PLAYBACK_CONTEXT_TYPE = "extra_playback_context_type"
     }
+
+    private val viewModel: PlayerViewModel by viewModels()
 
     private val TAG = PlayerFragment::class.java.canonicalName
     private val args: PlayerFragmentArgs by navArgs()
@@ -97,17 +98,56 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         }
     }
 
-    override fun subscribeUI() {}
+    override fun subscribeUI() {
+        observeResource(viewModel.asset) {
+            asset = it
+            onAssetLoaded()
+        }
+        observeResource(viewModel.userAssetRules) {
+            it.forEach {
+                if (it.ruleType == RuleType.PARENTAL) {
+                    parentalRuleId = it.id.toInt()
+                    pinLayout.visible()
+                }
+            }
+        }
+        observeResource(viewModel.favoriteList) { favorite.isChecked = true }
+        observeResource(viewModel.getLike) {
+            likeId = it.id
+            like.isChecked = true
+        }
+        observeResource(viewModel.doLike, error = {
+            like.isEnabled = true
+            like.isChecked = false
+        }, success = {
+            like.isEnabled = true
+            likeId = it.id
+        })
+        observeResource(viewModel.doUnlike, error = {
+            like.isEnabled = true
+            like.isChecked = true
+        }, success = {
+            like.isEnabled = true
+            likeId = ""
+        })
+        observeResource(viewModel.doFavorite, error = {
+            favorite.isEnabled = true
+            favorite.isChecked = false
+        }, success = {
+            favorite.isEnabled = true
+        })
+        observeResource(viewModel.doUnfavorite, error = {
+            favorite.isEnabled = true
+            favorite.isChecked = true
+        }, success = {
+            favorite.isEnabled = true
+        })
+    }
 
     private fun loadAsset(assetId: Long) {
         withInternetConnection {
-            PhoenixApiManager.execute(AssetService.get(assetId.toString(), AssetReferenceType.EPG_INTERNAL).setCompletion {
-                if (it.isSuccess) {
-                    asset = it.results
-                    onAssetLoaded()
-                }
-            })
             clearDebugView()
+            viewModel.loadAsset(assetId)
         }
     }
 
@@ -326,118 +366,41 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     private fun likeList() {
         withInternetConnection {
-            val socialActionFilter = SocialActionFilter().apply { assetIdIn = asset!!.id.toString() }
-            PhoenixApiManager.execute(SocialActionService.list(socialActionFilter).setCompletion {
-                if (it.isSuccess) {
-                    it.results.objects.forEach {
-                        if (it.actionType == SocialActionType.LIKE) {
-                            likeId = it.id
-                            like.isChecked = true
-                            return@forEach
-                        }
-                    }
-                }
-            })
             clearDebugView()
+            viewModel.getLike(asset!!.id)
         }
     }
 
     private fun favoriteList() {
         withInternetConnection {
-            val favoriteFilter = FavoriteFilter().apply { mediaIdIn = asset!!.id.toString() }
-            PhoenixApiManager.execute(FavoriteService.list(favoriteFilter).setCompletion {
-                if (it.isSuccess) {
-                    if (it.results.objects != null && it.results.objects.isNotEmpty()) {
-                        favorite.isChecked = true
-                    }
-                }
-            })
             clearDebugView()
+            viewModel.getFavoriteList(asset!!.id)
         }
     }
 
     private fun actionLike() {
         withInternetConnection {
-            val requestBuilder = if (likeId.isEmpty()) {
-                val socialAction = SocialAction().apply {
-                    assetId = asset!!.id
-                    actionType = SocialActionType.LIKE
-                }
-
-                SocialActionService.add(socialAction).setCompletion {
-                    like.isEnabled = true
-                    if (it.isSuccess) likeId = it.results.socialAction.id
-                    else like.isChecked = false
-                }
-            } else {
-                SocialActionService.delete(likeId).setCompletion {
-                    like.isEnabled = true
-                    if (it.isSuccess) likeId = ""
-                    else like.isChecked = true
-                }
-            }
-            PhoenixApiManager.execute(requestBuilder)
             clearDebugView()
             like.isEnabled = false
+            if (likeId.isEmpty()) viewModel.like(asset!!.id)
+            else viewModel.unlike(likeId)
         }
     }
 
     private fun actionFavorite() {
         withInternetConnection {
-            val requestBuilder = if (favorite.isChecked) {
-                favorite.isEnabled = false
-                val favoriteEntity = Favorite().apply { assetId = asset!!.id }
-                FavoriteService.add(favoriteEntity).setCompletion {
-                    favorite.isEnabled = true
-                    if (!it.isSuccess) favorite.isChecked = false
-                }
-            } else {
-                FavoriteService.delete(asset!!.id.toInt().toLong()).setCompletion {
-                    favorite.isEnabled = true
-                    if (!it.isSuccess) favorite.isChecked = true
-                }
-            }
-            PhoenixApiManager.execute(requestBuilder)
             clearDebugView()
+            favorite.isEnabled = false
+            if (favorite.isChecked) viewModel.favorite(asset!!.id)
+            else viewModel.unfavorite(asset!!.id)
         }
     }
 
     private fun checkAllTogetherRequest() {
         withInternetConnection {
             if (TextUtils.isDigitsOnly(asset!!.id.toString())) {
-                val multiRequestBuilder = MultiRequestBuilder()
-                // product price request
-                val productPriceFilter = ProductPriceFilter().apply { fileIdIn = asset!!.id.toString() }
-                multiRequestBuilder.add(ProductPriceService.list(productPriceFilter))
-                // bookmark request
-                val bookmarkFilter = BookmarkFilter().apply {
-                    assetIdIn = asset!!.id.toString()
-                    assetTypeEqual = AssetType.MEDIA
-                }
-
-                multiRequestBuilder.add(BookmarkService.list(bookmarkFilter))
-                // asset rules request
-                val userAssetRuleFilter = UserAssetRuleFilter().apply {
-                    assetTypeEqual = 1
-                    assetIdEqual = asset!!.id
-                }
-
-                multiRequestBuilder.add(UserAssetRuleService.list(userAssetRuleFilter))
-                multiRequestBuilder.setCompletion {
-                    if (it.isSuccess) {
-                        if (it.results != null && it.results[2] != null) {
-                            val userAssetRules = (it.results[2] as ListResponse<UserAssetRule>).objects
-                            userAssetRules.forEach {
-                                if (it.ruleType == RuleType.PARENTAL) {
-                                    parentalRuleId = it.id.toInt()
-                                    pinLayout.visible()
-                                }
-                            }
-                        }
-                    }
-                }
-                PhoenixApiManager.execute(multiRequestBuilder)
                 clearDebugView()
+                viewModel.checkAllValidations(asset!!.id)
             } else {
                 toast("Wrong input")
             }
@@ -447,8 +410,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     private fun checkPinRequest(pin: String) {
         withInternetConnection {
             if (TextUtils.isDigitsOnly(pin)) {
-                PhoenixApiManager.execute(PinService.validate(pin, PinType.PARENTAL, parentalRuleId))
                 clearDebugView()
+                viewModel.checkPinCode(pin, parentalRuleId)
             } else {
                 toast("Wrong input")
             }
