@@ -90,7 +90,7 @@
 
     <fragment
         android:id="@+id/epg"
-        android:name="com.kaltura.kflow.presentation.EpgFragment"
+        android:name="com.kaltura.kflow.presentation.epg.EpgFragment"
         android:label="EPG"
         tools:layout="@layout/fragment_epg">
         <action
