@@ -2,14 +2,11 @@ package com.kaltura.kflow.presentation.productPrice
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.kaltura.client.enums.AssetReferenceType
-import com.kaltura.client.services.AssetService
-import com.kaltura.client.services.ProductPriceService
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
-import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.assetList.AssetListFragment
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
@@ -21,6 +18,8 @@ import java.util.*
  * Created by alex_lytvynenko on 27.11.2018.
  */
 class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
+
+    private val viewModel: ProductPriceViewModel by viewModels()
     private val productPrices = arrayListOf<ProductPrice>()
 
     override fun debugView(): DebugView = debugView
@@ -49,7 +48,13 @@ class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
         productPriceList.adapter = ProductPriceListAdapter(arrayListOf())
     }
 
-    override fun subscribeUI() {}
+    override fun subscribeUI() {
+        observeResource(viewModel.productPriceList) {
+            productPrices.addAll(it)
+            showProductPrices.text = getQuantityString(R.plurals.show_product_prices, productPrices.size)
+            showProductPrices.visible()
+        }
+    }
 
     private fun makeGetAssetRequest(assetId: String) {
         withInternetConnection {
@@ -57,34 +62,7 @@ class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
             showProductPrices.gone()
             productPriceList.gone()
             clearDebugView()
-            PhoenixApiManager.execute(AssetService.get(assetId, AssetReferenceType.MEDIA).setCompletion {
-                if (it.isSuccess) makeGetProductPricesRequest(it.results)
-            })
-        }
-    }
-
-    private fun makeGetProductPricesRequest(asset: Asset) {
-        withInternetConnection {
-            val fileIdInString = StringBuilder()
-            asset.mediaFiles?.let {
-                asset.mediaFiles.forEach {
-                    if (asset.mediaFiles.indexOf(it) != 0)
-                        fileIdInString.append(", ")
-
-                    fileIdInString.append(it.id.toString())
-                }
-            }
-            val productPriceFilter = ProductPriceFilter().apply { fileIdIn = fileIdInString.toString() }
-            clearDebugView()
-            PhoenixApiManager.execute(ProductPriceService.list(productPriceFilter).setCompletion {
-                if (it.isSuccess && it.results != null) {
-                    if (it.results.objects != null)
-                        productPrices.addAll(it.results.objects)
-
-                    showProductPrices.text = getQuantityString(R.plurals.show_product_prices, productPrices.size)
-                    showProductPrices.visible()
-                }
-            })
+            viewModel.getProductPrices(assetId)
         }
     }
 
