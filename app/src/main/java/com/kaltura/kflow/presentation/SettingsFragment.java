@@ -43,7 +43,16 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         mMediaFileFormat = getView().findViewById(R.id.media_file_format);
 
         getView().findViewById(R.id.save).setOnClickListener(this);
-        initUI();
+//        initUI();
+        ApplyDialogConfiguration();
+    }
+
+    private void ApplyDialogConfiguration() {
+
+        mUrl.setText("https://restv4-as.ott.kaltura.com/v5_0_3");
+        mPartnerId.setText("3065");
+        mMediaFileFormat.setText("Mobile_Dash_SD");
+
     }
 
     @Override

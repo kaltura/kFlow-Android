@@ -321,7 +321,7 @@ public class PlayerFragment extends DebugFragment {
                 || playbackContextType == APIDefines.PlaybackContextType.Catchup)
             return APIDefines.AssetReferenceType.InternalEpg;
         else if (mRecording == null) return APIDefines.AssetReferenceType.Media;
-        else return APIDefines.AssetReferenceType.Npvr;
+        else return APIDefines.AssetReferenceType.Media;
     }
 
     private void loadPlayerSettings() {

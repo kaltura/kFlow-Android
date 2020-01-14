@@ -48,7 +48,7 @@ public class PreferenceManager {
     }
 
     public String getBaseUrl() {
-        return prefs.getString(KEY_BASE_URL, "https://rest-us.ott.kaltura.com/v5_0_3/");
+        return prefs.getString(KEY_BASE_URL, "https://restv4-as.ott.kaltura.com/v5_0_3/");
     }
 
     public void saveMediaFileFormat(String mediaFileFormat) {
@@ -56,7 +56,7 @@ public class PreferenceManager {
     }
 
     public String getMediaFileFormat() {
-        return prefs.getString(KEY_MAIN_MEDIA_FILE_FORMAT, "");
+        return prefs.getString(KEY_MAIN_MEDIA_FILE_FORMAT, "Mobile_Dash_SD");
     }
 
     public void savePartnerId(int partnerId) {
@@ -64,7 +64,7 @@ public class PreferenceManager {
     }
 
     public int getPartnerId() {
-        return prefs.getInt(KEY_PARTNER_ID, 3009);
+        return prefs.getInt(KEY_PARTNER_ID, 3065);
     }
 
     public void saveKs(String ks) {

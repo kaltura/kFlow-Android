@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.kaltura.android.exoplayer2.C;
+import com.google.android.exoplayer2.C;
 import com.kaltura.client.types.Asset;
 import com.kaltura.kflow.R;
 import com.kaltura.playkit.PKLog;

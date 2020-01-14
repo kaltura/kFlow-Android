@@ -44,8 +44,15 @@ public class LoginFragment extends DebugFragment implements View.OnClickListener
         mPassword = getView().findViewById(R.id.password);
         getView().findViewById(R.id.login).setOnClickListener(this);
 
-        mUsername.setText(PreferenceManager.getInstance(requireContext()).getAuthUser());
-        mPassword.setText(PreferenceManager.getInstance(requireContext()).getAuthPassword());
+//        mUsername.setText(PreferenceManager.getInstance(requireContext()).getAuthUser());
+//        mPassword.setText(PreferenceManager.getInstance(requireContext()).getAuthPassword());
+
+        applyDialogUserLogin();
+    }
+
+    private void applyDialogUserLogin() {
+        mUsername.setText("QA_TEST_QATest_1578784569422");
+        mPassword.setText("password_ETtcctTf");
     }
 
     @Override
