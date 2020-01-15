@@ -1,17 +1,12 @@
 package com.kaltura.kflow.presentation.transactionHistory
 
 import android.os.Bundle
-import android.text.format.DateUtils
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.kaltura.client.enums.EntityReferenceBy
-import com.kaltura.client.services.TransactionHistoryService
 import com.kaltura.client.types.BillingTransaction
-import com.kaltura.client.types.TransactionHistoryFilter
 import com.kaltura.kflow.R
-import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
