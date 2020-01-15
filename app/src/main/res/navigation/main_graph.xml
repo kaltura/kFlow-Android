@@ -78,7 +78,7 @@
 
     <fragment
         android:id="@+id/anonymous_login"
-        android:name="com.kaltura.kflow.presentation.AnonymousLoginFragment"
+        android:name="com.kaltura.kflow.presentation.anonymousLogin.AnonymousLoginFragment"
         android:label="Anonymous login"
         tools:layout="@layout/fragment_anonymous_login" />
 
