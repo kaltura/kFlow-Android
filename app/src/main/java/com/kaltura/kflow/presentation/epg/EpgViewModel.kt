@@ -10,13 +10,14 @@ import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
 import com.kaltura.kflow.utils.Resource
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by alex_lytvynenko on 2020-01-13.
  */
 class EpgViewModel : BaseViewModel() {
 
-    val getAssetList = MutableLiveData<Resource<List<Asset>>>()
+    val getAssetList = MutableLiveData<Resource<ArrayList<Asset>>>()
 
     fun getChannelsRequest(epgChannelId: String, dateFilter: EpgFragment.DateFilter) {
         var startDate = 0L
@@ -58,7 +59,7 @@ class EpgViewModel : BaseViewModel() {
 
         PhoenixApiManager.execute(AssetService.list(filter, filterPager)
                 .setCompletion {
-                    if (it.isSuccess && it.results.objects != null) getAssetList.value = Resource.Success(it.results.objects)
+                    if (it.isSuccess && it.results.objects != null) getAssetList.value = Resource.Success(it.results.objects as ArrayList<Asset>)
                 })
     }
 }

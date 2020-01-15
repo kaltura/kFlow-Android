@@ -20,7 +20,7 @@ import java.util.*
 class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
 
     private val viewModel: ProductPriceViewModel by viewModels()
-    private val productPrices = arrayListOf<ProductPrice>()
+    private var productPrices = arrayListOf<ProductPrice>()
 
     override fun debugView(): DebugView = debugView
 
@@ -37,8 +37,6 @@ class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
             makeGetAssetRequest(assetId.string)
         }
         assetId.string = "428755"
-        showProductPrices.visibleOrGone(productPrices.isNotEmpty())
-        showProductPrices.text = getQuantityString(R.plurals.show_product_prices, productPrices.size)
     }
 
     private fun initList() {
@@ -50,7 +48,7 @@ class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
 
     override fun subscribeUI() {
         observeResource(viewModel.productPriceList) {
-            productPrices.addAll(it)
+            productPrices = it
             showProductPrices.text = getQuantityString(R.plurals.show_product_prices, productPrices.size)
             showProductPrices.visible()
         }
@@ -58,7 +56,6 @@ class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
 
     private fun makeGetAssetRequest(assetId: String) {
         withInternetConnection {
-            productPrices.clear()
             showProductPrices.gone()
             productPriceList.gone()
             clearDebugView()

@@ -27,6 +27,7 @@
             android:id="@+id/showTransactions"
             android:layout_width="match_parent"
             android:layout_height="55dp"
+            android:visibility="gone"
             android:layout_marginBottom="5dp"
             android:backgroundTint="@color/colorAccent"
             android:gravity="center"

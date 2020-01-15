@@ -18,7 +18,7 @@ import com.kaltura.kflow.utils.Resource
  */
 class SubscriptionViewModel : BaseViewModel() {
 
-    val assetList = MutableLiveData<Resource<List<Asset>>>()
+    val assetList = MutableLiveData<Resource<ArrayList<Asset>>>()
     val assetsInSubscription = MutableLiveData<Resource<List<Asset>>>()
     val subscriptionList = MutableLiveData<Resource<ArrayList<Subscription>>>()
 
@@ -36,7 +36,7 @@ class SubscriptionViewModel : BaseViewModel() {
 
         PhoenixApiManager.execute(AssetService.list(filter, filterPager).setCompletion {
             if (it.isSuccess) {
-                if (it.results.objects != null) assetList.value = Resource.Success(it.results.objects)
+                if (it.results.objects != null) assetList.value = Resource.Success(it.results.objects as ArrayList<Asset>)
             }
         })
     }

@@ -18,7 +18,7 @@ import java.util.*
 class EpgFragment : DebugFragment(R.layout.fragment_epg) {
 
     private val viewModel: EpgViewModel by viewModels()
-    private val channels = ArrayList<Asset>()
+    private var channels = ArrayList<Asset>()
 
     enum class DateFilter {
         YESTERDAY, TODAY, TOMORROW
@@ -33,15 +33,11 @@ class EpgFragment : DebugFragment(R.layout.fragment_epg) {
         yesterday.setOnClickListener { makeGetChannelsRequest(linearMediaId.string, DateFilter.YESTERDAY) }
         today.setOnClickListener { makeGetChannelsRequest(linearMediaId.string, DateFilter.TODAY) }
         tomorrow.setOnClickListener { makeGetChannelsRequest(linearMediaId.string, DateFilter.TOMORROW) }
-
-        showChannel.visibleOrGone(channels.isNotEmpty())
-        showChannel.text = getQuantityString(R.plurals.show_programs, channels.size)
-        channels.clear()
     }
 
     override fun subscribeUI() {
         observeResource(viewModel.getAssetList) {
-            channels.addAll(it)
+            channels = it
             showChannel.text = getQuantityString(R.plurals.show_programs, channels.size)
             showChannel.visible()
         }
@@ -50,7 +46,6 @@ class EpgFragment : DebugFragment(R.layout.fragment_epg) {
     private fun makeGetChannelsRequest(epgChannelId: String, dateFilter: DateFilter) {
         withInternetConnection {
             hideKeyboard()
-            channels.clear()
             showChannel.gone()
             clearDebugView()
             viewModel.getChannelsRequest(epgChannelId, dateFilter)

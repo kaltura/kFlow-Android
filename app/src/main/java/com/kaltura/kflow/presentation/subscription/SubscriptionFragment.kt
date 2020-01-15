@@ -23,7 +23,7 @@ import kotlin.collections.ArrayList
 class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
 
     private val viewModel: SubscriptionViewModel by viewModels()
-    private val assets = arrayListOf<Asset>()
+    private var assets = arrayListOf<Asset>()
     private var subscriptionListAdapter = SubscriptionListAdapter(arrayListOf()).apply {
         packageGetSubscriptionListener = ::onPackageGetSubscriptionClicked
         subscriptionListener = ::onSubscriptionClicked
@@ -49,14 +49,12 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
             hideKeyboard()
             makeGetEntitlementListRequest()
         }
-        showAssets.visibleOrGone(assets.isNotEmpty())
-        showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
         progressDialog = ProgressDialog(requireContext())
     }
 
     override fun subscribeUI() {
         observeResource(viewModel.assetList) {
-            assets.addAll(it)
+            assets = it
             showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
             showAssets.visible()
         }
@@ -79,7 +77,6 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
 
     private fun makeGetPackageListRequest(packageType: String) {
         withInternetConnection {
-            assets.clear()
             showAssets.gone()
             packageList.gone()
             clearDebugView()
