@@ -46,7 +46,8 @@
             android:backgroundTint="@color/colorAccent"
             android:gravity="center"
             android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:visibility="gone" />
 
         <com.kaltura.kflow.presentation.debug.DebugView
             android:id="@+id/debugView"

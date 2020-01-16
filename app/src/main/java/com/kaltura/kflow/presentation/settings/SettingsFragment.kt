@@ -1,4 +1,4 @@
-package com.kaltura.kflow.presentation
+package com.kaltura.kflow.presentation.settings
 
 import android.os.Bundle
 import android.text.TextUtils
