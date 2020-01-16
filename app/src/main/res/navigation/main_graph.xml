@@ -84,7 +84,7 @@
 
     <fragment
         android:id="@+id/check_receipt"
-        android:name="com.kaltura.kflow.presentation.CheckReceiptFragment"
+        android:name="com.kaltura.kflow.presentation.checkReceipt.CheckReceiptFragment"
         android:label="Check receipt"
         tools:layout="@layout/fragment_check_receipt" />
 
