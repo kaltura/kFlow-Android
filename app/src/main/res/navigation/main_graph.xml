@@ -105,7 +105,7 @@
 
     <fragment
         android:id="@+id/favorites"
-        android:name="com.kaltura.kflow.presentation.FavoritesFragment"
+        android:name="com.kaltura.kflow.presentation.favorites.FavoritesFragment"
         android:label="Favorites"
         tools:layout="@layout/fragment_favorites" />
 
