@@ -1,17 +1,15 @@
-package com.kaltura.kflow.presentation
+package com.kaltura.kflow.presentation.recordings
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
 import com.kaltura.client.enums.RecordingStatus
-import com.kaltura.client.services.RecordingService
 import com.kaltura.client.types.Recording
 import com.kaltura.kflow.R
-import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.recordingList.RecordingListFragment
-import kotlinx.android.synthetic.main.fragment_media_page.debugView
 import kotlinx.android.synthetic.main.fragment_recordings.*
 
 /**
@@ -19,7 +17,8 @@ import kotlinx.android.synthetic.main.fragment_recordings.*
  */
 class RecordingsFragment : DebugFragment(R.layout.fragment_recordings) {
 
-    private val allRecordings = arrayListOf<Recording>()
+    private val viewModel: RecordingsViewModel by viewModels()
+    private var allRecordings = arrayListOf<Recording>()
     private val filteredRecordings = arrayListOf<Recording>()
     private var recordingFilter = RecordingsFilter.RECORDED_FILTER
 
@@ -55,11 +54,14 @@ class RecordingsFragment : DebugFragment(R.layout.fragment_recordings) {
             recordingFilter = RecordingsFilter.SCHEDULED_FILTER
             recordingsRequest()
         }
-        showRecordings.visibleOrGone(allRecordings.isNotEmpty())
-        filterRecordings()
     }
 
-    override fun subscribeUI() {}
+    override fun subscribeUI() {
+        observeResource(viewModel.recordingList) {
+            allRecordings = it
+            filterRecordings()
+        }
+    }
 
     private fun recordingsRequest() {
         if (allRecordings.isEmpty()) {
@@ -68,12 +70,7 @@ class RecordingsFragment : DebugFragment(R.layout.fragment_recordings) {
                 filteredRecordings.clear()
                 showRecordings.gone()
                 clearDebugView()
-                PhoenixApiManager.execute(RecordingService.list().setCompletion {
-                    if (it.isSuccess) {
-                        allRecordings.addAll(it.results.objects)
-                        filterRecordings()
-                    }
-                })
+                viewModel.getRecordings()
             }
         } else {
             filterRecordings()

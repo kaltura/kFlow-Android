@@ -144,7 +144,7 @@
 
     <fragment
         android:id="@+id/recordings"
-        android:name="com.kaltura.kflow.presentation.RecordingsFragment"
+        android:name="com.kaltura.kflow.presentation.recordings.RecordingsFragment"
         android:label="Recordings"
         tools:layout="@layout/fragment_recordings">
         <action
