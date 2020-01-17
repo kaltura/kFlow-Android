@@ -121,7 +121,7 @@
 
     <fragment
         android:id="@+id/live_tv"
-        android:name="com.kaltura.kflow.presentation.LiveTvFragment"
+        android:name="com.kaltura.kflow.presentation.liveTv.LiveTvFragment"
         android:label="Live TV"
         tools:layout="@layout/fragment_live">
         <action
