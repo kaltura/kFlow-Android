@@ -44,7 +44,7 @@ class LiveTvFragment : DebugFragment(R.layout.fragment_live) {
         withInternetConnection {
             showChannel.gone()
             clearDebugView()
-            viewModel.makeGetChannelsRequest(channelName)
+            viewModel.getChannels(channelName)
         }
     }
 }

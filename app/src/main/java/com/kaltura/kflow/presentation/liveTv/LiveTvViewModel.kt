@@ -17,7 +17,7 @@ class LiveTvViewModel : BaseViewModel() {
 
     val channelList = MutableLiveData<Resource<ArrayList<Asset>>>()
 
-    fun makeGetChannelsRequest(channelName: String) {
+    fun getChannels(channelName: String) {
         val filter = SearchAssetFilter().apply {
             orderBy = AssetOrderBy.START_DATE_DESC.value
             name = channelName

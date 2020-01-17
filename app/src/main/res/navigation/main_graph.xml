@@ -154,7 +154,7 @@
 
     <fragment
         android:id="@+id/registration"
-        android:name="com.kaltura.kflow.presentation.RegistrationFragment"
+        android:name="com.kaltura.kflow.presentation.registration.RegistrationFragment"
         android:label="Registration"
         tools:layout="@layout/fragment_registration" />
 
