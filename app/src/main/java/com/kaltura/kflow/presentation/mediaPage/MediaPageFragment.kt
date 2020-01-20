@@ -1,24 +1,18 @@
-package com.kaltura.kflow.presentation
+package com.kaltura.kflow.presentation.mediaPage
 
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.isGone
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import com.kaltura.client.enums.AssetReferenceType
-import com.kaltura.client.enums.AssetType
-import com.kaltura.client.enums.PinType
 import com.kaltura.client.enums.RuleType
-import com.kaltura.client.services.*
 import com.kaltura.client.types.*
-import com.kaltura.client.utils.request.MultiRequestBuilder
 import com.kaltura.kflow.R
-import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
-import com.kaltura.kflow.presentation.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_media_page.*
 import org.jetbrains.anko.support.v4.toast
 
@@ -27,6 +21,7 @@ import org.jetbrains.anko.support.v4.toast
  */
 class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
 
+    private val viewModel: MediaPageViewModel by viewModels()
     private val args: MediaPageFragmentArgs by navArgs()
     private var parentalRuleId = 0
     private var asset: Asset? = null
@@ -70,7 +65,16 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
         validateButtons()
     }
 
-    override fun subscribeUI() {}
+    override fun subscribeUI() {
+        observeResource(viewModel.asset) {
+            asset = it
+            validateButtons()
+        }
+        observeResource(viewModel.userAssetRules) {
+            handleUserRules(it)
+            validateButtons()
+        }
+    }
 
     private fun getAssetRequest(assetId: String) {
         withInternetConnection {
@@ -79,48 +83,29 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
             pin.string = ""
             validateButtons()
             clearDebugView()
-            PhoenixApiManager.execute(AssetService.get(assetId, AssetReferenceType.MEDIA).setCompletion {
-                if (it.isSuccess) {
-                    if (it.results != null) asset = it.results
-                    validateButtons()
-                }
-            })
+            viewModel.getAsset(assetId)
         }
     }
 
     private fun getProductPriceRequest(assetId: String) {
         withInternetConnection {
-            val productPriceFilter = ProductPriceFilter().apply { fileIdIn = assetId }
             clearDebugView()
-            PhoenixApiManager.execute(ProductPriceService.list(productPriceFilter))
+            viewModel.getProductPrice(assetId)
         }
     }
 
     private fun getBookmarkRequest(assetId: String) {
         withInternetConnection {
-            val bookmarkFilter = BookmarkFilter().apply {
-                assetIdIn = assetId
-                assetTypeEqual = AssetType.MEDIA
-            }
             clearDebugView()
-            PhoenixApiManager.execute(BookmarkService.list(bookmarkFilter))
+            viewModel.getBookmark(assetId)
         }
     }
 
     private fun getAssetRulesRequest(assetId: String) {
         withInternetConnection {
             if (TextUtils.isDigitsOnly(assetId)) {
-                val userAssetRuleFilter = UserAssetRuleFilter().apply {
-                    assetTypeEqual = 1
-                    assetIdEqual = assetId.toLong()
-                }
                 clearDebugView()
-                PhoenixApiManager.execute(UserAssetRuleService.list(userAssetRuleFilter).setCompletion {
-                    if (it.isSuccess) {
-                        it.results?.objects?.let { handleUserRules(it) }
-                        validateButtons()
-                    }
-                })
+                viewModel.getAssetRules(assetId)
             } else {
                 toast("Wrong input")
             }
@@ -130,34 +115,8 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
     private fun checkAllTogetherRequest(assetId: String) {
         withInternetConnection {
             if (TextUtils.isDigitsOnly(assetId)) {
-                val multiRequestBuilder = MultiRequestBuilder()
-                // product price request
-                val productPriceFilter = ProductPriceFilter().apply { fileIdIn = assetId }
-                multiRequestBuilder.add(ProductPriceService.list(productPriceFilter))
-                // bookmark request
-                val bookmarkFilter = BookmarkFilter().apply {
-                    assetIdIn = assetId
-                    assetTypeEqual = AssetType.MEDIA
-                }
-
-                multiRequestBuilder.add(BookmarkService.list(bookmarkFilter))
-                // asset rules request
-                val userAssetRuleFilter = UserAssetRuleFilter().apply {
-                    assetTypeEqual = 1
-                    assetIdEqual = assetId.toLong()
-                }
-
-                multiRequestBuilder.add(UserAssetRuleService.list(userAssetRuleFilter))
-                multiRequestBuilder.setCompletion {
-                    if (it.isSuccess) {
-                        if (it.results != null && it.results[2] != null) {
-                            handleUserRules((it.results[2] as ListResponse<UserAssetRule>).objects)
-                        }
-                        validateButtons()
-                    }
-                }
                 clearDebugView()
-                PhoenixApiManager.execute(multiRequestBuilder)
+                viewModel.checkAllTogether(assetId)
             } else {
                 Toast.makeText(requireContext(), "Wrong input", Toast.LENGTH_SHORT).show()
             }
@@ -168,7 +127,7 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
         withInternetConnection {
             if (TextUtils.isDigitsOnly(pin)) {
                 clearDebugView()
-                PhoenixApiManager.execute(PinService.validate(pin, PinType.PARENTAL, parentalRuleId))
+                viewModel.checkPin(pin, parentalRuleId)
             } else {
                 toast("Wrong input")
             }

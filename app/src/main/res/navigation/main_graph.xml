@@ -131,7 +131,7 @@
 
     <fragment
         android:id="@+id/media_page"
-        android:name="com.kaltura.kflow.presentation.MediaPageFragment"
+        android:name="com.kaltura.kflow.presentation.mediaPage.MediaPageFragment"
         android:label="Media page"
         tools:layout="@layout/fragment_media_page">
         <argument
