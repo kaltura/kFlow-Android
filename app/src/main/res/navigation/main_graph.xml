@@ -160,7 +160,7 @@
 
     <fragment
         android:id="@+id/search"
-        android:name="com.kaltura.kflow.presentation.SearchFragment"
+        android:name="com.kaltura.kflow.presentation.search.SearchFragment"
         android:label="Search"
         tools:layout="@layout/fragment_search">
         <action
