@@ -30,6 +30,7 @@
             android:layout_marginBottom="5dp"
             android:backgroundTint="@color/colorAccent"
             android:gravity="center"
+            android:visibility="gone"
             android:text="Get on going"
             android:textColor="@android:color/white"
             android:textSize="16sp" />
@@ -41,6 +42,7 @@
             android:layout_marginBottom="5dp"
             android:backgroundTint="@color/colorAccent"
             android:gravity="center"
+            android:visibility="gone"
             android:text="Get scheduled"
             android:textColor="@android:color/white"
             android:textSize="16sp" />

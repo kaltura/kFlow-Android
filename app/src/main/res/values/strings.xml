@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KFlow</string>
+    <string name="app_name">Recordings Test App</string>
 
     <string name="show_empty_recorded">No recorded</string>
     <string name="show_empty_ongoing_recordings">No on going recordings</string>

@@ -7,7 +7,7 @@ apply plugin: 'androidx.navigation.safeargs.kotlin'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.kaltura.kflow"
+        applicationId "com.kaltura.recordings_test_app"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 7
