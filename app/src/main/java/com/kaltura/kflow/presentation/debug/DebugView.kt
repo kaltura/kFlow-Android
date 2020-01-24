@@ -46,7 +46,7 @@ class DebugView @JvmOverloads constructor(
                 responseSort.drawable.colorFilter = null
             } else {
                 responseSort.isSelected = true
-                responseSort.drawable.mutate().setColorFilter(resources.getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP)
+                responseSort.drawable.mutate().setColorFilter(getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP)
             }
             setResponseBody(responseJson)
         }

@@ -64,16 +64,12 @@ class RecordingsFragment : DebugFragment(R.layout.fragment_recordings) {
     }
 
     private fun recordingsRequest() {
-        if (allRecordings.isEmpty()) {
-            withInternetConnection {
-                allRecordings.clear()
-                filteredRecordings.clear()
-                showRecordings.gone()
-                clearDebugView()
-                viewModel.getRecordings()
-            }
-        } else {
-            filterRecordings()
+        withInternetConnection {
+            allRecordings.clear()
+            filteredRecordings.clear()
+            showRecordings.gone()
+            clearDebugView()
+            viewModel.getRecordings()
         }
     }
 

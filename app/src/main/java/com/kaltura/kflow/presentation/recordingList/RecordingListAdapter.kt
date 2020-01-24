@@ -8,6 +8,7 @@ import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.extension.inflate
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_recording.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -15,6 +16,7 @@ import java.util.*
  */
 class RecordingListAdapter(private val recordings: ArrayList<Recording>) : RecyclerView.Adapter<RecordingListAdapter.MyViewHolder>() {
 
+    private val TIME_FORMAT = SimpleDateFormat("d MMM, HH:mm", Locale.US)
     var recordingClickListener: (recording: Recording) -> Unit = {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MyViewHolder(parent.inflate(R.layout.item_recording))
@@ -29,6 +31,14 @@ class RecordingListAdapter(private val recordings: ArrayList<Recording>) : Recyc
             recordingStatus.text = recording.status.value
             recordingId.text = "Asset ID: ${recording.assetId}"
             recordingContainer.setOnClickListener { recordingClickListener(recording) }
+
+            val createDateCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+            createDateCalendar.timeInMillis = recording.createDate * 1000
+            val viewableUntilDateCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+            viewableUntilDateCalendar.timeInMillis = recording.viewableUntilDate * 1000
+
+            createDate.text = "Create date: ${TIME_FORMAT.format(createDateCalendar.time)}"
+            viewableUntilDate.text = "Viewable until date: ${TIME_FORMAT.format(viewableUntilDateCalendar.time)}"
         }
     }
 }

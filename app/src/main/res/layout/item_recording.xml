@@ -13,7 +13,7 @@
         android:id="@+id/recordingStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toStartOf="@+id/arrow_icon"
+        android:layout_toStartOf="@+id/arrowIcon"
         android:textColor="@android:color/black"
         android:textSize="18sp" />
 
@@ -22,6 +22,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/recordingStatus"
+        android:layout_toStartOf="@+id/arrowIcon"
+        android:textSize="15sp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/createDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/recordingId"
+        android:layout_toStartOf="@+id/arrowIcon"
+        android:textSize="15sp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/viewableUntilDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/createDate"
         android:layout_toStartOf="@+id/arrowIcon"
         android:textSize="15sp" />
 
