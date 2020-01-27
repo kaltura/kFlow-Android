@@ -10,6 +10,7 @@ object PreferenceManager {
     private const val KEY_BASE_URL = "prefs_base_url"
     private const val KEY_PARTNER_ID = "prefs_partner_id"
     private const val KEY_MAIN_MEDIA_FILE_FORMAT = "prefs_main_media_file_format"
+    private const val KEY_DEVICE_PROFILE = "prefs_device_profile"
     private const val KEY_KS = "prefs_ks"
     private const val KEY_AUTH_USER = "prefs_auth_user"
     private const val KEY_AUTH_PASSWORD = "prefs_auth_password"
@@ -30,12 +31,16 @@ object PreferenceManager {
         set(value) = prefs.edit().putString(KEY_AUTH_PASSWORD, value).apply()
 
     var baseUrl: String
-        get() = prefs.getString(KEY_BASE_URL, null) ?: "https://api.frs1.ott.kaltura.com/"
+        get() = prefs.getString(KEY_BASE_URL, null) ?: "https://api.frs1.ott.kaltura.com"
         set(value) = prefs.edit().putString(KEY_BASE_URL, value).apply()
 
     var mediaFileFormat: String
         get() = prefs.getString(KEY_MAIN_MEDIA_FILE_FORMAT, null) ?: ""
         set(value) = prefs.edit().putString(KEY_MAIN_MEDIA_FILE_FORMAT, value).apply()
+
+    var deviceProfile: String
+        get() = prefs.getString(KEY_DEVICE_PROFILE, null) ?: ""
+        set(value) = prefs.edit().putString(KEY_DEVICE_PROFILE, value).apply()
 
     var partnerId: Int
         get() = prefs.getInt(KEY_PARTNER_ID, 313)

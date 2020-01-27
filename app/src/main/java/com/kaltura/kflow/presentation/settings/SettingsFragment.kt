@@ -21,7 +21,7 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
         super.onViewCreated(view, savedInstanceState)
 
         save.setOnClickListener {
-            save(url.string, partnerId.string, mediaFileFormat.string)
+            save(url.string, partnerId.string, mediaFileFormat.string, deviceProfile.string)
         }
         initUI()
     }
@@ -32,9 +32,10 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
         url.string = PreferenceManager.with(requireContext()).baseUrl
         partnerId.string = PreferenceManager.with(requireContext()).partnerId.toString()
         mediaFileFormat.string = PreferenceManager.with(requireContext()).mediaFileFormat
+        deviceProfile.string = PreferenceManager.with(requireContext()).deviceProfile
     }
 
-    private fun save(baseUrl: String, partnerId: String, mediaFileFormat: String) {
+    private fun save(baseUrl: String, partnerId: String, mediaFileFormat: String, deviceProfile: String) {
         if (baseUrl.isNotEmpty()) {
             PreferenceManager.with(requireContext()).clearKs()
             PreferenceManager.with(requireContext()).baseUrl = baseUrl
@@ -54,6 +55,9 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
         }
         if (mediaFileFormat.isNotEmpty()) PreferenceManager.with(requireContext()).mediaFileFormat = mediaFileFormat
         else toast("Media File Format is missing")
+
+        if (deviceProfile.isNotEmpty()) PreferenceManager.with(requireContext()).deviceProfile = deviceProfile
+        else toast("Device profile is missing")
 
         toast("Saved")
     }
