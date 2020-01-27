@@ -208,9 +208,10 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     private fun getAssetIdByFlowType(): String = when {
+        args.recording != null -> args.recording!!.id.toString()
         (asset is ProgramAsset && getPlaybackContextType() == APIDefines.PlaybackContextType.Playback) -> (asset as ProgramAsset).linearAssetId.toString()
         args.recording == null -> asset!!.id.toString()
-        else -> args.recording!!.id.toString()
+        else -> ""
     }
 
     private fun getAssetType(playbackContextType: APIDefines.PlaybackContextType): KalturaAssetType = when {
@@ -221,6 +222,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     private fun getPlaybackContextType(): APIDefines.PlaybackContextType = when {
         initialPlaybackContextType != null -> initialPlaybackContextType!!
+        args.recording != null -> APIDefines.PlaybackContextType.Playback
         asset is ProgramAsset && (asset as ProgramAsset).isProgramInPast() -> APIDefines.PlaybackContextType.Catchup
         asset is ProgramAsset && (asset as ProgramAsset).isProgramInLive() -> APIDefines.PlaybackContextType.Playback
         else -> APIDefines.PlaybackContextType.Playback
