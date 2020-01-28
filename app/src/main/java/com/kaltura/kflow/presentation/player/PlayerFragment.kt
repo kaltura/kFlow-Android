@@ -59,8 +59,6 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     private var likeId = ""
     private lateinit var mediaEntry: PKMediaEntry
     private var parentalRuleId = 0
-    private var isKeepAlive = false
-    private var playerKeepAliveService = PlayerKeepAliveService()
     private var initialPlaybackContextType: APIDefines.PlaybackContextType? = null
 
     override fun debugView(): DebugView = debugView
@@ -70,7 +68,6 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
         initUI()
         asset = args.asset
-        isKeepAlive = args.isKeepAlive
         initialPlaybackContextType = arguments?.getSerializable(ARG_PLAYBACK_CONTEXT_TYPE) as? APIDefines.PlaybackContextType
         if (asset == null && args.recording != null) loadAsset(args.recording!!.assetId) else onAssetLoaded()
     }
@@ -165,8 +162,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                 requireActivity().runOnUiThread {
                     if (it.response != null) {
                         mediaEntry = it.response
-                        if (isKeepAlive) onMediaLoadedKeepAlive()
-                        else onMediaLoaded()
+                        onMediaLoaded()
                     } else {
                         toast("failed to fetch media data: ${it.error?.message ?: ""}")
                     }
@@ -250,7 +246,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         }
     }
 
-    private fun onMediaLoadedKeepAlive() {
+    private fun onMediaLoaded() {
         loadPlayerSettings()
         var sourceUrl = ""
         val sources = mediaEntry.sources
@@ -258,23 +254,17 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             if (it.mediaFormat == PKMediaFormat.dash) sourceUrl = it.url
         }
         try {
-            getKeepAliveHeaderUrl(URL(sourceUrl)) { status, url ->
+            getHeaderUrl(URL(sourceUrl)) { status, url ->
                 if (mediaEntry.sources != null && mediaEntry.sources.isNotEmpty()) {
-                    Log.d(TAG, "The KeepAlive Url is : $url")
-                    playerKeepAliveService.keepAliveURL = url
+                    Log.d(TAG, "The Url is : $url")
                     mediaEntry.sources[0].url = url
                 }
                 setMediaEntry()
             }
         } catch (e: MalformedURLException) {
-            Log.d(TAG, "The KeepAlive Url is : " + e.message)
+            Log.d(TAG, "The Url is : " + e.message)
             e.printStackTrace()
         }
-    }
-
-    private fun onMediaLoaded() {
-        loadPlayerSettings()
-        setMediaEntry()
     }
 
     private fun setMediaEntry() {
@@ -290,18 +280,18 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         player?.play()
     }
 
-    private fun getKeepAliveHeaderUrl(url: URL, listener: ((status: Boolean, url: String) -> Unit)) {
+    private fun getHeaderUrl(url: URL, listener: ((status: Boolean, url: String) -> Unit)) {
         Thread(Runnable {
             try {
                 val conn = url.openConnection() as HttpURLConnection
                 conn.instanceFollowRedirects = false
-                val keepAliveURL = conn.getHeaderField("Location")
-                val isSuccess = !TextUtils.isEmpty(keepAliveURL) && conn.responseCode == 307
+                val headerURL = conn.getHeaderField("Location")
+                val isSuccess = !TextUtils.isEmpty(headerURL)
                 if (isSuccess) {
-                    requireActivity().runOnUiThread { listener(true, keepAliveURL) }
+                    requireActivity().runOnUiThread { listener(true, headerURL) }
                 } else {
-                    val url1 = URL(keepAliveURL)
-                    getKeepAliveHeaderUrl(url1, listener)
+                    val url1 = URL(headerURL)
+                    getHeaderUrl(url1, listener)
                 }
             } catch (e: Exception) {
                 listener(false, "Failed to retreive Location header : " + e.message)
@@ -322,7 +312,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             }
             it.addListener(this, AdEvent.Type.CONTENT_PAUSE_REQUESTED) { playerControls.setPlayerState(PlayerState.READY) }
             it.addListener(this, PlayerEvent.pause) { }
-            it.addListener(this, PlayerEvent.play) { if (isKeepAlive) playerKeepAliveService.startFireKeepAliveService() }
+            it.addListener(this, PlayerEvent.play) { }
             it.addListener(this, PlayerEvent.stateChanged) { event: StateChanged -> playerControls.setPlayerState(event.newState) }
             it.addListener(this, PlayerEvent.Type.ERROR) { event: PKEvent? ->
                 //When the track data available, this event occurs. It brings the info object with it.
@@ -424,14 +414,6 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         pinInputLayout.visible()
         insertPin.text = "Check pin"
         showKeyboard(pin)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        if (isKeepAlive) {
-            playerKeepAliveService.cancelFireKeepAliveService()
-            isKeepAlive = false
-        }
     }
 
     override fun onPause() {
