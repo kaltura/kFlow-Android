@@ -2,7 +2,6 @@ package com.kaltura.kflow.presentation.vod
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
 import com.kaltura.client.types.Asset
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.assetList.AssetListFragment
@@ -10,6 +9,7 @@ import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import kotlinx.android.synthetic.main.fragment_vod.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Created by alex_lytvynenko on 27.11.2018.
@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_vod.*
 class GetVodFragment : DebugFragment(R.layout.fragment_vod) {
 
     private var assets = arrayListOf<Asset>()
-    private val viewModel: GetVodViewModel by viewModels()
+    private val viewModel: GetVodViewModel by viewModel()
 
     override fun debugView(): DebugView = debugView
 

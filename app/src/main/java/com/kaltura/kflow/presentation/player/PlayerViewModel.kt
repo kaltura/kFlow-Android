@@ -9,13 +9,15 @@ import com.kaltura.client.services.*
 import com.kaltura.client.types.*
 import com.kaltura.client.utils.request.MultiRequestBuilder
 import com.kaltura.kflow.manager.PhoenixApiManager
+import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
 import com.kaltura.kflow.utils.Resource
 
 /**
  * Created by alex_lytvynenko on 2020-01-13.
  */
-class PlayerViewModel : BaseViewModel() {
+class PlayerViewModel(private val apiManager: PhoenixApiManager,
+                      private val preferenceManager: PreferenceManager) : BaseViewModel(apiManager) {
 
     val asset = MutableLiveData<Resource<Asset>>()
     val userAssetRules = MutableLiveData<Resource<List<UserAssetRule>>>()
@@ -27,7 +29,7 @@ class PlayerViewModel : BaseViewModel() {
     val doUnfavorite = MutableLiveData<Resource<Unit>>()
 
     fun loadAsset(assetId: Long) {
-        PhoenixApiManager.execute(AssetService.get(assetId.toString(), AssetReferenceType.EPG_INTERNAL).setCompletion {
+        apiManager.execute(AssetService.get(assetId.toString(), AssetReferenceType.EPG_INTERNAL).setCompletion {
             if (it.isSuccess) {
                 asset.value = Resource.Success(it.results)
             }
@@ -44,7 +46,7 @@ class PlayerViewModel : BaseViewModel() {
             if (it.isSuccess) doLike.value = Resource.Success(it.results.socialAction)
             else doLike.value = Resource.Error(it.error)
         }
-        PhoenixApiManager.execute(requestBuilder)
+        apiManager.execute(requestBuilder)
     }
 
     fun unlike(likeId: String) {
@@ -52,7 +54,7 @@ class PlayerViewModel : BaseViewModel() {
             if (it.isSuccess) doUnlike.value = Resource.Success(Unit)
             else doUnlike.value = Resource.Error(it.error)
         }
-        PhoenixApiManager.execute(requestBuilder)
+        apiManager.execute(requestBuilder)
     }
 
     fun favorite(assetId: Long) {
@@ -61,7 +63,7 @@ class PlayerViewModel : BaseViewModel() {
             if (it.isSuccess) doFavorite.value = Resource.Success(Unit)
             else doFavorite.value = Resource.Error(it.error)
         }
-        PhoenixApiManager.execute(requestBuilder)
+        apiManager.execute(requestBuilder)
     }
 
     fun unfavorite(assetId: Long) {
@@ -69,12 +71,12 @@ class PlayerViewModel : BaseViewModel() {
             if (it.isSuccess) doUnfavorite.value = Resource.Success(Unit)
             else doUnfavorite.value = Resource.Error(it.error)
         }
-        PhoenixApiManager.execute(requestBuilder)
+        apiManager.execute(requestBuilder)
     }
 
     fun getLike(assetId: Long) {
         val socialActionFilter = SocialActionFilter().apply { assetIdIn = assetId.toString() }
-        PhoenixApiManager.execute(SocialActionService.list(socialActionFilter).setCompletion {
+        apiManager.execute(SocialActionService.list(socialActionFilter).setCompletion {
             if (it.isSuccess) {
                 it.results.objects.forEach {
                     if (it.actionType == SocialActionType.LIKE) {
@@ -88,7 +90,7 @@ class PlayerViewModel : BaseViewModel() {
 
     fun getFavoriteList(assetId: Long) {
         val favoriteFilter = FavoriteFilter().apply { mediaIdIn = assetId.toString() }
-        PhoenixApiManager.execute(FavoriteService.list(favoriteFilter).setCompletion {
+        apiManager.execute(FavoriteService.list(favoriteFilter).setCompletion {
             if (it.isSuccess) {
                 if (it.results.objects != null && it.results.objects.isNotEmpty()) {
                     favoriteList.value = Resource.Success(it.results.objects)
@@ -98,7 +100,7 @@ class PlayerViewModel : BaseViewModel() {
     }
 
     fun checkPinCode(pin: String, parentalRulelId: Int) {
-        PhoenixApiManager.execute(PinService.validate(pin, PinType.PARENTAL, parentalRulelId))
+        apiManager.execute(PinService.validate(pin, PinType.PARENTAL, parentalRulelId))
     }
 
     fun checkAllValidations(assetId: Long) {
@@ -127,6 +129,14 @@ class PlayerViewModel : BaseViewModel() {
                 }
             }
         }
-        PhoenixApiManager.execute(multiRequestBuilder)
+        apiManager.execute(multiRequestBuilder)
     }
+
+    fun getPartnerId() = preferenceManager.partnerId
+
+    fun getBaseUrl() = preferenceManager.baseUrl
+
+    fun getMediaFileFormat() = preferenceManager.mediaFileFormat
+
+    fun getKs() = apiManager.ks
 }

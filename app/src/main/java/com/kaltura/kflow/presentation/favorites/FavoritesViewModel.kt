@@ -9,12 +9,12 @@ import com.kaltura.kflow.utils.Resource
 /**
  * Created by alex_lytvynenko on 2020-01-16.
  */
-class FavoritesViewModel : BaseViewModel() {
+class FavoritesViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
 
     val favoritesCount = MutableLiveData<Resource<Int>>()
 
     fun getFavorites() {
-        PhoenixApiManager.execute(FavoriteService.list().setCompletion {
+        apiManager.execute(FavoriteService.list().setCompletion {
             if (it.isSuccess) favoritesCount.value = Resource.Success(it.results.totalCount)
         })
     }

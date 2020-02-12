@@ -14,7 +14,7 @@ import com.kaltura.kflow.utils.Resource
 /**
  * Created by alex_lytvynenko on 2020-01-14.
  */
-class ProductPriceViewModel : BaseViewModel() {
+class ProductPriceViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
 
     val productPriceList = MutableLiveData<Resource<ArrayList<ProductPrice>>>()
 
@@ -23,7 +23,7 @@ class ProductPriceViewModel : BaseViewModel() {
     }
 
     private fun makeGetAssetRequest(assetId: String) {
-        PhoenixApiManager.execute(AssetService.get(assetId, AssetReferenceType.MEDIA).setCompletion {
+        apiManager.execute(AssetService.get(assetId, AssetReferenceType.MEDIA).setCompletion {
             if (it.isSuccess) makeGetProductPricesRequest(it.results)
         })
     }
@@ -39,7 +39,7 @@ class ProductPriceViewModel : BaseViewModel() {
             }
         }
         val productPriceFilter = ProductPriceFilter().apply { fileIdIn = fileIdInString.toString() }
-        PhoenixApiManager.execute(ProductPriceService.list(productPriceFilter).setCompletion {
+        apiManager.execute(ProductPriceService.list(productPriceFilter).setCompletion {
             if (it.isSuccess && it.results != null) {
                 if (it.results.objects != null) productPriceList.value = Resource.Success(it.results.objects as ArrayList<ProductPrice>)
             }

@@ -10,12 +10,12 @@ import com.kaltura.kflow.utils.Resource
 /**
  * Created by alex_lytvynenko on 17.01.2020.
  */
-class RecordingsViewModel : BaseViewModel() {
+class RecordingsViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
 
     val recordingList = MutableLiveData<Resource<ArrayList<Recording>>>()
 
     fun getRecordings() {
-        PhoenixApiManager.execute(RecordingService.list().setCompletion {
+        apiManager.execute(RecordingService.list().setCompletion {
             if (it.isSuccess) recordingList.value = Resource.Success(it.results.objects as ArrayList<Recording>)
         })
     }

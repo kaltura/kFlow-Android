@@ -9,9 +9,25 @@ import com.kaltura.kflow.utils.AndroidAPIRequestsExecutor
 /**
  * Created by alex_lytvynenko on 11/18/18.
  */
-object PhoenixApiManager {
+class PhoenixApiManager(private val prefs: PreferenceManager) {
 
-    val client = Client(Configuration())
+    private val client = Client(Configuration())
+
+    init {
+        val config = Configuration().apply { endpoint = prefs.baseUrl }
+        client.connectionConfiguration = config
+        client.ks = prefs.ks
+    }
+
+    var ks: String?
+        get() = client.ks
+        set(value) {
+            client.ks = value
+        }
+
+    fun setConnectionConfiguration(config: Configuration) {
+        client.connectionConfiguration = config
+    }
 
     fun setDebugListener(debugListener: DebugListener) {
         AndroidAPIRequestsExecutor.setDebugListener(debugListener)

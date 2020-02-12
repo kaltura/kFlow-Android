@@ -2,7 +2,6 @@ package com.kaltura.kflow.presentation.epg
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
 import com.kaltura.client.types.Asset
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.assetList.AssetListFragment
@@ -10,6 +9,7 @@ import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import kotlinx.android.synthetic.main.fragment_epg.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 /**
@@ -17,7 +17,7 @@ import java.util.*
  */
 class EpgFragment : DebugFragment(R.layout.fragment_epg) {
 
-    private val viewModel: EpgViewModel by viewModels()
+    private val viewModel: EpgViewModel by viewModel()
     private var channels = ArrayList<Asset>()
 
     enum class DateFilter {

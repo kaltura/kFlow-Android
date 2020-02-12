@@ -13,7 +13,7 @@ import com.kaltura.kflow.utils.Resource
 /**
  * Created by alex_lytvynenko on 2020-01-15.
  */
-class TransactionHistoryViewModel : BaseViewModel() {
+class TransactionHistoryViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
 
     val billingTransactions = MutableLiveData<Resource<ArrayList<BillingTransaction>>>()
 
@@ -23,7 +23,7 @@ class TransactionHistoryViewModel : BaseViewModel() {
             endDateLessThanOrEqual = ((System.currentTimeMillis() + DateUtils.YEAR_IN_MILLIS) / 1000).toInt()
         }
 
-        PhoenixApiManager.execute(TransactionHistoryService.list(transactionHistoryFilter).setCompletion {
+        apiManager.execute(TransactionHistoryService.list(transactionHistoryFilter).setCompletion {
             if (it.isSuccess && it.results != null) {
                 if (it.results.objects != null) billingTransactions.value = Resource.Success(it.results.objects as ArrayList<BillingTransaction>)
             }

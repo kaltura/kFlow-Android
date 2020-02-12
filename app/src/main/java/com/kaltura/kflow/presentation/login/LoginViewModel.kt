@@ -1,22 +1,29 @@
 package com.kaltura.kflow.presentation.login
 
 import com.kaltura.client.services.OttUserService
-import com.kaltura.client.types.LoginResponse
 import com.kaltura.kflow.manager.PhoenixApiManager
+import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
-import com.kaltura.kflow.utils.SingleLiveEvent
 
 /**
  * Created by alex_lytvynenko on 2020-01-09.
  */
-class LoginViewModel : BaseViewModel() {
+class LoginViewModel(private val apiManager: PhoenixApiManager,
+                     private val preferenceManager: PreferenceManager) : BaseViewModel(apiManager) {
 
-    val loginResponse = SingleLiveEvent<LoginResponse>()
-
-    fun makeLoginRequest(partnerId: Int, email: String, password: String, udid: String) {
-        PhoenixApiManager.execute(OttUserService.login(partnerId, email, password, null, udid)
+    fun makeLoginRequest(email: String, password: String, udid: String) {
+        apiManager.execute(OttUserService.login(preferenceManager.partnerId, email, password, null, udid)
                 .setCompletion {
-                    if (it.isSuccess) loginResponse.value = it.results
+                    if (it.isSuccess) {
+                        preferenceManager.ks = it.results.loginSession.ks
+                        apiManager.ks = it.results.loginSession.ks
+                        preferenceManager.authUser = email
+                        preferenceManager.authPassword = password
+                    }
                 })
     }
+
+    fun getSavedUsername() = preferenceManager.authUser
+
+    fun getSavedPassword() = preferenceManager.authPassword
 }
