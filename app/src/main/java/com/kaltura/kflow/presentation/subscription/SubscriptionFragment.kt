@@ -2,7 +2,6 @@ package com.kaltura.kflow.presentation.subscription
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.types.*
@@ -15,6 +14,7 @@ import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.ui.ProgressDialog
 import kotlinx.android.synthetic.main.fragment_subscription.*
 import org.jetbrains.anko.support.v4.toast
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.collections.ArrayList
 
 /**
@@ -22,7 +22,7 @@ import kotlin.collections.ArrayList
  */
 class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
 
-    private val viewModel: SubscriptionViewModel by viewModels()
+    private val viewModel: SubscriptionViewModel by viewModel()
     private var assets = arrayListOf<Asset>()
     private var subscriptionListAdapter = SubscriptionListAdapter(arrayListOf()).apply {
         packageGetSubscriptionListener = ::onPackageGetSubscriptionClicked

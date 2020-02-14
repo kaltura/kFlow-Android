@@ -1,9 +1,11 @@
 package com.kaltura.kflow.presentation
 
 import android.app.Application
-import com.kaltura.client.Configuration
-import com.kaltura.kflow.manager.PhoenixApiManager
-import com.kaltura.kflow.manager.PreferenceManager
+import com.kaltura.kflow.presentation.di.appModule
+import com.kaltura.kflow.presentation.di.viewModelModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 
 /**
  * Created by alex_lytvynenko on 2019-06-25.
@@ -12,12 +14,10 @@ class KFlowApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        initApiClient()
-    }
-
-    private fun initApiClient() {
-        val config = Configuration().apply { endpoint = PreferenceManager.with(this@KFlowApplication).baseUrl }
-        PhoenixApiManager.client.connectionConfiguration = config
-        PhoenixApiManager.client.ks = PreferenceManager.with(this).ks
+        startKoin {
+            androidLogger()
+            androidContext(this@KFlowApplication)
+            modules(listOf(appModule, viewModelModule))
+        }
     }
 }

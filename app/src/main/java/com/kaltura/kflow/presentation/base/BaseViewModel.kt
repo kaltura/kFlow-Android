@@ -6,10 +6,10 @@ import com.kaltura.kflow.manager.PhoenixApiManager
 /**
  * Created by alex_lytvynenko on 11.01.2020.
  */
-open class BaseViewModel: ViewModel() {
+open class BaseViewModel(private val apiManager: PhoenixApiManager): ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        PhoenixApiManager.cancelAll()
+        apiManager.cancelAll()
     }
 }

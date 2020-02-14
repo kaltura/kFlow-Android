@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/main"
         android:name="com.kaltura.kflow.presentation.main.MainFragment"
-        android:label="K-Flow"
+        android:label="Recordings Test App"
         tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/navigate_to_login"

@@ -2,22 +2,21 @@ package com.kaltura.kflow.presentation.registration
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
 import com.kaltura.kflow.R
-import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.hideKeyboard
 import com.kaltura.kflow.presentation.extension.string
 import com.kaltura.kflow.presentation.extension.withInternetConnection
 import kotlinx.android.synthetic.main.fragment_registration.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Created by alex_lytvynenko on 11/18/18.
  */
 class RegistrationFragment : DebugFragment(R.layout.fragment_registration) {
 
-    private val viewModel: RegistrationViewModel by viewModels()
+    private val viewModel: RegistrationViewModel by viewModel()
 
     override fun debugView(): DebugView = debugView
 
@@ -34,7 +33,7 @@ class RegistrationFragment : DebugFragment(R.layout.fragment_registration) {
     private fun makeRegistrationRequest(firstName: String, lastName: String, userName: String, email: String, password: String) {
         withInternetConnection {
             clearDebugView()
-            viewModel.register(firstName, lastName, userName, email, password, PreferenceManager.with(requireContext()).partnerId)
+            viewModel.register(firstName, lastName, userName, email, password)
         }
     }
 }

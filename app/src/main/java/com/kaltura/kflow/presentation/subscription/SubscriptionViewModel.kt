@@ -16,7 +16,7 @@ import com.kaltura.kflow.utils.Resource
 /**
  * Created by alex_lytvynenko on 2020-01-14.
  */
-class SubscriptionViewModel : BaseViewModel() {
+class SubscriptionViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
 
     val assetList = MutableLiveData<Resource<ArrayList<Asset>>>()
     val assetsInSubscription = MutableLiveData<Resource<List<Asset>>>()
@@ -34,7 +34,7 @@ class SubscriptionViewModel : BaseViewModel() {
             pageSize = 40
         }
 
-        PhoenixApiManager.execute(AssetService.list(filter, filterPager).setCompletion {
+        apiManager.execute(AssetService.list(filter, filterPager).setCompletion {
             if (it.isSuccess) {
                 if (it.results.objects != null) assetList.value = Resource.Success(it.results.objects as ArrayList<Asset>)
             }
@@ -53,7 +53,7 @@ class SubscriptionViewModel : BaseViewModel() {
             pageSize = 40
         }
 
-        PhoenixApiManager.execute(EntitlementService.list(filter, filterPager))
+        apiManager.execute(EntitlementService.list(filter, filterPager))
     }
 
     fun getSubscription(subscriptionBaseId: String) {
@@ -63,7 +63,7 @@ class SubscriptionViewModel : BaseViewModel() {
             pageSize = 40
         }
 
-        PhoenixApiManager.execute(SubscriptionService.list(subscriptionFilter, filterPager).setCompletion {
+        apiManager.execute(SubscriptionService.list(subscriptionFilter, filterPager).setCompletion {
             if (it.isSuccess) subscriptionList.value = Resource.Success(it.results.objects as ArrayList<Subscription>)
         })
     }
@@ -87,6 +87,6 @@ class SubscriptionViewModel : BaseViewModel() {
                 assetsInSubscription.value = Resource.Success(assets)
             }
         }
-        PhoenixApiManager.execute(multiRequestBuilder)
+        apiManager.execute(multiRequestBuilder)
     }
 }

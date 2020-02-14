@@ -6,13 +6,13 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.annotation.LayoutRes
-import androidx.fragment.app.Fragment
 import com.kaltura.kflow.R
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.base.BaseFragment
 import com.kaltura.kflow.presentation.extension.shareFile
 import com.kaltura.kflow.utils.saveToFile
 import org.json.JSONObject
+import org.koin.android.ext.android.inject
 
 /**
  * Created by alex_lytvynenko on 20.11.2018.
@@ -20,6 +20,7 @@ import org.json.JSONObject
 abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(contentLayoutId), DebugListener {
 
     private var shareMenuItem: MenuItem? = null
+    private val apiManager : PhoenixApiManager by inject()
 
     protected abstract fun debugView(): DebugView
 
@@ -44,12 +45,12 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        PhoenixApiManager.setDebugListener(this)
+        apiManager.setDebugListener(this)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        PhoenixApiManager.removeDebugListener()
+        apiManager.removeDebugListener()
     }
 
     override fun setRequestInfo(url: String, method: String, code: Int) {

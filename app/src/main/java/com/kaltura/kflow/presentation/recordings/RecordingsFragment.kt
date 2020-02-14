@@ -2,7 +2,6 @@ package com.kaltura.kflow.presentation.recordings
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
 import com.kaltura.client.enums.RecordingStatus
 import com.kaltura.client.types.Recording
 import com.kaltura.kflow.R
@@ -11,13 +10,14 @@ import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.recordingList.RecordingListFragment
 import kotlinx.android.synthetic.main.fragment_recordings.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Created by alex_lytvynenko on 12/13/18.
  */
 class RecordingsFragment : DebugFragment(R.layout.fragment_recordings) {
 
-    private val viewModel: RecordingsViewModel by viewModels()
+    private val viewModel: RecordingsViewModel by viewModel()
     private var allRecordings = arrayListOf<Recording>()
     private val filteredRecordings = arrayListOf<Recording>()
     private var recordingFilter = RecordingsFilter.RECORDED_FILTER

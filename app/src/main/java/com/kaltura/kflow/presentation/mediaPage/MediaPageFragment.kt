@@ -5,7 +5,6 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.isGone
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.kaltura.client.enums.RuleType
 import com.kaltura.client.types.*
@@ -15,13 +14,14 @@ import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import kotlinx.android.synthetic.main.fragment_media_page.*
 import org.jetbrains.anko.support.v4.toast
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Created by alex_lytvynenko on 27.11.2018.
  */
 class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
 
-    private val viewModel: MediaPageViewModel by viewModels()
+    private val viewModel: MediaPageViewModel by viewModel()
     private val args: MediaPageFragmentArgs by navArgs()
     private var parentalRuleId = 0
     private var asset: Asset? = null

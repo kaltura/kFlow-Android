@@ -15,7 +15,7 @@ import com.kaltura.kflow.utils.Resource
 /**
  * Created by alex_lytvynenko on 20.01.2020.
  */
-class SearchViewModel : BaseViewModel() {
+class SearchViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
 
     val assets = MutableLiveData<Resource<ArrayList<Asset>>>()
     val historyAssetsCount = MutableLiveData<Resource<Int>>()
@@ -31,7 +31,7 @@ class SearchViewModel : BaseViewModel() {
             pageSize = 50
         }
 
-        PhoenixApiManager.execute(AssetService.list(filter, filterPager).setCompletion {
+        apiManager.execute(AssetService.list(filter, filterPager).setCompletion {
             if (it.isSuccess) {
                 if (it.results.objects != null) assets.value = Resource.Success(it.results.objects as ArrayList<Asset>)
             }
@@ -45,7 +45,7 @@ class SearchViewModel : BaseViewModel() {
             pageSize = 50
         }
 
-        PhoenixApiManager.execute(SearchHistoryService.list(filter, filterPager).setCompletion {
+        apiManager.execute(SearchHistoryService.list(filter, filterPager).setCompletion {
             if (it.isSuccess) historyAssetsCount.value = Resource.Success(it.results.totalCount)
         })
     }

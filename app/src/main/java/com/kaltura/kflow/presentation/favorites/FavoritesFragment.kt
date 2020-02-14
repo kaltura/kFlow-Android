@@ -2,19 +2,19 @@ package com.kaltura.kflow.presentation.favorites
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import kotlinx.android.synthetic.main.fragment_favorites.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Created by alex_lytvynenko on 12/13/18.
  */
 class FavoritesFragment : DebugFragment(R.layout.fragment_favorites) {
 
-    private val viewModel: FavoritesViewModel by viewModels()
+    private val viewModel: FavoritesViewModel by viewModel()
 
     override fun debugView(): DebugView = debugView
 

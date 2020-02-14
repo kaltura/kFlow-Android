@@ -13,7 +13,7 @@ import com.kaltura.kflow.utils.Resource
 /**
  * Created by alex_lytvynenko on 2020-01-16.
  */
-class GetVodViewModel : BaseViewModel() {
+class GetVodViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
 
     val getAssetList = MutableLiveData<Resource<ArrayList<Asset>>>()
 
@@ -27,7 +27,7 @@ class GetVodViewModel : BaseViewModel() {
             pageIndex = 1
             pageSize = 50
         }
-        PhoenixApiManager.execute(AssetService.list(filter, filterPager).setCompletion {
+        apiManager.execute(AssetService.list(filter, filterPager).setCompletion {
             if (it.isSuccess) {
                 if (it.results.objects != null) getAssetList.value = Resource.Success(it.results.objects as ArrayList<Asset>)
             }

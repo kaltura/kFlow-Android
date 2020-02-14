@@ -2,7 +2,6 @@ package com.kaltura.kflow.presentation.transactionHistory
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.types.BillingTransaction
@@ -11,13 +10,14 @@ import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import kotlinx.android.synthetic.main.fragment_transaction_history.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Created by alex_lytvynenko on 27.11.2018.
  */
 class TransactionHistoryFragment : DebugFragment(R.layout.fragment_transaction_history) {
 
-    private val viewModel: TransactionHistoryViewModel by viewModels()
+    private val viewModel: TransactionHistoryViewModel by viewModel()
     private var transactions = arrayListOf<BillingTransaction>()
     private val transactionHistoryListAdapter = TransactionHistoryListAdapter()
 

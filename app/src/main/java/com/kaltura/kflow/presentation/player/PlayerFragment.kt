@@ -7,13 +7,10 @@ import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.view.isGone
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.kaltura.client.enums.*
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
-import com.kaltura.kflow.manager.PhoenixApiManager
-import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
@@ -37,6 +34,7 @@ import com.kaltura.playkit.providers.base.OnMediaLoadCompletion
 import com.kaltura.playkit.providers.ott.PhoenixMediaProvider
 import kotlinx.android.synthetic.main.fragment_player.*
 import org.jetbrains.anko.support.v4.toast
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
@@ -50,7 +48,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         const val ARG_PLAYBACK_CONTEXT_TYPE = "extra_playback_context_type"
     }
 
-    private val viewModel: PlayerViewModel by viewModels()
+    private val viewModel: PlayerViewModel by viewModel()
 
     private val TAG = PlayerFragment::class.java.canonicalName
     private val args: PlayerFragmentArgs by navArgs()
@@ -184,22 +182,22 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     private fun addPhoenixAnalyticsPluginConfig(config: PKPluginConfigs) {
-        val ks = PhoenixApiManager.client.ks
-        val pId = PreferenceManager.with(requireContext()).partnerId
-        val baseUrl = PreferenceManager.with(requireContext()).baseUrl + "/api_v3/"
+        val ks = viewModel.getKs()
+        val pId = viewModel.getPartnerId()
+        val baseUrl = viewModel.getBaseUrl() + "/api_v3/"
         val phoenixAnalyticsConfig = PhoenixAnalyticsConfig(pId, baseUrl, ks, 30)
         config.setPluginConfig(PhoenixAnalyticsPlugin.factory.name, phoenixAnalyticsConfig)
     }
 
     private fun startOttMediaLoading(playbackContextType: APIDefines.PlaybackContextType, completion: OnMediaLoadCompletion) {
         val mediaProvider: MediaEntryProvider = PhoenixMediaProvider()
-                .setSessionProvider(SimpleSessionProvider(PreferenceManager.with(requireContext()).baseUrl + "/api_v3/", PreferenceManager.with(requireContext()).partnerId, PhoenixApiManager.client.ks))
+                .setSessionProvider(SimpleSessionProvider(viewModel.getBaseUrl() + "/api_v3/", viewModel.getPartnerId(), viewModel.getKs()))
                 .setAssetId(getAssetIdByFlowType())
                 .setProtocol(PhoenixMediaProvider.HttpProtocol.All)
                 .setContextType(playbackContextType)
                 .setAssetReferenceType(getAssetReferenceType(playbackContextType))
                 .setAssetType(getAssetType(playbackContextType))
-                .setFormats(PreferenceManager.with(requireContext()).mediaFileFormat)
+                .setFormats(viewModel.getMediaFileFormat())
         mediaProvider.load(completion)
     }
 

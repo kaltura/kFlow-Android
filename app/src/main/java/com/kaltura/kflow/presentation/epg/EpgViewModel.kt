@@ -15,7 +15,7 @@ import kotlin.collections.ArrayList
 /**
  * Created by alex_lytvynenko on 2020-01-13.
  */
-class EpgViewModel : BaseViewModel() {
+class EpgViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
 
     val getAssetList = MutableLiveData<Resource<ArrayList<Asset>>>()
 
@@ -57,7 +57,7 @@ class EpgViewModel : BaseViewModel() {
             pageIndex = 1
         }
 
-        PhoenixApiManager.execute(AssetService.list(filter, filterPager)
+        apiManager.execute(AssetService.list(filter, filterPager)
                 .setCompletion {
                     if (it.isSuccess && it.results.objects != null) getAssetList.value = Resource.Success(it.results.objects as ArrayList<Asset>)
                 })

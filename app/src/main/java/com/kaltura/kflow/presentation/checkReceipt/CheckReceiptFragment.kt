@@ -3,7 +3,6 @@ package com.kaltura.kflow.presentation.checkReceipt
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
-import androidx.fragment.app.viewModels
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
@@ -12,13 +11,14 @@ import com.kaltura.kflow.presentation.extension.string
 import com.kaltura.kflow.presentation.extension.withInternetConnection
 import kotlinx.android.synthetic.main.fragment_check_receipt.*
 import org.jetbrains.anko.support.v4.toast
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Created by alex_lytvynenko on 27.11.2018.
  */
 class CheckReceiptFragment : DebugFragment(R.layout.fragment_check_receipt) {
 
-    private val viewModel: CheckReceiptViewModel by viewModels()
+    private val viewModel: CheckReceiptViewModel by viewModel()
 
     override fun debugView(): DebugView = debugView
 

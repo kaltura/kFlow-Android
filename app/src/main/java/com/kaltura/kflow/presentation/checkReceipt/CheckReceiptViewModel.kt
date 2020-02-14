@@ -9,7 +9,7 @@ import com.kaltura.kflow.presentation.base.BaseViewModel
 /**
  * Created by alex_lytvynenko on 2020-01-16.
  */
-class CheckReceiptViewModel : BaseViewModel() {
+class CheckReceiptViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
 
     fun checkReceipt(receiptId: String, productType: String, productId: String, contentId: String) {
         val externalReceipt = ExternalReceipt().apply {
@@ -23,6 +23,6 @@ class CheckReceiptViewModel : BaseViewModel() {
             this.contentId = contentId.toInt()
             this.paymentGatewayName = "PGAdapterGoogle"
         }
-        PhoenixApiManager.execute(TransactionService.validateReceipt(externalReceipt))
+        apiManager.execute(TransactionService.validateReceipt(externalReceipt))
     }
 }

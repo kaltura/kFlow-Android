@@ -2,7 +2,6 @@ package com.kaltura.kflow.presentation.productPrice
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.types.*
@@ -12,6 +11,7 @@ import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import kotlinx.android.synthetic.main.fragment_product_price.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 /**
@@ -19,7 +19,7 @@ import java.util.*
  */
 class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
 
-    private val viewModel: ProductPriceViewModel by viewModels()
+    private val viewModel: ProductPriceViewModel by viewModel()
     private var productPrices = arrayListOf<ProductPrice>()
 
     override fun debugView(): DebugView = debugView

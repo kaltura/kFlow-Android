@@ -14,13 +14,13 @@ import com.kaltura.kflow.utils.Resource
 /**
  * Created by alex_lytvynenko on 20.01.2020.
  */
-class MediaPageViewModel : BaseViewModel() {
+class MediaPageViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
 
     val asset = MutableLiveData<Resource<Asset>>()
     val userAssetRules = MutableLiveData<Resource<ArrayList<UserAssetRule>>>()
 
     fun getAsset(assetId: String) {
-        PhoenixApiManager.execute(AssetService.get(assetId, AssetReferenceType.MEDIA).setCompletion {
+        apiManager.execute(AssetService.get(assetId, AssetReferenceType.MEDIA).setCompletion {
             if (it.isSuccess) {
                 if (it.results != null) asset.value = Resource.Success(it.results)
             }
@@ -29,7 +29,7 @@ class MediaPageViewModel : BaseViewModel() {
 
     fun getProductPrice(assetId: String) {
         val productPriceFilter = ProductPriceFilter().apply { fileIdIn = assetId }
-        PhoenixApiManager.execute(ProductPriceService.list(productPriceFilter))
+        apiManager.execute(ProductPriceService.list(productPriceFilter))
     }
 
     fun getBookmark(assetId: String) {
@@ -37,7 +37,7 @@ class MediaPageViewModel : BaseViewModel() {
             assetIdIn = assetId
             assetTypeEqual = AssetType.MEDIA
         }
-        PhoenixApiManager.execute(BookmarkService.list(bookmarkFilter))
+        apiManager.execute(BookmarkService.list(bookmarkFilter))
     }
 
     fun getAssetRules(assetId: String) {
@@ -45,7 +45,7 @@ class MediaPageViewModel : BaseViewModel() {
             assetTypeEqual = 1
             assetIdEqual = assetId.toLong()
         }
-        PhoenixApiManager.execute(UserAssetRuleService.list(userAssetRuleFilter).setCompletion {
+        apiManager.execute(UserAssetRuleService.list(userAssetRuleFilter).setCompletion {
             if (it.isSuccess) {
                 if (it.results.objects != null) userAssetRules.value = Resource.Success(it.results.objects as ArrayList<UserAssetRule>)
             }
@@ -53,7 +53,7 @@ class MediaPageViewModel : BaseViewModel() {
     }
 
     fun checkPin(pin: String, parentalRuleId: Int) {
-        PhoenixApiManager.execute(PinService.validate(pin, PinType.PARENTAL, parentalRuleId))
+        apiManager.execute(PinService.validate(pin, PinType.PARENTAL, parentalRuleId))
     }
 
     fun checkAllTogether(assetId: String) {
@@ -82,6 +82,6 @@ class MediaPageViewModel : BaseViewModel() {
                 }
             }
         }
-        PhoenixApiManager.execute(multiRequestBuilder)
+        apiManager.execute(multiRequestBuilder)
     }
 }

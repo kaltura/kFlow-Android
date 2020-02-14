@@ -2,7 +2,6 @@ package com.kaltura.kflow.presentation.search
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.assetList.AssetListFragment
@@ -10,13 +9,14 @@ import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import kotlinx.android.synthetic.main.fragment_search.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Created by alex_lytvynenko on 11/30/18.
  */
 class SearchFragment : DebugFragment(R.layout.fragment_search) {
 
-    private val viewModel: SearchViewModel by viewModels()
+    private val viewModel: SearchViewModel by viewModel()
     private var assets = arrayListOf<Asset>()
 
     override fun debugView(): DebugView = debugView
