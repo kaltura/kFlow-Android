@@ -31,7 +31,10 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0-alpha10'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation('com.github.kaltura:KalturaOttGeneratedAPIClientsJava:master-SNAPSHOT') {
+//    implementation('com.github.kaltura:KalturaOttGeneratedAPIClientsJava:master-SNAPSHOT') {
+//        exclude module: 'log4j-core'
+//    }
+    implementation ('com.github.kaltura:KalturaOttGeneratedAPIClientsJava:e77c39f6198e19e4f8a1bcdcb14aa039fd21b98e'){
         exclude module: 'log4j-core'
     }
     implementation 'com.kaltura.playkit:playkit:4.4.0'
