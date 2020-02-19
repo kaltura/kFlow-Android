@@ -3,4 +3,25 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="red">#d7222e</color>
+    <color name="meadow">#1aa884</color>
+    <color name="green">#149349</color>
+    <color name="orange">#f5a432</color>
+    <color name="blue">#1e4d93</color>
+    <color name="light_blue">#1cabcb</color>
+    <color name="turmeric">#b2cc4a</color>
+    <color name="yellow">#fdd131</color>
+
+    <array name="colors">
+        <item>@color/red</item>
+        <item>@color/meadow</item>
+        <item>@color/green</item>
+        <item>@color/orange</item>
+        <item>@color/blue</item>
+        <item>@color/light_blue</item>
+        <item>@color/turmeric</item>
+        <item>@color/yellow</item>
+    </array>
+
 </resources>

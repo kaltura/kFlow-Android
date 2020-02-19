@@ -5,7 +5,7 @@ package com.kaltura.kflow.presentation.main
  */
 enum class Feature(val text: String) {
     LOGIN("Login"),
-    ANONYMOUS_LOGIN("Anonymous login"),
+    ANONYMOUS_LOGIN("Anonymous\nlogin"),
     REGISTRATION("Registration"),
     VOD("VOD gallery"),
     EPG("EPG"),
@@ -17,7 +17,7 @@ enum class Feature(val text: String) {
     SUBSCRIPTION("Subscription"),
     PRODUCT_PRICE("Product price"),
     CHECK_RECEIPT("Check receipt"),
-    TRANSACTION_HISTORY("Transaction history"),
+    TRANSACTION_HISTORY("Transaction\nhistory"),
     RECORDINGS("Recordings"),
     SETTINGS("Settings");
 }

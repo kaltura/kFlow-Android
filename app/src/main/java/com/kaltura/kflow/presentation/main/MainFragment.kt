@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.extension.navigate
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -26,8 +29,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     private fun initList() {
         list.setHasFixedSize(true)
-        list.layoutManager = LinearLayoutManager(requireContext())
-        list.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+        list.layoutManager = StaggeredGridLayoutManager(2, VERTICAL)
         val adapter = FeatureAdapter(features)
         adapter.clickListener = {
             navigate(when (it) {
