@@ -7,59 +7,89 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingStart="16dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="16dp">
+        android:orientation="vertical">
 
-        <com.google.android.material.textfield.TextInputLayout
+        <RelativeLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="150dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:src="@drawable/ic_login" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/featureText"
+                android:text="Login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/image"
+                android:layout_alignBottom="@+id/image"
+                android:layout_toEndOf="@+id/image"
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+        </RelativeLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:boxBackgroundColor="@android:color/transparent">
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="16dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/username"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:hint="Username"
-                android:imeOptions="actionNext"
-                android:nextFocusDown="@id/password"
-                android:singleLine="true" />
+                app:boxBackgroundColor="@android:color/transparent">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:hint="Username"
+                    android:imeOptions="actionNext"
+                    android:nextFocusDown="@id/password"
+                    android:singleLine="true" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:boxBackgroundColor="@android:color/transparent">
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/password"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:hint="Password"
-                android:imeOptions="actionDone"
-                android:inputType="textVisiblePassword"
-                android:singleLine="true" />
+                app:boxBackgroundColor="@android:color/transparent">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:hint="Password"
+                    android:imeOptions="actionDone"
+                    android:inputType="textVisiblePassword"
+                    android:singleLine="true" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/login"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginBottom="5dp"
-            android:backgroundTint="@color/colorAccent"
-            android:gravity="center"
-            android:text="Login"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.kaltura.kflow.presentation.debug.DebugView
-            android:id="@+id/debugView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/login"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginBottom="5dp"
+                android:backgroundTint="@color/colorAccent"
+                android:gravity="center"
+                android:text="Login"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+            <com.kaltura.kflow.presentation.debug.DebugView
+                android:id="@+id/debugView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

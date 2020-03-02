@@ -10,6 +10,7 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.NavDirections
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.kaltura.client.types.APIException
@@ -28,6 +29,12 @@ fun Fragment.navigate(direction: NavDirections, vararg additionalParams: Pair<St
     } else {
         findNavController().navigate(direction)
     }
+}
+
+fun Fragment.navigateWithExtras(direction: NavDirections, vararg views: View = emptyArray()) {
+    val sharedElements = views.map { it to it.transitionName }.toTypedArray()
+    val extras = FragmentNavigatorExtras(*sharedElements)
+    findNavController().navigate(direction, extras)
 }
 
 inline fun <T> Fragment.observeResource(liveData: LiveData<Resource<T>>,
