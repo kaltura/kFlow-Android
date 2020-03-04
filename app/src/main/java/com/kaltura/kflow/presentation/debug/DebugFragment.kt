@@ -33,18 +33,18 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
             if (slideOffset > 0) {
                 val width = (minTitleWidth + (maxTitleWidth - minTitleWidth) * slideOffset).toInt()
-                title.width = width
+                debugTitle.width = width
             }
         }
 
         override fun onStateChanged(bottomSheet: View, @BottomSheetBehavior.State newState: Int) {
             when (newState) {
                 BottomSheetBehavior.STATE_COLLAPSED -> {
-                    title.width = minTitleWidth
+                    debugTitle.width = minTitleWidth
                     share.invisible()
                 }
                 BottomSheetBehavior.STATE_EXPANDED -> {
-                    title.width = maxTitleWidth
+                    debugTitle.width = maxTitleWidth
                     share.visible()
                 }
                 else -> share.invisible()
@@ -55,13 +55,13 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         maxTitleWidth = screenWidth()
-        title.doOnLayout { minTitleWidth = title.width }
+        debugTitle.doOnLayout { minTitleWidth = debugTitle.width }
 
         apiManager.setDebugListener(this)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
         bottomSheetBehavior.isHideable = true
         bottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback)
-        title.setOnClickListener { bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED }
+        debugTitle.setOnClickListener { bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED }
         share.setOnClickListener { share() }
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
     }

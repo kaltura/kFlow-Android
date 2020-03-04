@@ -74,7 +74,17 @@
         android:id="@+id/login"
         android:name="com.kaltura.kflow.presentation.login.LoginFragment"
         android:label="Login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login">
+        <argument
+            android:name="transImage"
+            app:argType="string" />
+        <argument
+            android:name="transTitle"
+            app:argType="string" />
+        <argument
+            android:name="transBg"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/anonymous_login"
