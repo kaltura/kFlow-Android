@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -13,15 +13,17 @@
         android:paddingEnd="16dp">
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/usernameInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:boxBackgroundColor="@android:color/transparent">
+            android:layout_marginBottom="10dp"
+            app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
                 android:hint="Username"
                 android:imeOptions="actionNext"
                 android:nextFocusDown="@id/password"
@@ -30,15 +32,17 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/passwordInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:boxBackgroundColor="@android:color/transparent">
+            android:layout_marginBottom="10dp"
+            app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
                 android:hint="Password"
                 android:imeOptions="actionDone"
                 android:inputType="textVisiblePassword"
@@ -46,20 +50,24 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/login"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginBottom="5dp"
-            android:backgroundTint="@color/colorAccent"
-            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="4dp"
+            android:background="@drawable/bg_primary_rounded"
+            android:elevation="4dp"
+            android:foreground="?selectableItemBackground"
             android:text="Login"
+            app:initialCornerAngle="4dp"
             android:textColor="@android:color/white"
-            android:textSize="16sp" />
-
-        <com.kaltura.kflow.presentation.debug.DebugView
-            android:id="@+id/debugView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:textSize="16sp"
+            app:spinning_bar_color="#FFF"
+            app:spinning_bar_padding="6dp"
+            app:spinning_bar_width="2dp" />
     </LinearLayout>
-</ScrollView>
+
+    <include layout="@layout/view_bottom_debug" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.PorterDuff
 import android.transition.TransitionManager
 import android.util.AttributeSet
-import android.widget.RelativeLayout
+import android.widget.LinearLayout
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.extension.getColor
 import com.kaltura.kflow.presentation.extension.inflate
@@ -20,7 +20,7 @@ import org.json.JSONObject
 class DebugView @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0) : RelativeLayout(context, attrs, defStyleAttr) {
+        defStyleAttr: Int = 0) : LinearLayout(context, attrs, defStyleAttr) {
 
     var requestUrl: String = ""
     var requestMethod: String = ""

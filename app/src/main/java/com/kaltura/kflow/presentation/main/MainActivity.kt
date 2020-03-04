@@ -10,15 +10,15 @@ import com.kaltura.kflow.R
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
+//    private lateinit var appBarConfiguration: AppBarConfiguration
+//
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        val navController = findNavController(R.id.fragmentContainer)
+//        appBarConfiguration = AppBarConfiguration(navController.graph)
+//        setupActionBarWithNavController(navController, appBarConfiguration)
+//    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val navController = findNavController(R.id.fragmentContainer)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-    }
-
-    override fun onSupportNavigateUp() =
-            findNavController(R.id.fragmentContainer).navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+//    override fun onSupportNavigateUp() =
+//            findNavController(R.id.fragmentContainer).navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
 }

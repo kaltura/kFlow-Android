@@ -2,11 +2,10 @@ package com.kaltura.kflow.presentation.main
 
 import android.os.Bundle
 import android.view.View
+import androidx.dynamicanimation.animation.SpringAnimation
+import androidx.dynamicanimation.animation.SpringForce
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.recyclerview.widget.*
 import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.extension.navigate
@@ -22,8 +21,26 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             Feature.MEDIA_PAGE, Feature.SUBSCRIPTION, Feature.PRODUCT_PRICE, Feature.CHECK_RECEIPT,
             Feature.TRANSACTION_HISTORY, Feature.RECORDINGS, Feature.SETTINGS)
 
+    private lateinit var rotationAnimation: SpringAnimation
+    private var isDragging = false
+
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            if (isDragging) {
+                rotationAnimation.cancel()
+                kaltura.rotation += -(dy.toFloat() / 2)
+            }
+        }
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            isDragging = newState == RecyclerView.SCROLL_STATE_DRAGGING
+            if (newState == RecyclerView.SCROLL_STATE_SETTLING) rotationAnimation.start()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initSpringAnimation()
         initList()
     }
 
@@ -52,5 +69,20 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             })
         }
         list.adapter = adapter
+        list.addOnScrollListener(scrollListener)
+    }
+
+    private fun initSpringAnimation() {
+        rotationAnimation = SpringAnimation(kaltura, SpringAnimation.ROTATION).apply {
+            spring = SpringForce(0f).apply {
+                stiffness = SpringForce.STIFFNESS_LOW
+                dampingRatio = SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        list.removeOnScrollListener(scrollListener)
     }
 }
