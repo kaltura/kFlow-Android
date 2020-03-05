@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.item_feature.*
  */
 class FeatureAdapter(private val features: Array<Feature>) : RecyclerView.Adapter<FeatureAdapter.MyViewHolder>() {
 
-    var clickListener: (feature: Feature, image: View, title: View, bg: View) -> Unit = { _, _, _, _ -> }
+    var clickListener: (feature: Feature, image: View, title: View) -> Unit = { _, _, _ -> }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MyViewHolder(parent.inflate(R.layout.item_feature))
 
@@ -26,52 +26,11 @@ class FeatureAdapter(private val features: Array<Feature>) : RecyclerView.Adapte
         fun bind(feature: Feature) {
             featureText.transitionName = "${feature.text}_title"
             image.transitionName = "${feature.text}_image"
-            card.transitionName = "${feature.text}_bg"
 
             featureText.text = feature.text
+            if (feature.imageResId != -1) image.setImageResource(feature.imageResId)
             card.setOnClickListener {
-                clickListener(feature, image, featureText, card)
-            }
-            when (feature) {
-                Feature.LOGIN -> {
-                    image.setImageResource(R.drawable.ic_login)
-                }
-                Feature.ANONYMOUS_LOGIN -> {
-                    image.setImageResource(R.drawable.ic_anonymous)
-                }
-                Feature.REGISTRATION -> {
-                    image.setImageResource(R.drawable.ic_registration)
-                }
-                Feature.SEARCH -> {
-                    image.setImageResource(R.drawable.ic_search)
-                }
-                Feature.FAVORITES -> {
-                    image.setImageResource(R.drawable.ic_favorite)
-                }
-                Feature.VOD -> {
-                }
-                Feature.EPG -> {
-                }
-                Feature.LIVE -> {
-                }
-                Feature.MEDIA_PAGE -> {
-                }
-                Feature.KEEP_ALIVE -> {
-                }
-                Feature.SUBSCRIPTION -> {
-                }
-                Feature.PRODUCT_PRICE -> {
-                }
-                Feature.CHECK_RECEIPT -> {
-                }
-                Feature.TRANSACTION_HISTORY -> {
-                    image.setImageResource(R.drawable.ic_transaction_history)
-                }
-                Feature.RECORDINGS -> {
-                }
-                Feature.SETTINGS -> {
-                    image.setImageResource(R.drawable.ic_settings)
-                }
+                clickListener(feature, image, featureText)
             }
         }
     }
