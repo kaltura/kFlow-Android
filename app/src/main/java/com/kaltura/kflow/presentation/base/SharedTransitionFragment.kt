@@ -6,7 +6,6 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
 import androidx.annotation.LayoutRes
-import androidx.transition.Fade
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.main.Feature
 import com.kaltura.kflow.presentation.ui.SharedTransition
@@ -18,14 +17,13 @@ import kotlinx.android.synthetic.main.view_shared_transition_header.view.*
  */
 abstract class SharedTransitionFragment(@LayoutRes contentLayoutId: Int) : DebugFragment(contentLayoutId) {
 
+    private var isFirstEnter = true
     abstract val feature: Feature
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedElementEnterTransition = SharedTransition()
         sharedElementReturnTransition = SharedTransition()
-        exitTransition = Fade().setDuration(150L)
-        enterTransition = Fade().setDuration(150L)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,12 +40,15 @@ abstract class SharedTransitionFragment(@LayoutRes contentLayoutId: Int) : Debug
     }
 
     private fun animateCardEnter() {
-        val animation = ScaleAnimation(0f, 1f, 0f, 1f,
-                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f).apply {
-            duration = 500
-            interpolator = AccelerateDecelerateInterpolator()
+        if (isFirstEnter) {
+            isFirstEnter = false
+            val animation = ScaleAnimation(0f, 1f, 0f, 1f,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f).apply {
+                duration = 500
+                interpolator = AccelerateDecelerateInterpolator()
+            }
+            header.sharedTransitionCard.animation = animation
+            animation.start()
         }
-        header.sharedTransitionCard.animation = animation
-        animation.start()
     }
 }

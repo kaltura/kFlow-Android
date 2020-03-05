@@ -34,6 +34,8 @@ class SearchViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel
         apiManager.execute(AssetService.list(filter, filterPager).setCompletion {
             if (it.isSuccess) {
                 if (it.results.objects != null) assets.value = Resource.Success(it.results.objects as ArrayList<Asset>)
+            } else {
+                assets.value = Resource.Error(it.error)
             }
         })
     }
@@ -47,6 +49,7 @@ class SearchViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel
 
         apiManager.execute(SearchHistoryService.list(filter, filterPager).setCompletion {
             if (it.isSuccess) historyAssetsCount.value = Resource.Success(it.results.totalCount)
+            else historyAssetsCount.value = Resource.Error(it.error)
         })
     }
 }

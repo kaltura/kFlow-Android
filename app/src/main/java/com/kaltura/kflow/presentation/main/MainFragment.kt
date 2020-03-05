@@ -8,7 +8,6 @@ import androidx.dynamicanimation.animation.SpringForce
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.*
 import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
-import androidx.transition.Fade
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.extension.navigateWithExtras
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -38,11 +37,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             isDragging = newState == RecyclerView.SCROLL_STATE_DRAGGING
             if (newState == RecyclerView.SCROLL_STATE_SETTLING) rotationAnimation.start()
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        exitTransition = Fade().setDuration(150L)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
