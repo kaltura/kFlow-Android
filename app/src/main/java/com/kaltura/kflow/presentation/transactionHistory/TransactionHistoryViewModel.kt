@@ -26,6 +26,8 @@ class TransactionHistoryViewModel(private val apiManager: PhoenixApiManager) : B
         apiManager.execute(TransactionHistoryService.list(transactionHistoryFilter).setCompletion {
             if (it.isSuccess && it.results != null) {
                 if (it.results.objects != null) billingTransactions.value = Resource.Success(it.results.objects as ArrayList<BillingTransaction>)
+            } else {
+                billingTransactions.value = Resource.Error(it.error)
             }
         })
     }
