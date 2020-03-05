@@ -5,18 +5,26 @@ import android.text.TextUtils
 import android.view.View
 import com.kaltura.client.Configuration
 import com.kaltura.kflow.R
-import com.kaltura.kflow.presentation.base.BaseFragment
+import com.kaltura.kflow.presentation.base.SharedTransitionFragment
+import com.kaltura.kflow.presentation.debug.DebugView
+import com.kaltura.kflow.presentation.extension.hideError
+import com.kaltura.kflow.presentation.extension.showError
 import com.kaltura.kflow.presentation.extension.string
+import com.kaltura.kflow.presentation.main.Feature
 import kotlinx.android.synthetic.main.fragment_settings.*
+import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.jetbrains.anko.support.v4.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Created by alex_lytvynenko on 2019-06-24.
  */
-class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
+class SettingsFragment : SharedTransitionFragment(R.layout.fragment_settings) {
 
     private val viewModel: SettingsViewModel by viewModel()
+
+    override fun debugView(): DebugView = debugView
+    override val feature = Feature.SETTINGS
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,24 +44,39 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
     }
 
     private fun save(baseUrl: String, partnerId: String, mediaFileFormat: String) {
-        if (baseUrl.isNotEmpty()) {
-            viewModel.clearKs()
-            viewModel.baseUrl = baseUrl
+        clearInputLayouts()
 
-            val config = Configuration().apply { endpoint = viewModel.baseUrl }
-            viewModel.setConfiguration(config)
-        } else {
-            toast("END Point URL is empty")
+        if (baseUrl.isEmpty()) {
+            baseUrlInputLayout.showError("END Point URL is empty")
+            return
         }
-        if (partnerId.isNotEmpty() && TextUtils.isDigitsOnly(partnerId)) {
-            viewModel.clearKs()
-            viewModel.partnerId = partnerId.toInt()
-        } else {
-            toast("Parthner ID is missing or invalid")
+        if (partnerId.isEmpty()) {
+            partnerIdInputLayout.showError("Partner ID is missing")
+            return
         }
-        if (mediaFileFormat.isNotEmpty()) viewModel.mediaFileFormat = mediaFileFormat
-        else toast("Media File Format is missing")
+        if (TextUtils.isDigitsOnly(partnerId).not()) {
+            partnerIdInputLayout.showError("Partner ID is invalid")
+            return
+        }
+        if (mediaFileFormat.isEmpty()) {
+            mediaFileFormatInputLayout.showError("Media File Format is missing")
+            return
+        }
+
+        viewModel.clearKs()
+        viewModel.baseUrl = baseUrl
+        viewModel.partnerId = partnerId.toInt()
+        viewModel.mediaFileFormat = mediaFileFormat
+
+        val config = Configuration().apply { endpoint = viewModel.baseUrl }
+        viewModel.setConfiguration(config)
 
         toast("Saved")
+    }
+
+    private fun clearInputLayouts() {
+        baseUrlInputLayout.hideError()
+        partnerIdInputLayout.hideError()
+        mediaFileFormatInputLayout.hideError()
     }
 }
