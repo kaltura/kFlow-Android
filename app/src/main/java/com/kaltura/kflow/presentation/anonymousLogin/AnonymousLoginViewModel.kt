@@ -2,7 +2,7 @@ package com.kaltura.kflow.presentation.anonymousLogin
 
 import com.kaltura.client.enums.AppTokenHashType
 import com.kaltura.client.services.AppTokenService
-import com.kaltura.client.services.OttUserService
+//import com.kaltura.client.services.OttUserService
 import com.kaltura.client.types.AppToken
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
@@ -15,13 +15,13 @@ class AnonymousLoginViewModel(private val apiManager: PhoenixApiManager,
                               private val preferenceManager: PreferenceManager) : BaseViewModel(apiManager) {
 
     fun anonymousLogin(udid: String) {
-        apiManager.execute(OttUserService.anonymousLogin(preferenceManager.partnerId, udid)
-                .setCompletion {
-                    if (it.isSuccess) {
-                        preferenceManager.ks = it.results.ks
-                        apiManager.ks = it.results.ks
-                    }
-                })
+//        apiManager.execute(OttUserService.anonymousLogin(preferenceManager.partnerId, udid)
+//                .setCompletion {
+//                    if (it.isSuccess) {
+//                        preferenceManager.ks = it.results.ks
+//                        apiManager.ks = it.results.ks
+//                    }
+//                })
     }
 
     fun generateAppToken() {

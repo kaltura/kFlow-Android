@@ -67,10 +67,10 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         super.onViewCreated(view, savedInstanceState)
 
         initUI()
-        asset = args.asset
-        isKeepAlive = args.isKeepAlive
-        initialPlaybackContextType = arguments?.getSerializable(ARG_PLAYBACK_CONTEXT_TYPE) as? APIDefines.PlaybackContextType
-        if (asset == null && args.recording != null) loadAsset(args.recording!!.assetId) else onAssetLoaded()
+//        asset = args.asset
+//        isKeepAlive = args.isKeepAlive
+//        initialPlaybackContextType = arguments?.getSerializable(ARG_PLAYBACK_CONTEXT_TYPE) as? APIDefines.PlaybackContextType
+//        if (asset == null && args.recording != null) loadAsset(args.recording!!.assetId) else onAssetLoaded()
     }
 
     private fun initUI() {
@@ -81,9 +81,9 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             if (favorite.isPressed) actionFavorite()
         }
         playerControls.setOnStartOverClickListener(View.OnClickListener {
-            if (mediaEntry.mediaType == PKMediaEntry.MediaEntryType.Vod) player?.replay()
-            else if (asset is ProgramAsset && (asset as ProgramAsset).isProgramInPast()) initPlayer(APIDefines.PlaybackContextType.Catchup)
-            else if (asset is ProgramAsset && (asset as ProgramAsset).isProgramInLive()) initPlayer(APIDefines.PlaybackContextType.StartOver)
+//            if (mediaEntry.mediaType == PKMediaEntry.MediaEntryType.Vod) player?.replay()
+//            else if (asset is ProgramAsset && (asset as ProgramAsset).isProgramInPast()) initPlayer(APIDefines.PlaybackContextType.Catchup)
+//            else if (asset is ProgramAsset && (asset as ProgramAsset).isProgramInLive()) initPlayer(APIDefines.PlaybackContextType.StartOver)
         })
         checkAll.setOnClickListener {
             hideKeyboard()
@@ -101,26 +101,26 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             asset = it
             onAssetLoaded()
         }
-        observeResource(viewModel.userAssetRules) {
-            it.forEach {
-                if (it.ruleType == RuleType.PARENTAL) {
-                    parentalRuleId = it.id.toInt()
-                    pinLayout.visible()
-                }
-            }
-        }
-        observeResource(viewModel.favoriteList) { favorite.isChecked = true }
-        observeResource(viewModel.getLike) {
-            likeId = it.id
-            like.isChecked = true
-        }
-        observeResource(viewModel.doLike, error = {
-            like.isEnabled = true
-            like.isChecked = false
-        }, success = {
-            like.isEnabled = true
-            likeId = it.id
-        })
+//        observeResource(viewModel.userAssetRules) {
+//            it.forEach {
+//                if (it.ruleType == RuleType.PARENTAL) {
+//                    parentalRuleId = it.id.toInt()
+//                    pinLayout.visible()
+//                }
+//            }
+//        }
+//        observeResource(viewModel.favoriteList) { favorite.isChecked = true }
+//        observeResource(viewModel.getLike) {
+//            likeId = it.id
+//            like.isChecked = true
+//        }
+//        observeResource(viewModel.doLike, error = {
+//            like.isEnabled = true
+//            like.isChecked = false
+//        }, success = {
+//            like.isEnabled = true
+//            likeId = it.id
+//        })
         observeResource(viewModel.doUnlike, error = {
             like.isEnabled = true
             like.isChecked = true
@@ -150,7 +150,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     private fun onAssetLoaded() {
-        assetTitle.text = asset?.name ?: ""
+//        assetTitle.text = asset?.name ?: ""
         registerPlugins()
         initPlayer(getPlaybackContextType())
         likeList()
@@ -206,27 +206,28 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     private fun getAssetIdByFlowType(): String = when {
-        (asset is ProgramAsset && getPlaybackContextType() == APIDefines.PlaybackContextType.Playback) -> (asset as ProgramAsset).linearAssetId.toString()
-        args.recording == null -> asset!!.id.toString()
-        else -> args.recording!!.id.toString()
+//        (asset is ProgramAsset && getPlaybackContextType() == APIDefines.PlaybackContextType.Playback) -> (asset as ProgramAsset).linearAssetId.toString()
+//        args.recording == null -> asset!!.id.toString()
+//        else -> args.recording!!.id.toString()
+        else -> ""
     }
 
     private fun getAssetType(playbackContextType: APIDefines.PlaybackContextType): KalturaAssetType = when {
         (playbackContextType == APIDefines.PlaybackContextType.StartOver || playbackContextType == APIDefines.PlaybackContextType.Catchup) -> KalturaAssetType.Epg
-        args.recording != null -> KalturaAssetType.Recording
+//        args.recording != null -> KalturaAssetType.Recording
         else -> KalturaAssetType.Media
     }
 
     private fun getPlaybackContextType(): APIDefines.PlaybackContextType = when {
         initialPlaybackContextType != null -> initialPlaybackContextType!!
-        asset is ProgramAsset && (asset as ProgramAsset).isProgramInPast() -> APIDefines.PlaybackContextType.Catchup
-        asset is ProgramAsset && (asset as ProgramAsset).isProgramInLive() -> APIDefines.PlaybackContextType.Playback
+//        asset is ProgramAsset && (asset as ProgramAsset).isProgramInPast() -> APIDefines.PlaybackContextType.Catchup
+//        asset is ProgramAsset && (asset as ProgramAsset).isProgramInLive() -> APIDefines.PlaybackContextType.Playback
         else -> APIDefines.PlaybackContextType.Playback
     }
 
     private fun getAssetReferenceType(playbackContextType: APIDefines.PlaybackContextType): APIDefines.AssetReferenceType = when {
         playbackContextType == APIDefines.PlaybackContextType.StartOver || playbackContextType == APIDefines.PlaybackContextType.Catchup -> APIDefines.AssetReferenceType.InternalEpg
-        args.recording == null -> APIDefines.AssetReferenceType.Media
+//        args.recording == null -> APIDefines.AssetReferenceType.Media
         else -> APIDefines.AssetReferenceType.Npvr
     }
 
@@ -365,14 +366,14 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     private fun likeList() {
         withInternetConnection {
             clearDebugView()
-            viewModel.getLike(asset!!.id)
+//            viewModel.getLike(asset!!.id)
         }
     }
 
     private fun favoriteList() {
         withInternetConnection {
             clearDebugView()
-            viewModel.getFavoriteList(asset!!.id)
+//            viewModel.getFavoriteList(asset!!.id)
         }
     }
 
@@ -380,8 +381,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         withInternetConnection {
             clearDebugView()
             like.isEnabled = false
-            if (likeId.isEmpty()) viewModel.like(asset!!.id)
-            else viewModel.unlike(likeId)
+//            if (likeId.isEmpty()) viewModel.like(asset!!.id)
+//            else viewModel.unlike(likeId)
         }
     }
 
@@ -389,8 +390,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         withInternetConnection {
             clearDebugView()
             favorite.isEnabled = false
-            if (favorite.isChecked) viewModel.favorite(asset!!.id)
-            else viewModel.unfavorite(asset!!.id)
+//            if (favorite.isChecked) viewModel.favorite(asset!!.id)
+//            else viewModel.unfavorite(asset!!.id)
         }
     }
 
@@ -398,7 +399,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         withInternetConnection {
             if (TextUtils.isDigitsOnly(asset!!.id.toString())) {
                 clearDebugView()
-                viewModel.checkAllValidations(asset!!.id)
+//                viewModel.checkAllValidations(asset!!.id)
             } else {
                 toast("Wrong input")
             }

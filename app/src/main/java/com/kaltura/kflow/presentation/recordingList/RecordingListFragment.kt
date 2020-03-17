@@ -5,7 +5,7 @@ import android.view.View
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.enums.RecordingStatus
-import com.kaltura.client.types.Recording
+//import com.kaltura.client.types.Recording
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.base.BaseFragment
 import com.kaltura.kflow.presentation.extension.navigate
@@ -32,12 +32,12 @@ class RecordingListFragment : BaseFragment(R.layout.fragment_recording_list) {
         list.setHasFixedSize(true)
         list.layoutManager = LinearLayoutManager(requireContext())
         list.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
-        val recordings = arguments?.getSerializable(ARG_RECORDINGS) as? ArrayList<Recording> ?: arrayListOf()
-        list.adapter = RecordingListAdapter(recordings).apply {
-            recordingClickListener = {
-                if (it.status == RecordingStatus.RECORDED)
-                    navigate(RecordingListFragmentDirections.navigateToPlayer(recording = it))
-            }
-        }
+//        val recordings = arguments?.getSerializable(ARG_RECORDINGS) as? ArrayList<Recording> ?: arrayListOf()
+//        list.adapter = RecordingListAdapter(recordings).apply {
+//            recordingClickListener = {
+//                if (it.status == RecordingStatus.RECORDED)
+//                    navigate(RecordingListFragmentDirections.navigateToPlayer(recording = it))
+//            }
+//        }
     }
 }

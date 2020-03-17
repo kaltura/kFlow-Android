@@ -65,10 +65,11 @@ dependencies {
     implementation 'org.jetbrains.anko:anko-commons:0.10.8'
 
     // Client library
-    implementation('com.github.kaltura:KalturaOttGeneratedAPIClientsJava:master-SNAPSHOT') {
-        exclude module: 'log4j-core'
-    }
-    implementation 'org.apache.logging.log4j:log4j-api:2.13.0'
+//    implementation('com.github.kaltura:KalturaOttGeneratedAPIClientsJava:master-SNAPSHOT') {
+//        exclude module: 'log4j-core'
+//    }
+    implementation 'com.github.kaltura:KalturaGeneratedAPIClientsAndroid:15.17.0'
+//    implementation 'org.apache.logging.log4j:log4j-api:2.13.0'
 
     // Playkit
     implementation 'com.kaltura.playkit:playkit:4.4.0'

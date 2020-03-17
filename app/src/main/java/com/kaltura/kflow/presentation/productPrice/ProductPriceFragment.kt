@@ -20,7 +20,7 @@ import java.util.*
 class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
 
     private val viewModel: ProductPriceViewModel by viewModel()
-    private var productPrices = arrayListOf<ProductPrice>()
+//    private var productPrices = arrayListOf<ProductPrice>()
 
     override fun debugView(): DebugView = debugView
 
@@ -43,15 +43,15 @@ class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
         productPriceList.isNestedScrollingEnabled = false
         productPriceList.layoutManager = LinearLayoutManager(requireContext())
         productPriceList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
-        productPriceList.adapter = ProductPriceListAdapter(arrayListOf())
+//        productPriceList.adapter = ProductPriceListAdapter(arrayListOf())
     }
 
     override fun subscribeUI() {
-        observeResource(viewModel.productPriceList) {
-            productPrices = it
-            showProductPrices.text = getQuantityString(R.plurals.show_product_prices, productPrices.size)
-            showProductPrices.visible()
-        }
+//        observeResource(viewModel.productPriceList) {
+//            productPrices = it
+//            showProductPrices.text = getQuantityString(R.plurals.show_product_prices, productPrices.size)
+//            showProductPrices.visible()
+//        }
     }
 
     private fun makeGetAssetRequest(assetId: String) {
@@ -66,11 +66,11 @@ class ProductPriceFragment : DebugFragment(R.layout.fragment_product_price) {
     private fun showProductPrices() {
         productPriceList.visible()
         showProductPrices.gone()
-        productPriceList.adapter = ProductPriceListAdapter(productPrices).apply {
-            onSubscriptionPriceClickListener = {
-
-            }
-        }
+//        productPriceList.adapter = ProductPriceListAdapter(productPrices).apply {
+//            onSubscriptionPriceClickListener = {
+//
+//            }
+//        }
     }
 
     private fun showAssets(assetList: ArrayList<Asset>) {

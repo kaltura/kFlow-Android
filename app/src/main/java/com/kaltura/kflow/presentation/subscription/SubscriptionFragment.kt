@@ -24,10 +24,10 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
 
     private val viewModel: SubscriptionViewModel by viewModel()
     private var assets = arrayListOf<Asset>()
-    private var subscriptionListAdapter = SubscriptionListAdapter(arrayListOf()).apply {
-        packageGetSubscriptionListener = ::onPackageGetSubscriptionClicked
-        subscriptionListener = ::onSubscriptionClicked
-    }
+//    private var subscriptionListAdapter = SubscriptionListAdapter(arrayListOf()).apply {
+//        packageGetSubscriptionListener = ::onPackageGetSubscriptionClicked
+//        subscriptionListener = ::onSubscriptionClicked
+//    }
     private lateinit var progressDialog: ProgressDialog
     private var selectedPackageBaseId: Double = 0.0
 
@@ -58,9 +58,9 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
             showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
             showAssets.visible()
         }
-        observeResource(viewModel.subscriptionList) {
-            subscriptionListAdapter.addSubscriptionToPackage(selectedPackageBaseId, it)
-        }
+//        observeResource(viewModel.subscriptionList) {
+//            subscriptionListAdapter.addSubscriptionToPackage(selectedPackageBaseId, it)
+//        }
         observeResource(viewModel.assetsInSubscription) {
             hideLoadingDialog()
             if (it.isEmpty()) toast("No assets in this subscription")
@@ -72,7 +72,7 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
         packageList.isNestedScrollingEnabled = false
         packageList.layoutManager = LinearLayoutManager(requireContext())
         packageList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
-        packageList.adapter = subscriptionListAdapter
+//        packageList.adapter = subscriptionListAdapter
     }
 
     private fun makeGetPackageListRequest(packageType: String) {
@@ -106,25 +106,25 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
     }
 
     private fun showPackages() {
-        packageList.visible()
-        showAssets.gone()
-        val packages = ArrayList<ParentRecyclerViewItem<Asset, Subscription>>()
-        assets.forEach { packages.add(ParentRecyclerViewItem(it, arrayListOf())) }
-        subscriptionListAdapter = SubscriptionListAdapter(packages).apply {
-            packageGetSubscriptionListener = ::onPackageGetSubscriptionClicked
-            subscriptionListener = ::onSubscriptionClicked
-        }
-        packageList.adapter = subscriptionListAdapter
+//        packageList.visible()
+//        showAssets.gone()
+//        val packages = ArrayList<ParentRecyclerViewItem<Asset, Subscription>>()
+//        assets.forEach { packages.add(ParentRecyclerViewItem(it, arrayListOf())) }
+//        subscriptionListAdapter = SubscriptionListAdapter(packages).apply {
+//            packageGetSubscriptionListener = ::onPackageGetSubscriptionClicked
+//            subscriptionListener = ::onSubscriptionClicked
+//        }
+//        packageList.adapter = subscriptionListAdapter
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        subscriptionListAdapter.onSaveInstanceState(outState)
+//        subscriptionListAdapter.onSaveInstanceState(outState)
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        subscriptionListAdapter.onRestoreInstanceState(savedInstanceState)
+//        subscriptionListAdapter.onRestoreInstanceState(savedInstanceState)
     }
 
     private fun onPackageGetSubscriptionClicked(packageBaseId: Double) {

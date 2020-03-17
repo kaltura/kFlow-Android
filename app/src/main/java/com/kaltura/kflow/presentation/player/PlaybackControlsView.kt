@@ -60,16 +60,16 @@ class PlaybackControlsView @JvmOverloads constructor(
     }
 
     private fun updateLiveProgress() {
-        val startDate = asset?.startDate ?: 0L
-        val endDate = asset?.endDate ?: 0L
-        val durationMs = endDate - startDate
-        val currentProgress = Date().time / 1000 - startDate
-        val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val startTime = dateFormat.format(Date(startDate))
-        val endTime = dateFormat.format(Date(endDate))
-        timeCurrent.text = startTime
-        time.text = endTime
-        mediacontrollerProgress.progress = (PROGRESS_BAR_MAX.toFloat() * currentProgress / durationMs).toInt()
+//        val startDate = asset?.startDate ?: 0L
+//        val endDate = asset?.endDate ?: 0L
+//        val durationMs = endDate - startDate
+//        val currentProgress = Date().time / 1000 - startDate
+//        val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+//        val startTime = dateFormat.format(Date(startDate))
+//        val endTime = dateFormat.format(Date(endDate))
+//        timeCurrent.text = startTime
+//        time.text = endTime
+//        mediacontrollerProgress.progress = (PROGRESS_BAR_MAX.toFloat() * currentProgress / durationMs).toInt()
     }
 
     private fun updateVodProgress() {

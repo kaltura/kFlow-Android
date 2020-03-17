@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.navigation.fragment.navArgs
-import com.kaltura.client.enums.RuleType
+//import com.kaltura.client.enums.RuleType
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.debug.DebugFragment
@@ -32,7 +32,7 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
         super.onViewCreated(view, savedInstanceState)
 
         playAsset.setOnClickListener {
-            navigate(MediaPageFragmentDirections.navigateToPlayer(args.isKeepAlive, asset = asset!!))
+//            navigate(MediaPageFragmentDirections.navigateToPlayer(args.isKeepAlive, asset = asset!!))
         }
         getProductPrice.setOnClickListener {
             hideKeyboard()
@@ -70,10 +70,10 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
             asset = it
             validateButtons()
         }
-        observeResource(viewModel.userAssetRules) {
-            handleUserRules(it)
-            validateButtons()
-        }
+//        observeResource(viewModel.userAssetRules) {
+//            handleUserRules(it)
+//            validateButtons()
+//        }
     }
 
     private fun getAssetRequest(assetId: String) {
@@ -161,11 +161,11 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
         }
     }
 
-    private fun handleUserRules(userAssetRules: List<UserAssetRule>) {
-        userAssetRules.forEach {
-            if (it.ruleType == RuleType.PARENTAL) {
-                parentalRuleId = it.id.toInt()
-            }
-        }
-    }
+//    private fun handleUserRules(userAssetRules: List<UserAssetRule>) {
+//        userAssetRules.forEach {
+//            if (it.ruleType == RuleType.PARENTAL) {
+//                parentalRuleId = it.id.toInt()
+//            }
+//        }
+//    }
 }

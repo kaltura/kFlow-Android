@@ -24,7 +24,7 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit().putString(KEY_AUTH_PASSWORD, value).apply()
 
     var baseUrl: String
-        get() = prefs.getString(KEY_BASE_URL, null) ?: "https://rest-us.ott.kaltura.com/v5_0_3/"
+        get() = prefs.getString(KEY_BASE_URL, null) ?: "https://cdnapisec.kaltura.com/"
         set(value) = prefs.edit().putString(KEY_BASE_URL, value).apply()
 
     var mediaFileFormat: String
@@ -32,7 +32,7 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit().putString(KEY_MAIN_MEDIA_FILE_FORMAT, value).apply()
 
     var partnerId: Int
-        get() = prefs.getInt(KEY_PARTNER_ID, 3009)
+        get() = prefs.getInt(KEY_PARTNER_ID, 2068231)
         set(value) = prefs.edit().putInt(KEY_PARTNER_ID, value).apply()
 
     var ks: String?

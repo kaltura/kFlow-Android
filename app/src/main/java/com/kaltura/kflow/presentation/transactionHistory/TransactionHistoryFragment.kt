@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.kaltura.client.types.BillingTransaction
+//import com.kaltura.client.types.BillingTransaction
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
@@ -18,8 +18,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class TransactionHistoryFragment : DebugFragment(R.layout.fragment_transaction_history) {
 
     private val viewModel: TransactionHistoryViewModel by viewModel()
-    private var transactions = arrayListOf<BillingTransaction>()
-    private val transactionHistoryListAdapter = TransactionHistoryListAdapter()
+//    private var transactions = arrayListOf<BillingTransaction>()
+//    private val transactionHistoryListAdapter = TransactionHistoryListAdapter()
 
     override fun debugView(): DebugView = debugView
 
@@ -38,18 +38,18 @@ class TransactionHistoryFragment : DebugFragment(R.layout.fragment_transaction_h
     }
 
     override fun subscribeUI() {
-        observeResource(viewModel.billingTransactions) {
-            transactions = it
-            showTransactions.text = getQuantityString(R.plurals.show_transactions, transactions.size)
-            showTransactions.visible()
-        }
+//        observeResource(viewModel.billingTransactions) {
+//            transactions = it
+//            showTransactions.text = getQuantityString(R.plurals.show_transactions, transactions.size)
+//            showTransactions.visible()
+//        }
     }
 
     private fun initList() {
         transactionsList.isNestedScrollingEnabled = false
         transactionsList.layoutManager = LinearLayoutManager(requireContext())
         transactionsList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
-        transactionsList.adapter = transactionHistoryListAdapter
+//        transactionsList.adapter = transactionHistoryListAdapter
     }
 
     private fun makeGetTransactionHistoryRequest() {
@@ -63,6 +63,6 @@ class TransactionHistoryFragment : DebugFragment(R.layout.fragment_transaction_h
     private fun showTransactions() {
         transactionsList.visible()
         showTransactions.gone()
-        transactionHistoryListAdapter.transactions = transactions
+//        transactionHistoryListAdapter.transactions = transactions
     }
 }

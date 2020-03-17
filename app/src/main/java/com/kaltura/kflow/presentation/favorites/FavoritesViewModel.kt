@@ -1,7 +1,7 @@
 package com.kaltura.kflow.presentation.favorites
 
 import androidx.lifecycle.MutableLiveData
-import com.kaltura.client.services.FavoriteService
+//import com.kaltura.client.services.FavoriteService
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
 import com.kaltura.kflow.utils.Resource
@@ -14,8 +14,8 @@ class FavoritesViewModel(private val apiManager: PhoenixApiManager) : BaseViewMo
     val favoritesCount = MutableLiveData<Resource<Int>>()
 
     fun getFavorites() {
-        apiManager.execute(FavoriteService.list().setCompletion {
-            if (it.isSuccess) favoritesCount.value = Resource.Success(it.results.totalCount)
-        })
+//        apiManager.execute(FavoriteService.list().setCompletion {
+//            if (it.isSuccess) favoritesCount.value = Resource.Success(it.results.totalCount)
+//        })
     }
 }

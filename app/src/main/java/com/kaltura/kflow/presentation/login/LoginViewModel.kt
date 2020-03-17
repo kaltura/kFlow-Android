@@ -1,6 +1,6 @@
 package com.kaltura.kflow.presentation.login
 
-import com.kaltura.client.services.OttUserService
+import com.kaltura.client.services.UserService
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
@@ -12,11 +12,11 @@ class LoginViewModel(private val apiManager: PhoenixApiManager,
                      private val preferenceManager: PreferenceManager) : BaseViewModel(apiManager) {
 
     fun makeLoginRequest(email: String, password: String, udid: String) {
-        apiManager.execute(OttUserService.login(preferenceManager.partnerId, email, password, null, udid)
+        apiManager.execute(UserService.login(preferenceManager.partnerId, email, password)
                 .setCompletion {
                     if (it.isSuccess) {
-                        preferenceManager.ks = it.results.loginSession.ks
-                        apiManager.ks = it.results.loginSession.ks
+                        preferenceManager.ks = it.results
+                        apiManager.ks = it.results
                         preferenceManager.authUser = email
                         preferenceManager.authPassword = password
                     }

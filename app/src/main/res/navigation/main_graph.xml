@@ -233,15 +233,15 @@
             android:name="isKeepAlive"
             android:defaultValue="false"
             app:argType="boolean" />
-        <argument
-            android:name="asset"
-            android:defaultValue="@null"
-            app:argType="com.kaltura.client.types.Asset"
-            app:nullable="true" />
-        <argument
-            android:name="recording"
-            android:defaultValue="@null"
-            app:argType="com.kaltura.client.types.Recording"
-            app:nullable="true" />
+        <!--        <argument-->
+        <!--            android:name="asset"-->
+        <!--            android:defaultValue="@null"-->
+        <!--            app:argType="com.kaltura.client.types.Asset"-->
+        <!--            app:nullable="true" />-->
+        <!--        <argument-->
+        <!--            android:name="recording"-->
+        <!--            android:defaultValue="@null"-->
+        <!--            app:argType="com.kaltura.client.types.Recording"-->
+        <!--            app:nullable="true" />-->
     </fragment>
 </navigation>
