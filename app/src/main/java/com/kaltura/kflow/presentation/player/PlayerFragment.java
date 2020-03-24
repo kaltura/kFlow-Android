@@ -117,7 +117,7 @@ public class PlayerFragment extends DebugFragment {
     public static PlayerFragment newInstance(Asset asset, boolean isKeepAlive) {
         PlayerFragment likeFragment = new PlayerFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_ASSET, asset);
+        bundle.putParcelable(ARG_ASSET, asset);
         bundle.putBoolean(ARG_KEEP_ALIVE, isKeepAlive);
         likeFragment.setArguments(bundle);
         return likeFragment;
@@ -126,7 +126,7 @@ public class PlayerFragment extends DebugFragment {
     public static PlayerFragment newInstance(Asset asset, boolean isKeepAlive, APIDefines.PlaybackContextType playbackContextType) {
         PlayerFragment likeFragment = new PlayerFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_ASSET, asset);
+        bundle.putParcelable(ARG_ASSET, asset);
         bundle.putBoolean(ARG_KEEP_ALIVE, isKeepAlive);
         bundle.putSerializable(ARG_PLAYBACK_CONTEXT_TYPE, playbackContextType);
         likeFragment.setArguments(bundle);
@@ -136,7 +136,7 @@ public class PlayerFragment extends DebugFragment {
     public static PlayerFragment newInstance(Recording recording) {
         PlayerFragment likeFragment = new PlayerFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_RECORDING, recording);
+        bundle.putParcelable(ARG_RECORDING, recording);
         likeFragment.setArguments(bundle);
         return likeFragment;
     }

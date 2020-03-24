@@ -1,1 +1,4 @@
 include ':app'
+include ':clientlib'
+project(':clientlib').projectDir = new File('../../../Sites/KalturaOttGeneratedAPIClientsAndroid/KalturaClient')
+
