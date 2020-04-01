@@ -12,6 +12,8 @@ class LoginViewModel(private val apiManager: PhoenixApiManager,
                      private val preferenceManager: PreferenceManager) : BaseViewModel(apiManager) {
 
     fun makeLoginRequest(email: String, password: String, udid: String) {
+        preferenceManager.clearKs()
+        apiManager.ks = null
         apiManager.execute(UserService.login(preferenceManager.partnerId, email, password)
                 .setCompletion {
                     if (it.isSuccess) {

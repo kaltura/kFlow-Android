@@ -56,7 +56,9 @@ object AndroidAPIRequestsExecutor : APIOkRequestsExecutor() {
                 it.setRequestBody(JSONObject(action.body))
                 it.setResponseBody(JSONObject(responseElement.response))
             } catch (e: JSONException) {
-                it.onError()
+                it.setRequestInfo(action.url, action.method, responseElement.code)
+                it.setRequestBody(JSONObject(action.body))
+                it.setResponseBody(JSONObject().apply { put("body", responseElement.response) })
                 e.printStackTrace()
             }
         }

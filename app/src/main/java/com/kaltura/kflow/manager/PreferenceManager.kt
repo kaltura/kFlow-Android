@@ -24,7 +24,7 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit().putString(KEY_AUTH_PASSWORD, value).apply()
 
     var baseUrl: String
-        get() = prefs.getString(KEY_BASE_URL, null) ?: "https://cdnapisec.kaltura.com/"
+        get() = prefs.getString(KEY_BASE_URL, null) ?: "https://cdnapisec.kaltura.com"
         set(value) = prefs.edit().putString(KEY_BASE_URL, value).apply()
 
     var mediaFileFormat: String

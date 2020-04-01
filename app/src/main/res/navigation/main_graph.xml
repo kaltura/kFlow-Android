@@ -35,20 +35,8 @@
             android:id="@+id/navigate_to_search"
             app:destination="@id/search" />
         <action
-            android:id="@+id/navigate_to_keep_alive"
-            app:destination="@id/media_page">
-            <argument
-                android:name="isKeepAlive"
-                android:defaultValue="true"
-                app:argType="boolean" />
-        </action>
-        <action
             android:id="@+id/navigate_to_media_page"
             app:destination="@id/media_page">
-            <argument
-                android:name="isKeepAlive"
-                android:defaultValue="false"
-                app:argType="boolean" />
         </action>
         <action
             android:id="@+id/navigate_to_subscription"
@@ -134,9 +122,6 @@
         android:name="com.kaltura.kflow.presentation.mediaPage.MediaPageFragment"
         android:label="Media page"
         tools:layout="@layout/fragment_media_page">
-        <argument
-            android:name="isKeepAlive"
-            app:argType="boolean" />
         <action
             android:id="@+id/navigate_to_player"
             app:destination="@id/player" />
@@ -230,14 +215,8 @@
         android:label="Player"
         tools:layout="@layout/fragment_player">
         <argument
-            android:name="isKeepAlive"
-            android:defaultValue="false"
-            app:argType="boolean" />
-        <!--        <argument-->
-        <!--            android:name="asset"-->
-        <!--            android:defaultValue="@null"-->
-        <!--            app:argType="com.kaltura.client.types.Asset"-->
-        <!--            app:nullable="true" />-->
+            android:name="mediaEntry"
+            app:argType="com.kaltura.client.types.MediaEntry" />
         <!--        <argument-->
         <!--            android:name="recording"-->
         <!--            android:defaultValue="@null"-->

@@ -2,11 +2,9 @@ package com.kaltura.kflow.presentation.mediaPage
 
 import androidx.lifecycle.MutableLiveData
 //import com.kaltura.client.enums.AssetReferenceType
-import com.kaltura.client.enums.AssetType
 //import com.kaltura.client.enums.PinType
 import com.kaltura.client.services.*
 import com.kaltura.client.types.*
-import com.kaltura.client.utils.request.MultiRequestBuilder
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
 import com.kaltura.kflow.utils.Resource
@@ -16,15 +14,15 @@ import com.kaltura.kflow.utils.Resource
  */
 class MediaPageViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
 
-    val asset = MutableLiveData<Resource<Asset>>()
+    val mediaEntry = MutableLiveData<Resource<MediaEntry>>()
 //    val userAssetRules = MutableLiveData<Resource<ArrayList<UserAssetRule>>>()
 
-    fun getAsset(assetId: String) {
-//        apiManager.execute(AssetService.get(assetId, AssetReferenceType.MEDIA).setCompletion {
-//            if (it.isSuccess) {
-//                if (it.results != null) asset.value = Resource.Success(it.results)
-//            }
-//        })
+    fun getMediaEntry(entryId: String) {
+        apiManager.execute(MediaService.get(entryId).setCompletion {
+            if (it.isSuccess) {
+                if (it.results != null) mediaEntry.value = Resource.Success(it.results)
+            }
+        })
     }
 
     fun getProductPrice(assetId: String) {

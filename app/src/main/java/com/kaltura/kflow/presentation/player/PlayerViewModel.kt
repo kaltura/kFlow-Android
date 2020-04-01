@@ -19,7 +19,7 @@ import com.kaltura.kflow.utils.Resource
 class PlayerViewModel(private val apiManager: PhoenixApiManager,
                       private val preferenceManager: PreferenceManager) : BaseViewModel(apiManager) {
 
-    val asset = MutableLiveData<Resource<Asset>>()
+//    val mediaEntry = MutableLiveData<Resource<MediaEntry>>()
 //    val userAssetRules = MutableLiveData<Resource<List<UserAssetRule>>>()
 //    val favoriteList = MutableLiveData<Resource<List<Favorite>>>()
 //    val getLike = MutableLiveData<Resource<SocialAction>>()
@@ -28,13 +28,13 @@ class PlayerViewModel(private val apiManager: PhoenixApiManager,
     val doFavorite = MutableLiveData<Resource<Unit>>()
     val doUnfavorite = MutableLiveData<Resource<Unit>>()
 
-    fun loadAsset(assetId: Long) {
-//        apiManager.execute(AssetService.get(assetId.toString(), AssetReferenceType.EPG_INTERNAL).setCompletion {
+//    fun loadAsset(mediaEntryId: String) {
+//        apiManager.execute(MediaService.get(mediaEntryId).setCompletion {
 //            if (it.isSuccess) {
-//                asset.value = Resource.Success(it.results)
+//                mediaEntry.value = Resource.Success(it.results)
 //            }
 //        })
-    }
+//    }
 
     fun like(assetId: Long) {
 //        val socialAction = SocialAction().apply {

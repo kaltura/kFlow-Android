@@ -13,7 +13,6 @@ enum class Feature(val text: String) {
     FAVORITES("Favorites"),
     SEARCH("Search"),
     MEDIA_PAGE("Media page"),
-    KEEP_ALIVE("Keep Alive"),
     SUBSCRIPTION("Subscription"),
     PRODUCT_PRICE("Product price"),
     CHECK_RECEIPT("Check receipt"),

@@ -5,8 +5,6 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.isGone
-import androidx.navigation.fragment.navArgs
-//import com.kaltura.client.enums.RuleType
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.debug.DebugFragment
@@ -22,9 +20,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
 
     private val viewModel: MediaPageViewModel by viewModel()
-    private val args: MediaPageFragmentArgs by navArgs()
     private var parentalRuleId = 0
-    private var asset: Asset? = null
+    private var mediaEntry: MediaEntry? = null
 
     override fun debugView(): DebugView = debugView
 
@@ -32,7 +29,7 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
         super.onViewCreated(view, savedInstanceState)
 
         playAsset.setOnClickListener {
-//            navigate(MediaPageFragmentDirections.navigateToPlayer(args.isKeepAlive, asset = asset!!))
+            navigate(MediaPageFragmentDirections.navigateToPlayer(mediaEntry!!))
         }
         getProductPrice.setOnClickListener {
             hideKeyboard()
@@ -66,8 +63,8 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
     }
 
     override fun subscribeUI() {
-        observeResource(viewModel.asset) {
-            asset = it
+        observeResource(viewModel.mediaEntry) {
+            mediaEntry = it
             validateButtons()
         }
 //        observeResource(viewModel.userAssetRules) {
@@ -78,12 +75,12 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
 
     private fun getAssetRequest(assetId: String) {
         withInternetConnection {
-            asset = null
+            mediaEntry = null
             parentalRuleId = 0
             pin.string = ""
             validateButtons()
             clearDebugView()
-            viewModel.getAsset(assetId)
+            viewModel.getMediaEntry(assetId)
         }
     }
 
@@ -141,12 +138,16 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
     }
 
     private fun validateButtons() {
-        val isVisible = asset != null
+        val isVisible = mediaEntry != null
         playAsset.visibleOrGone(isVisible)
-        getProductPrice.visibleOrGone(isVisible)
-        getBookmark.visibleOrGone(isVisible)
-        getAssetRules.visibleOrGone(isVisible)
-        checkAll.visibleOrGone(isVisible)
+//        getProductPrice.visibleOrGone(isVisible)
+//        getBookmark.visibleOrGone(isVisible)
+//        getAssetRules.visibleOrGone(isVisible)
+//        checkAll.visibleOrGone(isVisible)
+        getProductPrice.gone()
+        getBookmark.gone()
+        getAssetRules.gone()
+        checkAll.gone()
         validatePinLayout()
     }
 

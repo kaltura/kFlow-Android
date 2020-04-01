@@ -2,14 +2,12 @@ package com.kaltura.kflow.presentation.player
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import androidx.core.view.isGone
 import androidx.navigation.fragment.navArgs
-import com.kaltura.client.enums.*
-import com.kaltura.client.types.*
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
@@ -19,47 +17,32 @@ import com.kaltura.playkit.PlayerEvent.StateChanged
 import com.kaltura.playkit.PlayerEvent.TracksAvailable
 import com.kaltura.playkit.player.PKTracks
 import com.kaltura.playkit.player.TextTrack
-import com.kaltura.playkit.plugins.SamplePlugin
 import com.kaltura.playkit.plugins.ads.AdEvent
+import com.kaltura.playkit.plugins.kava.KavaAnalyticsConfig
 import com.kaltura.playkit.plugins.kava.KavaAnalyticsPlugin
 import com.kaltura.playkit.plugins.ott.OttEvent
-import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsConfig
-import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsPlugin
-import com.kaltura.playkit.plugins.youbora.YouboraPlugin
-import com.kaltura.playkit.providers.MediaEntryProvider
-import com.kaltura.playkit.providers.api.SimpleSessionProvider
-import com.kaltura.playkit.providers.api.phoenix.APIDefines
-import com.kaltura.playkit.providers.api.phoenix.APIDefines.KalturaAssetType
-import com.kaltura.playkit.providers.base.OnMediaLoadCompletion
-import com.kaltura.playkit.providers.ott.PhoenixMediaProvider
+import com.kaltura.playkit.providers.ovp.KalturaOvpMediaProvider
 import kotlinx.android.synthetic.main.fragment_player.*
+import org.jetbrains.anko.support.v4.runOnUiThread
 import org.jetbrains.anko.support.v4.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
-import java.net.URL
 
 /**
  * Created by alex_lytvynenko on 04.12.2018.
  */
 class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
-    companion object {
-        const val ARG_PLAYBACK_CONTEXT_TYPE = "extra_playback_context_type"
-    }
-
     private val viewModel: PlayerViewModel by viewModel()
 
+    private val KAVA_BASE_URL = "https://analytics.kaltura.com/api_v3/index.php"
+
+    // UIConf id -- optional for KAVA
+    private val UI_CONF_ID = 0
     private val TAG = PlayerFragment::class.java.canonicalName
     private val args: PlayerFragmentArgs by navArgs()
-    private var player: Player? = null
-    private var asset: Asset? = null
+    private lateinit var player: Player
     private var likeId = ""
-    private lateinit var mediaEntry: PKMediaEntry
     private var parentalRuleId = 0
-    private var isKeepAlive = false
-    private var playerKeepAliveService = PlayerKeepAliveService()
-    private var initialPlaybackContextType: APIDefines.PlaybackContextType? = null
 
     override fun debugView(): DebugView = debugView
 
@@ -67,10 +50,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         super.onViewCreated(view, savedInstanceState)
 
         initUI()
-//        asset = args.asset
-//        isKeepAlive = args.isKeepAlive
-//        initialPlaybackContextType = arguments?.getSerializable(ARG_PLAYBACK_CONTEXT_TYPE) as? APIDefines.PlaybackContextType
-//        if (asset == null && args.recording != null) loadAsset(args.recording!!.assetId) else onAssetLoaded()
+        onAssetLoaded()
     }
 
     private fun initUI() {
@@ -81,7 +61,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             if (favorite.isPressed) actionFavorite()
         }
         playerControls.setOnStartOverClickListener(View.OnClickListener {
-//            if (mediaEntry.mediaType == PKMediaEntry.MediaEntryType.Vod) player?.replay()
+//            if (pkMediaEntry.mediaType == PKMediaEntry.MediaEntryType.Vod) player?.replay()
 //            else if (asset is ProgramAsset && (asset as ProgramAsset).isProgramInPast()) initPlayer(APIDefines.PlaybackContextType.Catchup)
 //            else if (asset is ProgramAsset && (asset as ProgramAsset).isProgramInLive()) initPlayer(APIDefines.PlaybackContextType.StartOver)
         })
@@ -97,10 +77,10 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     override fun subscribeUI() {
-        observeResource(viewModel.asset) {
-            asset = it
-            onAssetLoaded()
-        }
+//        observeResource(viewModel.mediaEntry) {
+//            mediaEntry = it
+//            onAssetLoaded()
+//        }
 //        observeResource(viewModel.userAssetRules) {
 //            it.forEach {
 //                if (it.ruleType == RuleType.PARENTAL) {
@@ -142,195 +122,88 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         })
     }
 
-    private fun loadAsset(assetId: Long) {
-        withInternetConnection {
-            clearDebugView()
-            viewModel.loadAsset(assetId)
-        }
-    }
+//    private fun loadAsset(mediaEntryId: String) {
+//        withInternetConnection {
+//            clearDebugView()
+//            viewModel.loadAsset(mediaEntryId)
+//        }
+//    }
 
     private fun onAssetLoaded() {
-//        assetTitle.text = asset?.name ?: ""
+        assetTitle.text = args.mediaEntry.name ?: ""
         registerPlugins()
-        initPlayer(getPlaybackContextType())
+        setupPlayer()
         likeList()
         favoriteList()
+        loadMedia()
     }
 
-    private fun initPlayer(playbackContextType: APIDefines.PlaybackContextType) {
-        startOttMediaLoading(playbackContextType, OnMediaLoadCompletion {
-            if (isAdded) {
-                requireActivity().runOnUiThread {
-                    if (it.response != null) {
-                        mediaEntry = it.response
-                        if (isKeepAlive) onMediaLoadedKeepAlive()
-                        else onMediaLoaded()
-                    } else {
-                        toast("failed to fetch media data: ${it.error?.message ?: ""}")
-                    }
-                }
-            }
-        })
+    private fun setupPlayer() {
+        player = PlayKitManager.loadPlayer(requireContext(), createPluginConfigs()).apply {
+            settings.setSecureSurface(false)
+            settings.setAllowCrossProtocolRedirect(true)
+            settings.setCea608CaptionsEnabled(true) // default is false
+        }
+        playerLayout.addView(player.view)
+        addPlayerListeners()
+        playerControls.player = player
+    }
+
+    private fun createPluginConfigs() = PKPluginConfigs().apply {
+        setPluginConfig(KavaAnalyticsPlugin.factory.name, getKavaConfig())
     }
 
     private fun registerPlugins() {
-        PlayKitManager.registerPlugins(requireContext(), SamplePlugin.factory)
-        //		PlayKitManager.registerPlugins(requireContext(), KalturaStatsPlugin.factory);
         PlayKitManager.registerPlugins(requireContext(), KavaAnalyticsPlugin.factory)
-        PlayKitManager.registerPlugins(requireContext(), YouboraPlugin.factory)
-        PlayKitManager.registerPlugins(requireContext(), PhoenixAnalyticsPlugin.factory)
     }
 
-    private fun configurePlugins(pluginConfigs: PKPluginConfigs) {
-        addPhoenixAnalyticsPluginConfig(pluginConfigs)
-    }
+    private fun getKavaConfig() = KavaAnalyticsConfig()
+            .setBaseUrl(KAVA_BASE_URL)
+            .setPartnerId(viewModel.getPartnerId())
+            .setEntryId(args.mediaEntry.id)
+            .setKs(viewModel.getKs())
+            .setUiConfId(UI_CONF_ID)
 
-    private fun addPhoenixAnalyticsPluginConfig(config: PKPluginConfigs) {
-        val ks = viewModel.getKs()
-        val pId = viewModel.getPartnerId()
-        val baseUrl = viewModel.getBaseUrl() + "/api_v3/"
-        val phoenixAnalyticsConfig = PhoenixAnalyticsConfig(pId, baseUrl, ks, 30)
-        config.setPluginConfig(PhoenixAnalyticsPlugin.factory.name, phoenixAnalyticsConfig)
-    }
-
-    private fun startOttMediaLoading(playbackContextType: APIDefines.PlaybackContextType, completion: OnMediaLoadCompletion) {
-        val mediaProvider: MediaEntryProvider = PhoenixMediaProvider()
-                .setSessionProvider(SimpleSessionProvider(viewModel.getBaseUrl() + "/api_v3/", viewModel.getPartnerId(), viewModel.getKs()))
-                .setAssetId(getAssetIdByFlowType())
-                .setProtocol(PhoenixMediaProvider.HttpProtocol.All)
-                .setContextType(playbackContextType)
-                .setAssetReferenceType(getAssetReferenceType(playbackContextType))
-                .setAssetType(getAssetType(playbackContextType))
-                .setFormats(viewModel.getMediaFileFormat())
-        mediaProvider.load(completion)
-    }
-
-    private fun getAssetIdByFlowType(): String = when {
-//        (asset is ProgramAsset && getPlaybackContextType() == APIDefines.PlaybackContextType.Playback) -> (asset as ProgramAsset).linearAssetId.toString()
-//        args.recording == null -> asset!!.id.toString()
-//        else -> args.recording!!.id.toString()
-        else -> ""
-    }
-
-    private fun getAssetType(playbackContextType: APIDefines.PlaybackContextType): KalturaAssetType = when {
-        (playbackContextType == APIDefines.PlaybackContextType.StartOver || playbackContextType == APIDefines.PlaybackContextType.Catchup) -> KalturaAssetType.Epg
-//        args.recording != null -> KalturaAssetType.Recording
-        else -> KalturaAssetType.Media
-    }
-
-    private fun getPlaybackContextType(): APIDefines.PlaybackContextType = when {
-        initialPlaybackContextType != null -> initialPlaybackContextType!!
-//        asset is ProgramAsset && (asset as ProgramAsset).isProgramInPast() -> APIDefines.PlaybackContextType.Catchup
-//        asset is ProgramAsset && (asset as ProgramAsset).isProgramInLive() -> APIDefines.PlaybackContextType.Playback
-        else -> APIDefines.PlaybackContextType.Playback
-    }
-
-    private fun getAssetReferenceType(playbackContextType: APIDefines.PlaybackContextType): APIDefines.AssetReferenceType = when {
-        playbackContextType == APIDefines.PlaybackContextType.StartOver || playbackContextType == APIDefines.PlaybackContextType.Catchup -> APIDefines.AssetReferenceType.InternalEpg
-//        args.recording == null -> APIDefines.AssetReferenceType.Media
-        else -> APIDefines.AssetReferenceType.Npvr
-    }
-
-    private fun loadPlayerSettings() {
-        if (player == null) {
-            val pluginConfig = PKPluginConfigs()
-            configurePlugins(pluginConfig)
-            player = PlayKitManager.loadPlayer(requireContext(), pluginConfig).apply {
-                settings.setSecureSurface(false)
-                settings.setAllowCrossProtocolRedirect(true)
-                settings.setCea608CaptionsEnabled(true) // default is false
-            }
-
-            addPlayerListeners()
-            playerLayout.addView(player?.view)
-            playerControls.player = player
-        }
-    }
-
-    private fun onMediaLoadedKeepAlive() {
-        loadPlayerSettings()
-        var sourceUrl = ""
-        val sources = mediaEntry.sources
-        sources.forEach {
-            if (it.mediaFormat == PKMediaFormat.dash) sourceUrl = it.url
-        }
-        try {
-            getKeepAliveHeaderUrl(URL(sourceUrl)) { status, url ->
-                if (mediaEntry.sources != null && mediaEntry.sources.isNotEmpty()) {
-                    Log.d(TAG, "The KeepAlive Url is : $url")
-                    playerKeepAliveService.keepAliveURL = url
-                    mediaEntry.sources[0].url = url
+    private fun loadMedia() {
+        KalturaOvpMediaProvider(viewModel.getBaseUrl(), viewModel.getPartnerId(), viewModel.getKs())
+                .setEntryId(args.mediaEntry.id)
+                .load { response ->
+                    runOnUiThread {
+                        if (response.isSuccess) {
+                            // Update with entryId and KS
+                            player.updatePluginConfig(KavaAnalyticsPlugin.factory.name, getKavaConfig())
+                            playerControls.mediaEntry = args.mediaEntry
+                            player.prepare(PKMediaConfig().setMediaEntry(response.response))
+                            player.play() // Will play when ready
+                        } else {
+                            toast("Failed loading media: " + response.error)
+                        }
+                    }
                 }
-                setMediaEntry()
-            }
-        } catch (e: MalformedURLException) {
-            Log.d(TAG, "The KeepAlive Url is : " + e.message)
-            e.printStackTrace()
-        }
-    }
-
-    private fun onMediaLoaded() {
-        loadPlayerSettings()
-        setMediaEntry()
-    }
-
-    private fun setMediaEntry() {
-        val mediaConfig = PKMediaConfig().setMediaEntry(mediaEntry)
-        if (mediaEntry.mediaType == PKMediaEntry.MediaEntryType.Live) {
-            mediaEntry.mediaType = PKMediaEntry.MediaEntryType.DvrLive
-            playerControls.asset = asset
-            //playerControls.disableControllersForLive();
-        } else {
-            mediaConfig.startPosition = 0L
-        }
-        player?.prepare(mediaConfig)
-        player?.play()
-    }
-
-    private fun getKeepAliveHeaderUrl(url: URL, listener: ((status: Boolean, url: String) -> Unit)) {
-        Thread(Runnable {
-            try {
-                val conn = url.openConnection() as HttpURLConnection
-                conn.instanceFollowRedirects = false
-                val keepAliveURL = conn.getHeaderField("Location")
-                val isSuccess = !TextUtils.isEmpty(keepAliveURL) && conn.responseCode == 307
-                if (isSuccess) {
-                    requireActivity().runOnUiThread { listener(true, keepAliveURL) }
-                } else {
-                    val url1 = URL(keepAliveURL)
-                    getKeepAliveHeaderUrl(url1, listener)
-                }
-            } catch (e: Exception) {
-                listener(false, "Failed to retreive Location header : " + e.message)
-                e.printStackTrace()
-            }
-        }).start()
     }
 
     private fun addPlayerListeners() {
-        player?.let {
-            it.addListener(this, PlayerEvent.tracksAvailable) { event: TracksAvailable? ->
-                //When the track data available, this event occurs. It brings the info object with it.
-                if (event?.tracksInfo != null && event.tracksInfo.textTracks.isNotEmpty()) {
-                    val defaultTextTrack = getDefaultTextTrack(event.tracksInfo)
-                    initSubtitles(event.tracksInfo.textTracks, defaultTextTrack)
-                    changeTextTrack(defaultTextTrack)
-                }
+        player.addListener(this, PlayerEvent.tracksAvailable) { event: TracksAvailable? ->
+            //When the track data available, this event occurs. It brings the info object with it.
+            if (event?.tracksInfo != null && event.tracksInfo.textTracks.isNotEmpty()) {
+                val defaultTextTrack = getDefaultTextTrack(event.tracksInfo)
+                initSubtitles(event.tracksInfo.textTracks, defaultTextTrack)
+                changeTextTrack(defaultTextTrack)
             }
-            it.addListener(this, AdEvent.Type.CONTENT_PAUSE_REQUESTED) { playerControls.setPlayerState(PlayerState.READY) }
-            it.addListener(this, PlayerEvent.pause) { }
-            it.addListener(this, PlayerEvent.play) { if (isKeepAlive) playerKeepAliveService.startFireKeepAliveService() }
-            it.addListener(this, PlayerEvent.stateChanged) { event: StateChanged -> playerControls.setPlayerState(event.newState) }
-            it.addListener(this, PlayerEvent.Type.ERROR) { event: PKEvent? ->
-                //When the track data available, this event occurs. It brings the info object with it.
-                val playerError = event as PlayerEvent.Error?
-                if (playerError?.error != null) {
-                    toast("PlayerEvent.Error event  position = ${playerError.error.errorType} errorMessage = ${playerError.error.message}")
-                }
-            }
-            //OLD WAY FOR GETTING THE CONCURRENCY
-            it.addListener(this, OttEvent.OttEventType.Concurrency) { toast("Concurrency event") }
         }
+        player.addListener(this, AdEvent.Type.CONTENT_PAUSE_REQUESTED) { playerControls.setPlayerState(PlayerState.READY) }
+        player.addListener(this, PlayerEvent.pause) { }
+        player.addListener(this, PlayerEvent.play) { }
+        player.addListener(this, PlayerEvent.stateChanged) { event: StateChanged -> playerControls.setPlayerState(event.newState) }
+        player.addListener(this, PlayerEvent.Type.ERROR) { event: PKEvent? ->
+            //When the track data available, this event occurs. It brings the info object with it.
+            val playerError = event as PlayerEvent.Error?
+            if (playerError?.error != null) {
+                toast("PlayerEvent.Error event  position = ${playerError.error.errorType} errorMessage = ${playerError.error.message}")
+            }
+        }
+        //OLD WAY FOR GETTING THE CONCURRENCY
+        player.addListener(this, OttEvent.OttEventType.Concurrency) { toast("Concurrency event") }
     }
 
     private fun initSubtitles(tracks: List<TextTrack>, selected: TextTrack) {
@@ -352,7 +225,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     private fun changeTextTrack(textTrack: TextTrack) {
-        player?.changeTrack(textTrack.uniqueId)
+        player.changeTrack(textTrack.uniqueId)
     }
 
     private fun getDefaultTextTrack(tracksInfo: PKTracks): TextTrack {
@@ -397,12 +270,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     private fun checkAllTogetherRequest() {
         withInternetConnection {
-            if (TextUtils.isDigitsOnly(asset!!.id.toString())) {
-                clearDebugView()
+            clearDebugView()
 //                viewModel.checkAllValidations(asset!!.id)
-            } else {
-                toast("Wrong input")
-            }
         }
     }
 
@@ -424,22 +293,19 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     override fun onDestroyView() {
+        player.destroy()
         super.onDestroyView()
-        if (isKeepAlive) {
-            playerKeepAliveService.cancelFireKeepAliveService()
-            isKeepAlive = false
-        }
     }
 
     override fun onPause() {
-        super.onPause()
         playerControls.release()
-        player?.onApplicationPaused()
+        player.onApplicationPaused()
+        super.onPause()
     }
 
     override fun onResume() {
-        super.onResume()
-        player?.onApplicationResumed()
+        player.onApplicationResumed()
         playerControls.resume()
+        super.onResume()
     }
 }

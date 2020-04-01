@@ -21,9 +21,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:hint="Media ID"
+                android:text="1_jnlsx5nv"
+                android:hint="Entry ID"
                 android:imeOptions="actionDone"
-                android:inputType="number"
                 android:singleLine="true" />
 
         </com.google.android.material.textfield.TextInputLayout>

@@ -6,6 +6,7 @@ import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import com.kaltura.android.exoplayer2.C
 import com.kaltura.client.types.Asset
+import com.kaltura.client.types.MediaEntry
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.extension.getColor
 import com.kaltura.kflow.presentation.extension.inflate
@@ -25,7 +26,7 @@ class PlaybackControlsView @JvmOverloads constructor(
     private val PROGRESS_BAR_MAX = 100
 
     var player: Player? = null
-    var asset: Asset? = null
+    var mediaEntry: MediaEntry? = null
     private var playerState: PlayerState = PlayerState.IDLE
     private val formatBuilder = StringBuilder()
     private val formatter = Formatter(formatBuilder, Locale.getDefault())
@@ -56,7 +57,7 @@ class PlaybackControlsView @JvmOverloads constructor(
     }
 
     private fun updateProgress() {
-        if (asset == null) updateVodProgress() else updateLiveProgress()
+        if (mediaEntry == null) updateVodProgress() else updateLiveProgress()
     }
 
     private fun updateLiveProgress() {
