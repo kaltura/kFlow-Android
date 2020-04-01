@@ -53,7 +53,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -76,6 +77,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="Like"
+            android:visibility="gone"
             app:switchPadding="10dp" />
 
         <androidx.appcompat.widget.SwitchCompat
@@ -84,6 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:text="Favorite"
+            android:visibility="gone"
             app:switchPadding="10dp" />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -95,7 +98,8 @@
             android:gravity="center"
             android:text="Check all validations"
             android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/pinLayout"
