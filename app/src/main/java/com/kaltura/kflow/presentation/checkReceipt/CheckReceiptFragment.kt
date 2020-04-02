@@ -1,26 +1,26 @@
 package com.kaltura.kflow.presentation.checkReceipt
 
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import com.kaltura.kflow.R
-import com.kaltura.kflow.presentation.debug.DebugFragment
+import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
-import com.kaltura.kflow.presentation.extension.hideKeyboard
-import com.kaltura.kflow.presentation.extension.string
-import com.kaltura.kflow.presentation.extension.withInternetConnection
+import com.kaltura.kflow.presentation.extension.*
+import com.kaltura.kflow.presentation.main.Feature
 import kotlinx.android.synthetic.main.fragment_check_receipt.*
-import org.jetbrains.anko.support.v4.toast
+import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Created by alex_lytvynenko on 27.11.2018.
  */
-class CheckReceiptFragment : DebugFragment(R.layout.fragment_check_receipt) {
+class CheckReceiptFragment : SharedTransitionFragment(R.layout.fragment_check_receipt) {
 
     private val viewModel: CheckReceiptViewModel by viewModel()
 
     override fun debugView(): DebugView = debugView
+    override val feature = Feature.CHECK_RECEIPT
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,20 +30,44 @@ class CheckReceiptFragment : DebugFragment(R.layout.fragment_check_receipt) {
         }
     }
 
-    override fun subscribeUI() {}
+    override fun subscribeUI() {
+        observeResource(viewModel.transactionRequest,
+                error = { validate.error(lifecycleScope) },
+                success = { validate.success(lifecycleScope) }
+        )
+    }
 
     private fun checkReceiptRequest(receiptId: String, productType: String, productId: String, contentId: String) {
-        if (receiptId.isEmpty() || productType.isEmpty() || productId.isEmpty() || contentId.isEmpty()) {
-            toast("Wrong input, please fill in all the fields")
-            return
-        }
         withInternetConnection {
-            if (TextUtils.isDigitsOnly(productId) && TextUtils.isDigitsOnly(contentId)) {
-                clearDebugView()
+            clearDebugView()
+            clearInputLayouts()
+
+            if (receiptId.isEmpty()) {
+                receiptIdInputLayout.showError("Empty receipt ID")
+                return@withInternetConnection
+            }
+            if (productType.isEmpty()) {
+                productTypeInputLayout.showError("Empty product type")
+                return@withInternetConnection
+            }
+            if (productId.isEmpty()) {
+                productIdInputLayout.showError("Empty product ID")
+                return@withInternetConnection
+            }
+            if (contentId.isEmpty()) {
+                contentIdInputLayout.showError("Empty content ID")
+                return@withInternetConnection
+            }
+            validate.startAnimation {
                 viewModel.checkReceipt(receiptId, productType, productId, contentId)
-            } else {
-                toast("Wrong input")
             }
         }
+    }
+
+    private fun clearInputLayouts() {
+        receiptIdInputLayout.hideError()
+        productTypeInputLayout.hideError()
+        productIdInputLayout.hideError()
+        contentIdInputLayout.hideError()
     }
 }
