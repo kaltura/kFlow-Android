@@ -42,7 +42,7 @@ class ProductPriceViewModel(private val apiManager: PhoenixApiManager) : BaseVie
         apiManager.execute(ProductPriceService.list(productPriceFilter).setCompletion {
             if (it.isSuccess && it.results != null) {
                 if (it.results.objects != null) productPriceList.value = Resource.Success(it.results.objects as ArrayList<ProductPrice>)
-            }
+            } else productPriceList.value = Resource.Error(it.error)
         })
     }
 }

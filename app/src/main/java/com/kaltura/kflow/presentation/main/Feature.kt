@@ -18,7 +18,7 @@ enum class Feature(val text: String, @DrawableRes val imageResId: Int) {
     MEDIA_PAGE("Media page", -1),
     KEEP_ALIVE("Keep Alive", -1),
     SUBSCRIPTION("Subscription", -1),
-    PRODUCT_PRICE("Product price", -1),
+    PRODUCT_PRICE("Product price", R.drawable.ic_product_price),
     CHECK_RECEIPT("Check receipt", R.drawable.ic_check_receipt),
     TRANSACTION_HISTORY("Transaction\nhistory", R.drawable.ic_transaction_history),
     RECORDINGS("Recordings", R.drawable.ic_recordings),
