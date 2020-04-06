@@ -17,6 +17,7 @@ class RecordingsViewModel(private val apiManager: PhoenixApiManager) : BaseViewM
     fun getRecordings() {
         apiManager.execute(RecordingService.list().setCompletion {
             if (it.isSuccess) recordingList.value = Resource.Success(it.results.objects as ArrayList<Recording>)
+            else recordingList.value = Resource.Error(it.error)
         })
     }
 }
