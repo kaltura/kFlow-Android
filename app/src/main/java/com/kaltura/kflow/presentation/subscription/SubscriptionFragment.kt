@@ -2,17 +2,20 @@ package com.kaltura.kflow.presentation.subscription
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
 import com.kaltura.kflow.entity.ParentRecyclerViewItem
 import com.kaltura.kflow.presentation.assetList.AssetListFragment
-import com.kaltura.kflow.presentation.debug.DebugFragment
+import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
+import com.kaltura.kflow.presentation.main.Feature
 import com.kaltura.kflow.presentation.ui.ProgressDialog
 import kotlinx.android.synthetic.main.fragment_subscription.*
+import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.jetbrains.anko.support.v4.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.collections.ArrayList
@@ -20,7 +23,7 @@ import kotlin.collections.ArrayList
 /**
  * Created by alex_lytvynenko on 27.11.2018.
  */
-class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
+class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscription) {
 
     private val viewModel: SubscriptionViewModel by viewModel()
     private var assets = arrayListOf<Asset>()
@@ -32,6 +35,7 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
     private var selectedPackageBaseId: Double = 0.0
 
     override fun debugView(): DebugView = debugView
+    override val feature = Feature.SUBSCRIPTION
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,11 +57,17 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
     }
 
     override fun subscribeUI() {
-        observeResource(viewModel.assetList) {
-            assets = it
-            showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
-            showAssets.visible()
-        }
+        observeResource(viewModel.assetList,
+                error = { getPackages.error(lifecycleScope) },
+                success = {
+                    assets = it
+                    showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
+                    showAssets.visible()
+                    getPackages.success(lifecycleScope)
+                })
+        observeResource(viewModel.entitlementList,
+                error = { getEntitlements.error(lifecycleScope) },
+                success = { getEntitlements.success(lifecycleScope) })
         observeResource(viewModel.subscriptionList) {
             subscriptionListAdapter.addSubscriptionToPackage(selectedPackageBaseId, it)
         }
@@ -77,17 +87,33 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
 
     private fun makeGetPackageListRequest(packageType: String) {
         withInternetConnection {
+            clearDebugView()
+            clearInputLayouts()
+
+            if (packageType.isEmpty()) {
+                packageAssetTypeInputLayout.showError("Empty package type")
+                return@withInternetConnection
+            }
+
             showAssets.gone()
             packageList.gone()
-            clearDebugView()
-            viewModel.getPackageList(packageType)
+
+            getPackages.startAnimation {
+                viewModel.getPackageList(packageType)
+            }
         }
+    }
+
+    private fun clearInputLayouts() {
+        packageAssetTypeInputLayout.hideError()
     }
 
     private fun makeGetEntitlementListRequest() {
         withInternetConnection {
             clearDebugView()
-            viewModel.getEntitlementList()
+            getEntitlements.startAnimation {
+                viewModel.getEntitlementList()
+            }
         }
     }
 
