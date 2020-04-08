@@ -18,18 +18,24 @@ class MediaPageViewModel(private val apiManager: PhoenixApiManager) : BaseViewMo
 
     val asset = MutableLiveData<Resource<Asset>>()
     val userAssetRules = MutableLiveData<Resource<ArrayList<UserAssetRule>>>()
+    val productPrices = MutableLiveData<Resource<ArrayList<ProductPrice>>>()
+    val bookmarks = MutableLiveData<Resource<ArrayList<Bookmark>>>()
 
     fun getAsset(assetId: String) {
         apiManager.execute(AssetService.get(assetId, AssetReferenceType.MEDIA).setCompletion {
             if (it.isSuccess) {
                 if (it.results != null) asset.value = Resource.Success(it.results)
-            }
+            } else asset.value = Resource.Error(it.error)
         })
     }
 
     fun getProductPrice(assetId: String) {
         val productPriceFilter = ProductPriceFilter().apply { fileIdIn = assetId }
-        apiManager.execute(ProductPriceService.list(productPriceFilter))
+        apiManager.execute(ProductPriceService.list(productPriceFilter)
+                .setCompletion {
+                    if (it.isSuccess) productPrices.value = Resource.Success(it.results.objects as ArrayList<ProductPrice>)
+                    else productPrices.value = Resource.Error(it.error)
+                })
     }
 
     fun getBookmark(assetId: String) {
@@ -37,7 +43,11 @@ class MediaPageViewModel(private val apiManager: PhoenixApiManager) : BaseViewMo
             assetIdIn = assetId
             assetTypeEqual = AssetType.MEDIA
         }
-        apiManager.execute(BookmarkService.list(bookmarkFilter))
+        apiManager.execute(BookmarkService.list(bookmarkFilter)
+                .setCompletion {
+                    if (it.isSuccess) bookmarks.value = Resource.Success(it.results.objects as ArrayList<Bookmark>)
+                    else bookmarks.value = Resource.Error(it.error)
+                })
     }
 
     fun getAssetRules(assetId: String) {
@@ -48,7 +58,7 @@ class MediaPageViewModel(private val apiManager: PhoenixApiManager) : BaseViewMo
         apiManager.execute(UserAssetRuleService.list(userAssetRuleFilter).setCompletion {
             if (it.isSuccess) {
                 if (it.results.objects != null) userAssetRules.value = Resource.Success(it.results.objects as ArrayList<UserAssetRule>)
-            }
+            } else userAssetRules.value = Resource.Error(it.error)
         })
     }
 
