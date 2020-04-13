@@ -59,7 +59,10 @@ class EpgViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(ap
 
         apiManager.execute(AssetService.list(filter, filterPager)
                 .setCompletion {
-                    if (it.isSuccess && it.results.objects != null) getAssetList.value = Resource.Success(it.results.objects as ArrayList<Asset>)
+                    if (it.isSuccess) {
+                        if (it.results.objects != null) getAssetList.value = Resource.Success(it.results.objects as ArrayList<Asset>)
+                        else getAssetList.value = Resource.Success(arrayListOf())
+                    } else getAssetList.value = Resource.Error(it.error)
                 })
     }
 }
