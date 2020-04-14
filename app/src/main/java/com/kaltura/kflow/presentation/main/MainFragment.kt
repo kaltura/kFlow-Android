@@ -7,7 +7,6 @@ import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.*
-import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.extension.navigateWithExtras
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -49,7 +48,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     private fun initList() {
         list.setHasFixedSize(true)
-        list.layoutManager = StaggeredGridLayoutManager(2, VERTICAL)
+        list.layoutManager = GridLayoutManager(requireContext(), 2)
         val adapter = FeatureAdapter(features)
         adapter.clickListener = { feature, image, title ->
             navigateWithExtras(when (feature) {
