@@ -4,16 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:paddingStart="16dp"
-    android:paddingTop="10dp"
-    android:paddingEnd="6dp"
-    android:paddingBottom="10dp">
+    android:paddingTop="10dp">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/recordingStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toStartOf="@+id/arrow_icon"
+        android:layout_toStartOf="@+id/arrowIcon"
+        android:paddingStart="16dp"
         android:textColor="@android:color/black"
         android:textSize="18sp" />
 
@@ -22,7 +20,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/recordingStatus"
+        android:layout_marginBottom="10dp"
         android:layout_toStartOf="@+id/arrowIcon"
+        android:paddingStart="16dp"
         android:textSize="15sp" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -31,5 +31,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerInParent="true"
+        android:paddingEnd="6dp"
         android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:alpha="0.3"
+        android:background="@color/colorPrimary" />
 </RelativeLayout>

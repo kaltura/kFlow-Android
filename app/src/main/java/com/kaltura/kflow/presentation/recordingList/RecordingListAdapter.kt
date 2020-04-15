@@ -13,9 +13,16 @@ import java.util.*
 /**
  * Created by alex_lytvynenko on 30.11.2018.
  */
-class RecordingListAdapter(private val recordings: ArrayList<Recording>) : RecyclerView.Adapter<RecordingListAdapter.MyViewHolder>() {
+class RecordingListAdapter : RecyclerView.Adapter<RecordingListAdapter.MyViewHolder>() {
 
     var recordingClickListener: (recording: Recording) -> Unit = {}
+
+    var recordings: ArrayList<Recording> = arrayListOf()
+        set(value) {
+            field.clear()
+            field.addAll(value)
+            notifyDataSetChanged()
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MyViewHolder(parent.inflate(R.layout.item_recording))
 
