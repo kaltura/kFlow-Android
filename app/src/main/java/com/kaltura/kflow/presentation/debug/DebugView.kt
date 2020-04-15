@@ -1,15 +1,11 @@
 package com.kaltura.kflow.presentation.debug
 
 import android.content.Context
-import android.graphics.PorterDuff
 import android.transition.TransitionManager
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import com.kaltura.kflow.R
-import com.kaltura.kflow.presentation.extension.getColor
-import com.kaltura.kflow.presentation.extension.inflate
-import com.kaltura.kflow.presentation.extension.invisible
-import com.kaltura.kflow.presentation.extension.visible
+import com.kaltura.kflow.presentation.extension.*
 import kotlinx.android.synthetic.main.view_debug.view.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -36,7 +32,7 @@ class DebugView @JvmOverloads constructor(
                 requestSort.drawable.colorFilter = null
             } else {
                 requestSort.isSelected = true
-                requestSort.drawable.mutate().setColorFilter(getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP)
+                requestSort.drawable.mutate().setColor(R.color.colorAccent)
             }
             setRequestBody(requestJson)
         }
@@ -46,7 +42,7 @@ class DebugView @JvmOverloads constructor(
                 responseSort.drawable.colorFilter = null
             } else {
                 responseSort.isSelected = true
-                responseSort.drawable.mutate().setColorFilter(resources.getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP)
+                responseSort.drawable.mutate().setColor(R.color.colorAccent)
             }
             setResponseBody(responseJson)
         }
@@ -55,9 +51,8 @@ class DebugView @JvmOverloads constructor(
     fun setRequestBody(json: JSONObject) {
         try {
             requestJson = json
-            val text = if (requestSort.isSelected) json.toString(2) else json.toString()
             TransitionManager.beginDelayedTransition(requestContainer)
-            requestBody.text = text
+            requestBody.text = getRequestJsonAsText()
             requestSort.visible()
         } catch (e: JSONException) {
             e.printStackTrace()
@@ -67,9 +62,8 @@ class DebugView @JvmOverloads constructor(
     fun setResponseBody(json: JSONObject) {
         try {
             responseJson = json
-            val text = if (responseSort.isSelected) json.toString(2) else json.toString()
             TransitionManager.beginDelayedTransition(responseContainer)
-            responseBody.text = text
+            responseBody.text = getResponseJsonAsText().take(3000)
             responseSort.visible()
         } catch (e: JSONException) {
             e.printStackTrace()
@@ -99,6 +93,10 @@ class DebugView @JvmOverloads constructor(
         get() = "URL $requestUrl\n" +
                 "Method $requestMethod\n" +
                 "Status $responseCode\n" +
-                "Request Body:\n ${requestBody.text}\n" +
-                "Response Body:\n ${responseBody.text}\n"
+                "Request Body:\n ${getRequestJsonAsText()}\n" +
+                "Response Body:\n ${getResponseJsonAsText()}\n"
+
+    private fun getRequestJsonAsText() = if (requestSort.isSelected) requestJson.toString(2) else requestJson.toString()
+
+    private fun getResponseJsonAsText() = if (responseSort.isSelected) responseJson.toString(2) else responseJson.toString()
 }
