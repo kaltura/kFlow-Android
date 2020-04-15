@@ -2,9 +2,8 @@ package com.kaltura.kflow.presentation.assetList
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
+import android.view.animation.AnimationUtils
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.types.Asset
 import com.kaltura.client.types.ProgramAsset
@@ -26,26 +25,33 @@ class AssetListFragment : BaseFragment(R.layout.fragment_vod_list) {
     }
 
     private val args: AssetListFragmentArgs by navArgs()
+    private val adapter = AssetListAdapter().apply {
+        vodClickListener = {
+            navigate(AssetListFragmentDirections.navigateToPlayer(asset = it))
+        }
+        programClickListener = { asset, contextType ->
+            navigate(AssetListFragmentDirections.navigateToPlayer(asset = asset), PlayerFragment.ARG_PLAYBACK_CONTEXT_TYPE to contextType)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
         initList()
     }
 
     private fun initList() {
+        val assets: ArrayList<Asset> = arguments?.getSerializable(ARG_ASSETS) as ArrayList<Asset>?
+                ?: arrayListOf()
+
         list.setHasFixedSize(true)
         list.layoutManager = LinearLayoutManager(requireContext())
-        list.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+        list.layoutAnimation =
+                if (adapter.assets.isEmpty()) AnimationUtils.loadLayoutAnimation(context, R.anim.item_layout_animation)
+                else null
 
-        val assets: ArrayList<Asset> = arguments?.getSerializable(ARG_ASSETS) as ArrayList<Asset>? ?: arrayListOf()
-        list.adapter = AssetListAdapter(assets).apply {
-            vodClickListener = {
-                navigate(AssetListFragmentDirections.navigateToPlayer(asset = it))
-            }
-            programClickListener = { asset, contextType ->
-                navigate(AssetListFragmentDirections.navigateToPlayer(asset = asset), PlayerFragment.ARG_PLAYBACK_CONTEXT_TYPE to contextType)
-            }
-        }
+        list.adapter = adapter
+        adapter.assets = assets
         if (args.isScrollToLive && assets.isNotEmpty()) {
             var liveAssetPosition = assets.indexOfFirst { it is ProgramAsset && it.isProgramInLive() }
             if (liveAssetPosition < 0) liveAssetPosition = 0
