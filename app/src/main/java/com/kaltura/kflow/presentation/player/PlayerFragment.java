@@ -155,7 +155,7 @@ public class PlayerFragment extends DebugFragment {
 
         Bundle savedState = getArguments();
         if (savedState != null) {
-            mAsset = (Asset) savedState.getSerializable(ARG_ASSET);
+            mAsset = (Asset) savedState.getParcelable(ARG_ASSET);
             mIsKeepAlive = savedState.getBoolean(ARG_KEEP_ALIVE);
             mRecording = (Recording) savedState.getSerializable(ARG_RECORDING);
             initialPlaybackContextType = (APIDefines.PlaybackContextType) savedState.getSerializable(ARG_PLAYBACK_CONTEXT_TYPE);
