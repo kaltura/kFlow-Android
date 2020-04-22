@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.view.isGone
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.kaltura.client.enums.*
 import com.kaltura.client.types.*
@@ -33,6 +34,7 @@ import com.kaltura.playkit.providers.api.phoenix.APIDefines.KalturaAssetType
 import com.kaltura.playkit.providers.base.OnMediaLoadCompletion
 import com.kaltura.playkit.providers.ott.PhoenixMediaProvider
 import kotlinx.android.synthetic.main.fragment_player.*
+import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.jetbrains.anko.support.v4.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.net.HttpURLConnection
@@ -99,16 +101,20 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     override fun subscribeUI() {
         observeResource(viewModel.asset) {
             asset = it
-            onAssetLoaded()
+            if (it.indexStatus == AssetIndexStatus.DELETED) toast("Asset was deleted!")
+            else onAssetLoaded()
         }
-        observeResource(viewModel.userAssetRules) {
-            it.forEach {
-                if (it.ruleType == RuleType.PARENTAL) {
-                    parentalRuleId = it.id.toInt()
-                    pinLayout.visible()
-                }
-            }
-        }
+        observeResource(viewModel.userAssetRules,
+                error = { checkAll.error(lifecycleScope) },
+                success = {
+                    checkAll.success(lifecycleScope)
+                    it.forEach {
+                        if (it.ruleType == RuleType.PARENTAL) {
+                            parentalRuleId = it.id.toInt()
+                            pinLayout.visible()
+                        }
+                    }
+                })
         observeResource(viewModel.favoriteList) { favorite.isChecked = true }
         observeResource(viewModel.getLike) {
             likeId = it.id
@@ -396,23 +402,28 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     private fun checkAllTogetherRequest() {
         withInternetConnection {
-            if (TextUtils.isDigitsOnly(asset!!.id.toString())) {
-                clearDebugView()
+            clearDebugView()
+            if (TextUtils.isDigitsOnly(asset!!.id.toString()).not()) {
+                toast("Error")
+                return@withInternetConnection
+            }
+
+            checkAll.startAnimation {
                 viewModel.checkAllValidations(asset!!.id)
-            } else {
-                toast("Wrong input")
             }
         }
     }
 
     private fun checkPinRequest(pin: String) {
         withInternetConnection {
-            if (TextUtils.isDigitsOnly(pin)) {
-                clearDebugView()
-                viewModel.checkPinCode(pin, parentalRuleId)
-            } else {
-                toast("Wrong input")
+            clearDebugView()
+            pinInputLayout.hideError()
+            if (TextUtils.isDigitsOnly(pin).not()) {
+                pinInputLayout.showError("Wrong input")
+                return@withInternetConnection
             }
+
+            viewModel.checkPinCode(pin, parentalRuleId)
         }
     }
 
