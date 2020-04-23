@@ -67,7 +67,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
+        
         initUI()
         asset = args.asset
         isKeepAlive = args.isKeepAlive
