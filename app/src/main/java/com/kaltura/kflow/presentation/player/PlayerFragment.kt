@@ -282,6 +282,9 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         } else {
             mediaConfig.startPosition = 0L
         }
+        if (args.isPPV) {
+            mediaEntry.mediaType = PKMediaEntry.MediaEntryType.DvrLive
+        }
         player?.prepare(mediaConfig)
         player?.play()
     }

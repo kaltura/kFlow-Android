@@ -14,6 +14,7 @@ enum class Feature(val text: String) {
     SEARCH("Search"),
     MEDIA_PAGE("Media page"),
     KEEP_ALIVE("Keep Alive"),
+    PPV("PPV"),
     SUBSCRIPTION("Subscription"),
     PRODUCT_PRICE("Product price"),
     CHECK_RECEIPT("Check receipt"),

@@ -41,6 +41,10 @@
                 android:name="isKeepAlive"
                 android:defaultValue="true"
                 app:argType="boolean" />
+            <argument
+                android:name="isPPV"
+                android:defaultValue="false"
+                app:argType="boolean" />
         </action>
         <action
             android:id="@+id/navigate_to_media_page"
@@ -48,6 +52,26 @@
             <argument
                 android:name="isKeepAlive"
                 android:defaultValue="false"
+                app:argType="boolean" />
+            <argument
+                android:name="isPPV"
+                android:defaultValue="false"
+                app:argType="boolean" />
+        </action>
+        <action
+            android:id="@+id/navigate_to_ppv"
+            app:destination="@id/media_page"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit">
+            <argument
+                android:name="isKeepAlive"
+                android:defaultValue="false"
+                app:argType="boolean" />
+            <argument
+                android:name="isPPV"
+                android:defaultValue="true"
                 app:argType="boolean" />
         </action>
         <action
@@ -136,6 +160,9 @@
         tools:layout="@layout/fragment_media_page">
         <argument
             android:name="isKeepAlive"
+            app:argType="boolean" />
+        <argument
+            android:name="isPPV"
             app:argType="boolean" />
         <action
             android:id="@+id/navigate_to_player"
@@ -231,6 +258,10 @@
         tools:layout="@layout/fragment_player">
         <argument
             android:name="isKeepAlive"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <argument
+            android:name="isPPV"
             android:defaultValue="false"
             app:argType="boolean" />
         <argument
