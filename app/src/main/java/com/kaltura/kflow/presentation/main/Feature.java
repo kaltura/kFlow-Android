@@ -15,6 +15,7 @@ public enum Feature {
     SEARCH("Search"),
     MEDIA_PAGE("Media page"),
     KEEP_ALIVE("Keep Alive"),
+    PPV("PPV"),
     SUBSCRIPTION("Subscription"),
     PRODUCT_PRICE("Product price"),
     CHECK_RECEIPT("Check receipt"),

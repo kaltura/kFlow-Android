@@ -91,6 +91,7 @@ public class PlayerFragment extends DebugFragment {
 
     private static final String ARG_ASSET = "extra_asset";
     private static final String ARG_KEEP_ALIVE = "extra_keep_alive";
+    private static final String ARG_PPV = "extra_ppv";
     private static final String ARG_RECORDING = "extra_recording";
     private static final String ARG_PLAYBACK_CONTEXT_TYPE = "extra_playback_context_type";
     private final static String TAG = PlayerFragment.class.getCanonicalName();
@@ -111,14 +112,16 @@ public class PlayerFragment extends DebugFragment {
     private PKMediaEntry mediaEntry;
     private int mParentalRuleId;
     private boolean mIsKeepAlive;
+    private boolean mIsPPV;
     private PlayerKeepAliveService playerKeepAliveService;
     private APIDefines.PlaybackContextType initialPlaybackContextType;
 
-    public static PlayerFragment newInstance(Asset asset, boolean isKeepAlive) {
+    public static PlayerFragment newInstance(Asset asset, boolean isKeepAlive, boolean isPPV) {
         PlayerFragment likeFragment = new PlayerFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable(ARG_ASSET, asset);
         bundle.putBoolean(ARG_KEEP_ALIVE, isKeepAlive);
+        bundle.putBoolean(ARG_PPV, isPPV);
         likeFragment.setArguments(bundle);
         return likeFragment;
     }
@@ -157,6 +160,7 @@ public class PlayerFragment extends DebugFragment {
         if (savedState != null) {
             mAsset = (Asset) savedState.getParcelable(ARG_ASSET);
             mIsKeepAlive = savedState.getBoolean(ARG_KEEP_ALIVE);
+            mIsPPV = savedState.getBoolean(ARG_PPV);
             mRecording = (Recording) savedState.getSerializable(ARG_RECORDING);
             initialPlaybackContextType = (APIDefines.PlaybackContextType) savedState.getSerializable(ARG_PLAYBACK_CONTEXT_TYPE);
         }
@@ -385,6 +389,10 @@ public class PlayerFragment extends DebugFragment {
 //            mPlayerControls.disableControllersForLive();
         } else {
             mediaConfig.setStartPosition(0L);
+        }
+
+        if (mIsPPV) {
+            mediaEntry.setMediaType(PKMediaEntry.MediaEntryType.DvrLive);
         }
 
         mPlayer.prepare(mediaConfig);
