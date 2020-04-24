@@ -30,13 +30,22 @@ class MediaPageFragment : SharedTransitionFragment(R.layout.fragment_media_page)
     private var asset: Asset? = null
 
     override fun debugView(): DebugView = debugView
-    override val feature by lazy { if (args.isKeepAlive) Feature.KEEP_ALIVE else Feature.MEDIA_PAGE }
+    override val feature by lazy {
+        when {
+            args.isKeepAlive -> Feature.KEEP_ALIVE
+            args.isPPV -> Feature.PPV
+            else -> Feature.MEDIA_PAGE
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         playAsset.setOnClickListener {
-            navigate(MediaPageFragmentDirections.navigateToPlayer(args.isKeepAlive, asset = asset!!))
+            if (args.isPPV && asset !is MediaAsset)
+                toast("Invalid asset for PPV")
+            else navigate(MediaPageFragmentDirections.navigateToPlayer(args.isKeepAlive,
+                    args.isPPV, asset = asset!!))
         }
         getProductPrice.setOnClickListener {
             hideKeyboard()

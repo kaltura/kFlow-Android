@@ -69,7 +69,7 @@ dependencies {
     implementation 'org.jetbrains.anko:anko-commons:0.10.8'
 
     // Client library
-    implementation('com.github.kaltura:KalturaOttGeneratedAPIClientsJava:master-SNAPSHOT') {
+    implementation('com.github.kaltura:KalturaOttGeneratedAPIClientsJava:e77c39f6198e19e4f8a1bcdcb14aa039fd21b98e') {
         exclude module: 'log4j-core'
     }
     implementation 'org.apache.logging.log4j:log4j-api:2.13.0'

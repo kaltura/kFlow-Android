@@ -18,7 +18,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     private val features = arrayOf(Feature.LOGIN, Feature.ANONYMOUS_LOGIN, Feature.REGISTRATION,
             Feature.VOD, Feature.EPG, Feature.LIVE, Feature.FAVORITES, Feature.SEARCH, Feature.KEEP_ALIVE,
-            Feature.MEDIA_PAGE, Feature.SUBSCRIPTION, Feature.PRODUCT_PRICE, Feature.CHECK_RECEIPT,
+            Feature.MEDIA_PAGE, Feature.PPV, Feature.SUBSCRIPTION, Feature.PRODUCT_PRICE, Feature.CHECK_RECEIPT,
             Feature.TRANSACTION_HISTORY, Feature.RECORDINGS, Feature.SETTINGS)
 
     private lateinit var rotationAnimation: SpringAnimation
@@ -62,6 +62,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 Feature.SEARCH -> MainFragmentDirections.navigateToSearch()
                 Feature.KEEP_ALIVE -> MainFragmentDirections.navigateToKeepAlive()
                 Feature.MEDIA_PAGE -> MainFragmentDirections.navigateToMediaPage()
+                Feature.PPV -> MainFragmentDirections.navigateToPpv()
                 Feature.SUBSCRIPTION -> MainFragmentDirections.navigateToSubscription()
                 Feature.PRODUCT_PRICE -> MainFragmentDirections.navigateToProductPrice()
                 Feature.CHECK_RECEIPT -> MainFragmentDirections.navigateToCheckReceipt()
