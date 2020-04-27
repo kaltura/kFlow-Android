@@ -47,6 +47,7 @@ import java.util.List;
 public class MediaPageFragment extends DebugFragment implements View.OnClickListener {
 
     private static final String ARG_KEEP_ALIVE = "extra_keep_alive";
+    private static final String ARG_PPV = "extra_ppv";
 
     private TextInputEditText mMediaId;
     private TextInputEditText mPin;
@@ -61,11 +62,13 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
     private Asset mAsset;
     private int mParentalRuleId;
     private boolean mIsKeepAlive;
+    private boolean mIsPPV;
 
-    public static MediaPageFragment newInstance(boolean isKeepAlive) {
+    public static MediaPageFragment newInstance(boolean isKeepAlive, boolean isPPV) {
         MediaPageFragment mediaPageFragment = new MediaPageFragment();
         Bundle bundle = new Bundle();
         bundle.putBoolean(ARG_KEEP_ALIVE, isKeepAlive);
+        bundle.putBoolean(ARG_PPV, isPPV);
         mediaPageFragment.setArguments(bundle);
         return mediaPageFragment;
     }
@@ -84,6 +87,7 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
         Bundle savedState = getArguments();
         if (savedState != null) {
             mIsKeepAlive = savedState.getBoolean(ARG_KEEP_ALIVE);
+            mIsPPV = savedState.getBoolean(ARG_PPV);
         }
 
         mMediaId = getView().findViewById(R.id.id);
@@ -302,7 +306,7 @@ public class MediaPageFragment extends DebugFragment implements View.OnClickList
     }
 
     private void playAsset() {
-        PlayerFragment assetListFragment = PlayerFragment.newInstance(mAsset, mIsKeepAlive);
+        PlayerFragment assetListFragment = PlayerFragment.newInstance(mAsset, mIsKeepAlive, mIsPPV);
         requireActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, assetListFragment)
                 .addToBackStack(null)

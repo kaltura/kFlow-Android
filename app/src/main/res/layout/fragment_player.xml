@@ -76,6 +76,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="Like"
+            android:visibility="gone"
             app:switchPadding="10dp" />
 
         <androidx.appcompat.widget.SwitchCompat
@@ -84,6 +85,17 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:text="Favorite"
+            android:visibility="gone"
+            app:switchPadding="10dp" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/dvr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:text="DVR"
             app:switchPadding="10dp" />
 
         <androidx.appcompat.widget.AppCompatButton

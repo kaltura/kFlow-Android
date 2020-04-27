@@ -37,6 +37,7 @@ import static com.kaltura.kflow.presentation.main.Feature.KEEP_ALIVE;
 import static com.kaltura.kflow.presentation.main.Feature.LIVE;
 import static com.kaltura.kflow.presentation.main.Feature.LOGIN;
 import static com.kaltura.kflow.presentation.main.Feature.MEDIA_PAGE;
+import static com.kaltura.kflow.presentation.main.Feature.PPV;
 import static com.kaltura.kflow.presentation.main.Feature.PRODUCT_PRICE;
 import static com.kaltura.kflow.presentation.main.Feature.RECORDINGS;
 import static com.kaltura.kflow.presentation.main.Feature.REGISTRATION;
@@ -52,7 +53,7 @@ import static com.kaltura.kflow.presentation.main.Feature.VOD;
 public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureClickListener {
 
     private Feature[] mFeatures = {LOGIN, ANONYMOUS_LOGIN, REGISTRATION, VOD, EPG, LIVE, FAVORITES,
-            SEARCH, KEEP_ALIVE, MEDIA_PAGE, SUBSCRIPTION, PRODUCT_PRICE, CHECK_RECEIPT, TRANSACTION_HISTORY, RECORDINGS, SETTINGS};
+            SEARCH, KEEP_ALIVE, MEDIA_PAGE, PPV, SUBSCRIPTION, PRODUCT_PRICE, CHECK_RECEIPT, TRANSACTION_HISTORY, RECORDINGS, SETTINGS};
 
     @Nullable
     @Override
@@ -103,10 +104,13 @@ public class MainFragment extends Fragment implements FeatureAdapter.OnFeatureCl
                 pushFragment(new SearchFragment());
                 break;
             case KEEP_ALIVE:
-                pushFragment(MediaPageFragment.newInstance(true));
+                pushFragment(MediaPageFragment.newInstance(true, false));
                 break;
             case MEDIA_PAGE:
-                pushFragment(MediaPageFragment.newInstance(false));
+                pushFragment(MediaPageFragment.newInstance(false, false));
+                break;
+            case PPV:
+                pushFragment(MediaPageFragment.newInstance(false, true));
                 break;
             case SUBSCRIPTION:
                 pushFragment(new SubscriptionFragment());
