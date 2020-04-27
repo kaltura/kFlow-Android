@@ -11,7 +11,6 @@ import com.kaltura.kflow.R;
 import com.kaltura.kflow.presentation.player.PlayerFragment;
 import com.kaltura.kflow.presentation.main.MainActivity;
 import com.kaltura.kflow.utils.Utils;
-import com.kaltura.playkit.PKMediaEntry;
 import com.kaltura.playkit.providers.api.phoenix.APIDefines;
 
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class AssetListFragment extends Fragment implements AssetListAdapter.OnAs
     public static AssetListFragment newInstance(ArrayList<Asset> assets) {
         AssetListFragment assetListFragment = new AssetListFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_ASSETS, assets);
+        bundle.putParcelableArrayList(ARG_ASSETS, assets);
         assetListFragment.setArguments(bundle);
         return assetListFragment;
     }
@@ -42,7 +41,7 @@ public class AssetListFragment extends Fragment implements AssetListAdapter.OnAs
     public static AssetListFragment newInstance(ArrayList<Asset> assets, boolean scrollToLive) {
         AssetListFragment assetListFragment = new AssetListFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_ASSETS, assets);
+        bundle.putParcelableArrayList(ARG_ASSETS, assets);
         bundle.putBoolean(ARG_SCROLL_TO_LIVE, scrollToLive);
         assetListFragment.setArguments(bundle);
         return assetListFragment;
@@ -69,7 +68,7 @@ public class AssetListFragment extends Fragment implements AssetListAdapter.OnAs
         list.addItemDecoration(new DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL));
 
         Bundle savedState = getArguments();
-        ArrayList<Asset> assets = savedState != null ? (ArrayList<Asset>) savedState.getSerializable(ARG_ASSETS) : null;
+        ArrayList<Asset> assets = savedState != null ? savedState.getParcelableArrayList(ARG_ASSETS) : null;
         boolean scrollToLive = savedState != null && savedState.getBoolean(ARG_SCROLL_TO_LIVE);
 
         AssetListAdapter adapter = new AssetListAdapter(assets, this);

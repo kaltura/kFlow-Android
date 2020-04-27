@@ -30,7 +30,7 @@ public class RecordingListFragment extends Fragment implements RecordingListAdap
     public static RecordingListFragment newInstance(ArrayList<Recording> recordings) {
         RecordingListFragment recordingListFragment = new RecordingListFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_RECORDINGS, recordings);
+        bundle.putParcelableArrayList(ARG_RECORDINGS, recordings);
         recordingListFragment.setArguments(bundle);
         return recordingListFragment;
     }
@@ -56,7 +56,7 @@ public class RecordingListFragment extends Fragment implements RecordingListAdap
         list.addItemDecoration(new DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL));
 
         Bundle savedState = getArguments();
-        ArrayList<Recording> recordings = savedState != null ? (ArrayList<Recording>) savedState.getSerializable(ARG_RECORDINGS) : null;
+        ArrayList<Recording> recordings = savedState != null ? savedState.getParcelableArrayList(ARG_RECORDINGS) : null;
 
         RecordingListAdapter adapter = new RecordingListAdapter(recordings, this);
         list.setAdapter(adapter);

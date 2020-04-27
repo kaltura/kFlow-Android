@@ -55,7 +55,6 @@ import com.kaltura.playkit.PlayKitManager;
 import com.kaltura.playkit.Player;
 import com.kaltura.playkit.PlayerEvent;
 import com.kaltura.playkit.PlayerState;
-import com.kaltura.playkit.player.LoadControlBuffers;
 import com.kaltura.playkit.player.PKTracks;
 import com.kaltura.playkit.player.TextTrack;
 import com.kaltura.playkit.plugins.SamplePlugin;
@@ -117,7 +116,7 @@ public class PlayerFragment extends DebugFragment {
     public static PlayerFragment newInstance(Asset asset, boolean isKeepAlive) {
         PlayerFragment likeFragment = new PlayerFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_ASSET, asset);
+        bundle.putParcelable(ARG_ASSET, asset);
         bundle.putBoolean(ARG_KEEP_ALIVE, isKeepAlive);
         likeFragment.setArguments(bundle);
         return likeFragment;
@@ -126,7 +125,7 @@ public class PlayerFragment extends DebugFragment {
     public static PlayerFragment newInstance(Asset asset, boolean isKeepAlive, APIDefines.PlaybackContextType playbackContextType) {
         PlayerFragment likeFragment = new PlayerFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_ASSET, asset);
+        bundle.putParcelable(ARG_ASSET, asset);
         bundle.putBoolean(ARG_KEEP_ALIVE, isKeepAlive);
         bundle.putSerializable(ARG_PLAYBACK_CONTEXT_TYPE, playbackContextType);
         likeFragment.setArguments(bundle);
@@ -136,7 +135,7 @@ public class PlayerFragment extends DebugFragment {
     public static PlayerFragment newInstance(Recording recording) {
         PlayerFragment likeFragment = new PlayerFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_RECORDING, recording);
+        bundle.putParcelable(ARG_RECORDING, recording);
         likeFragment.setArguments(bundle);
         return likeFragment;
     }
@@ -155,9 +154,9 @@ public class PlayerFragment extends DebugFragment {
 
         Bundle savedState = getArguments();
         if (savedState != null) {
-            mAsset = (Asset) savedState.getSerializable(ARG_ASSET);
+            mAsset = savedState.getParcelable(ARG_ASSET);
             mIsKeepAlive = savedState.getBoolean(ARG_KEEP_ALIVE);
-            mRecording = (Recording) savedState.getSerializable(ARG_RECORDING);
+            mRecording = savedState.getParcelable(ARG_RECORDING);
             initialPlaybackContextType = (APIDefines.PlaybackContextType) savedState.getSerializable(ARG_PLAYBACK_CONTEXT_TYPE);
         }
 
