@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import com.kaltura.client.types.Asset
 import com.kaltura.kflow.R
-import com.kaltura.kflow.presentation.assetList.AssetListFragment
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
@@ -24,7 +23,7 @@ class GetVodFragment : DebugFragment(R.layout.fragment_vod) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        showAssets.navigateOnClick(GetVodFragmentDirections.navigateToAssetList()) { arrayOf(AssetListFragment.ARG_ASSETS to assets) }
+        showAssets.navigateOnClick { GetVodFragmentDirections.navigateToAssetList(assets = assets.toTypedArray()) }
         get.setOnClickListener {
             hideKeyboard()
             makeGetVodRequest(ksqlRequest.string)

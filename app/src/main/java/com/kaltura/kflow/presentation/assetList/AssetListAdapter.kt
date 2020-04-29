@@ -16,7 +16,7 @@ import java.util.*
 /**
  * Created by alex_lytvynenko on 30.11.2018.
  */
-class AssetListAdapter(private val assets: ArrayList<Asset>) : RecyclerView.Adapter<AssetListAdapter.MyViewHolder>() {
+class AssetListAdapter(private val assets: Array<Asset>) : RecyclerView.Adapter<AssetListAdapter.MyViewHolder>() {
 
     var vodClickListener: (asset: Asset) -> Unit = {}
     var programClickListener: (asset: Asset, contextType: APIDefines.PlaybackContextType) -> Unit = { _, _ -> Unit }

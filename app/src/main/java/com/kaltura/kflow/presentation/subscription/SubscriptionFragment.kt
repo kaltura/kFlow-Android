@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
 import com.kaltura.kflow.entity.ParentRecyclerViewItem
-import com.kaltura.kflow.presentation.assetList.AssetListFragment
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
@@ -64,7 +63,7 @@ class SubscriptionFragment : DebugFragment(R.layout.fragment_subscription) {
         observeResource(viewModel.assetsInSubscription) {
             hideLoadingDialog()
             if (it.isEmpty()) toast("No assets in this subscription")
-            else navigate(SubscriptionFragmentDirections.navigateToAssetList(), AssetListFragment.ARG_ASSETS to it)
+            else navigate(SubscriptionFragmentDirections.navigateToAssetList(assets = it.toTypedArray()))
         }
     }
 

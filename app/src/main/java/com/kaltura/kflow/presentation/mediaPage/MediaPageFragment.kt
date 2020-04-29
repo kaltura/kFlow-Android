@@ -32,10 +32,7 @@ class MediaPageFragment : DebugFragment(R.layout.fragment_media_page) {
         super.onViewCreated(view, savedInstanceState)
 
         playAsset.setOnClickListener {
-            if (args.isPPV && asset !is MediaAsset)
-                toast("Invalid asset for PPV")
-            else navigate(MediaPageFragmentDirections.navigateToPlayer(args.isKeepAlive,
-                    args.isPPV, asset = asset!!))
+            navigate(MediaPageFragmentDirections.navigateToPlayer(args.isKeepAlive, asset = asset!!))
         }
         getProductPrice.setOnClickListener {
             hideKeyboard()

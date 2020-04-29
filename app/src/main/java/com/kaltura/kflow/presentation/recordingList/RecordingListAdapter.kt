@@ -8,12 +8,11 @@ import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.extension.inflate
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_recording.*
-import java.util.*
 
 /**
  * Created by alex_lytvynenko on 30.11.2018.
  */
-class RecordingListAdapter(private val recordings: ArrayList<Recording>) : RecyclerView.Adapter<RecordingListAdapter.MyViewHolder>() {
+class RecordingListAdapter(private val recordings: Array<Recording>) : RecyclerView.Adapter<RecordingListAdapter.MyViewHolder>() {
 
     var recordingClickListener: (recording: Recording) -> Unit = {}
 

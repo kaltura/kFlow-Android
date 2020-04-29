@@ -41,10 +41,6 @@
                 android:name="isKeepAlive"
                 android:defaultValue="true"
                 app:argType="boolean" />
-            <argument
-                android:name="isPPV"
-                android:defaultValue="false"
-                app:argType="boolean" />
         </action>
         <action
             android:id="@+id/navigate_to_media_page"
@@ -52,26 +48,6 @@
             <argument
                 android:name="isKeepAlive"
                 android:defaultValue="false"
-                app:argType="boolean" />
-            <argument
-                android:name="isPPV"
-                android:defaultValue="false"
-                app:argType="boolean" />
-        </action>
-        <action
-            android:id="@+id/navigate_to_ppv"
-            app:destination="@id/media_page"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit">
-            <argument
-                android:name="isKeepAlive"
-                android:defaultValue="false"
-                app:argType="boolean" />
-            <argument
-                android:name="isPPV"
-                android:defaultValue="true"
                 app:argType="boolean" />
         </action>
         <action
@@ -161,9 +137,6 @@
         <argument
             android:name="isKeepAlive"
             app:argType="boolean" />
-        <argument
-            android:name="isPPV"
-            app:argType="boolean" />
         <action
             android:id="@+id/navigate_to_player"
             app:destination="@id/player" />
@@ -236,6 +209,9 @@
             android:name="isScrollToLive"
             android:defaultValue="false"
             app:argType="boolean" />
+        <argument
+            android:name="assets"
+            app:argType="com.kaltura.client.types.Asset[]" />
         <action
             android:id="@+id/navigate_to_player"
             app:destination="@id/player" />
@@ -246,6 +222,9 @@
         android:name="com.kaltura.kflow.presentation.recordingList.RecordingListFragment"
         android:label="Recording list"
         tools:layout="@layout/fragment_recording_list">
+        <argument
+            android:name="recordings"
+            app:argType="com.kaltura.client.types.Recording[]" />
         <action
             android:id="@+id/navigate_to_player"
             app:destination="@id/player" />
@@ -261,10 +240,6 @@
             android:defaultValue="false"
             app:argType="boolean" />
         <argument
-            android:name="isPPV"
-            android:defaultValue="false"
-            app:argType="boolean" />
-        <argument
             android:name="asset"
             android:defaultValue="@null"
             app:argType="com.kaltura.client.types.Asset"
@@ -274,5 +249,10 @@
             android:defaultValue="@null"
             app:argType="com.kaltura.client.types.Recording"
             app:nullable="true" />
+        <argument
+            android:name="playbackContextType"
+            android:defaultValue=" "
+            app:argType="string"
+            app:nullable="false" />
     </fragment>
 </navigation>
