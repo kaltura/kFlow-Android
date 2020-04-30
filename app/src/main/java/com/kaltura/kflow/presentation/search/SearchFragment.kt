@@ -5,7 +5,6 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
-import com.kaltura.kflow.presentation.assetList.AssetListFragment
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
@@ -36,7 +35,7 @@ class SearchFragment : SharedTransitionFragment(R.layout.fragment_search) {
             hideKeyboard()
             searchRequest(typeIn.string, searchText.string)
         }
-        showAssets.navigateOnClick(SearchFragmentDirections.navigateToAssetList()) { arrayOf(AssetListFragment.ARG_ASSETS to assets) }
+        showAssets.navigateOnClick { SearchFragmentDirections.navigateToAssetList(assets = assets.toTypedArray()) }
     }
 
     override fun subscribeUI() {

@@ -46,10 +46,6 @@ import java.net.URL
  */
 class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
-    companion object {
-        const val ARG_PLAYBACK_CONTEXT_TYPE = "extra_playback_context_type"
-    }
-
     private val viewModel: PlayerViewModel by viewModel()
 
     private val TAG = PlayerFragment::class.java.canonicalName
@@ -61,7 +57,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     private var parentalRuleId = 0
     private var isKeepAlive = false
     private var playerKeepAliveService = PlayerKeepAliveService()
-    private var initialPlaybackContextType: APIDefines.PlaybackContextType? = null
+    private val initialPlaybackContextType by lazy { playbackContextTypeFromString(args.playbackContextType) }
 
     override fun debugView(): DebugView = debugView
 
@@ -72,7 +68,6 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         initUI()
         asset = args.asset
         isKeepAlive = args.isKeepAlive
-        initialPlaybackContextType = arguments?.getSerializable(ARG_PLAYBACK_CONTEXT_TYPE) as? APIDefines.PlaybackContextType
         if (asset == null && args.recording != null) loadAsset(args.recording!!.assetId) else onAssetLoaded()
     }
 
@@ -289,9 +284,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         } else {
             mediaConfig.startPosition = 0L
         }
-        if (args.isPPV) {
-            mediaEntry.mediaType = PKMediaEntry.MediaEntryType.DvrLive
-        }
+
         player?.prepare(mediaConfig)
         player?.play()
     }

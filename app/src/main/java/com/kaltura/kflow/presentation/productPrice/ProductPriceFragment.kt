@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
-import com.kaltura.kflow.presentation.assetList.AssetListFragment
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
@@ -95,6 +94,6 @@ class ProductPriceFragment : SharedTransitionFragment(R.layout.fragment_product_
     }
 
     private fun showAssets(assetList: ArrayList<Asset>) {
-        navigate(ProductPriceFragmentDirections.navigateToAssetList(), AssetListFragment.ARG_ASSETS to assetList)
+        navigate(ProductPriceFragmentDirections.navigateToAssetList(assets = assetList.toTypedArray()))
     }
 }

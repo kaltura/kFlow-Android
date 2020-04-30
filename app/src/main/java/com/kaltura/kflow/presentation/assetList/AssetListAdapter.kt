@@ -21,10 +21,9 @@ class AssetListAdapter : RecyclerView.Adapter<AssetListAdapter.MyViewHolder>() {
     var vodClickListener: (asset: Asset) -> Unit = {}
     var programClickListener: (asset: Asset, contextType: APIDefines.PlaybackContextType) -> Unit = { _, _ -> Unit }
 
-    var assets: ArrayList<Asset> = arrayListOf()
+    var assets: Array<Asset> = arrayOf()
         set(value) {
-            field.clear()
-            field.addAll(value)
+            field = value
             notifyDataSetChanged()
         }
 

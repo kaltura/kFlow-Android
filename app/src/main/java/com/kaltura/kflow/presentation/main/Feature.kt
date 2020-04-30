@@ -16,7 +16,6 @@ enum class Feature(val text: String, @DrawableRes val imageResId: Int) {
     FAVORITES("Favorites", R.drawable.ic_favorite),
     SEARCH("Search", R.drawable.ic_search),
     MEDIA_PAGE("Media page", R.drawable.ic_media_page),
-    PPV("PPV", R.drawable.ic_media_page),
     KEEP_ALIVE("Keep Alive", R.drawable.ic_media_page),
     SUBSCRIPTION("Subscription", R.drawable.ic_subscription),
     PRODUCT_PRICE("Product price", R.drawable.ic_product_price),

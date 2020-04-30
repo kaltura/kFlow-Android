@@ -10,7 +10,6 @@ import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
-import com.kaltura.kflow.presentation.recordingList.RecordingListFragment
 import kotlinx.android.synthetic.main.fragment_recordings.*
 import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -40,7 +39,7 @@ class RecordingsFragment : SharedTransitionFragment(R.layout.fragment_recordings
         showRecordings.setOnClickListener {
             hideKeyboard()
             if (filteredRecordings.isNotEmpty()) {
-                navigate(RecordingsFragmentDirections.navigateToRecordingList(), RecordingListFragment.ARG_RECORDINGS to filteredRecordings)
+                navigate(RecordingsFragmentDirections.navigateToRecordingList(recordings = filteredRecordings.toTypedArray()))
             }
         }
         getRecorded.setOnClickListener {

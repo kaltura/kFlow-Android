@@ -8,7 +8,6 @@ import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.extension.inflate
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_recording.*
-import java.util.*
 
 /**
  * Created by alex_lytvynenko on 30.11.2018.
@@ -17,10 +16,9 @@ class RecordingListAdapter : RecyclerView.Adapter<RecordingListAdapter.MyViewHol
 
     var recordingClickListener: (recording: Recording) -> Unit = {}
 
-    var recordings: ArrayList<Recording> = arrayListOf()
+    var recordings: Array<Recording> = arrayOf()
         set(value) {
-            field.clear()
-            field.addAll(value)
+            field = value
             notifyDataSetChanged()
         }
 
