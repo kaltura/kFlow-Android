@@ -21,6 +21,7 @@ class SubscriptionViewModel(private val apiManager: PhoenixApiManager) : BaseVie
     val assetList = MutableLiveData<Resource<ArrayList<Asset>>>()
     val assetsInSubscription = MutableLiveData<Resource<List<Asset>>>()
     val subscriptionList = MutableLiveData<Resource<ArrayList<Subscription>>>()
+    val entitlementList = MutableLiveData<Resource<ArrayList<Entitlement>>>()
 
     fun getPackageList(packageType: String) {
         val filter = SearchAssetFilter().apply {
@@ -37,7 +38,7 @@ class SubscriptionViewModel(private val apiManager: PhoenixApiManager) : BaseVie
         apiManager.execute(AssetService.list(filter, filterPager).setCompletion {
             if (it.isSuccess) {
                 if (it.results.objects != null) assetList.value = Resource.Success(it.results.objects as ArrayList<Asset>)
-            }
+            } else assetList.value = Resource.Error(it.error)
         })
     }
 
@@ -53,7 +54,11 @@ class SubscriptionViewModel(private val apiManager: PhoenixApiManager) : BaseVie
             pageSize = 40
         }
 
-        apiManager.execute(EntitlementService.list(filter, filterPager))
+        apiManager.execute(EntitlementService.list(filter, filterPager)
+                .setCompletion {
+                    if (it.isSuccess) entitlementList.value = Resource.Success(it.results.objects as ArrayList<Entitlement>)
+                    else entitlementList.value = Resource.Error(it.error)
+                })
     }
 
     fun getSubscription(subscriptionBaseId: String) {

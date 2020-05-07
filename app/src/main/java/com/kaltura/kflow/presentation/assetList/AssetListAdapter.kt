@@ -16,10 +16,16 @@ import java.util.*
 /**
  * Created by alex_lytvynenko on 30.11.2018.
  */
-class AssetListAdapter(private val assets: Array<Asset>) : RecyclerView.Adapter<AssetListAdapter.MyViewHolder>() {
+class AssetListAdapter : RecyclerView.Adapter<AssetListAdapter.MyViewHolder>() {
 
     var vodClickListener: (asset: Asset) -> Unit = {}
     var programClickListener: (asset: Asset, contextType: APIDefines.PlaybackContextType) -> Unit = { _, _ -> Unit }
+
+    var assets: Array<Asset> = arrayOf()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MyViewHolder(parent.inflate(R.layout.item_asset))
 

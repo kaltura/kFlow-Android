@@ -16,6 +16,7 @@ class FavoritesViewModel(private val apiManager: PhoenixApiManager) : BaseViewMo
     fun getFavorites() {
         apiManager.execute(FavoriteService.list().setCompletion {
             if (it.isSuccess) favoritesCount.value = Resource.Success(it.results.totalCount)
+            else favoritesCount.value = Resource.Error(it.error)
         })
     }
 }

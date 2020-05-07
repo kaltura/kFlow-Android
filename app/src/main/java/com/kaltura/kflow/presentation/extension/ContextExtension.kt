@@ -22,3 +22,6 @@ inline val Context.inputManager: InputMethodManager?
 
 fun Context.getQuantityString(@PluralsRes id: Int, count: Int): String =
         resources.getQuantityString(id, count, NumberFormat.getInstance().format(count.toLong()))
+
+fun Context.dip(value: Int): Int = (value * resources.displayMetrics.density).toInt()
+fun Context.dip(value: Float): Int = (value * resources.displayMetrics.density).toInt()

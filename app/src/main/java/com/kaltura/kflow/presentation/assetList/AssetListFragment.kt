@@ -2,8 +2,8 @@ package com.kaltura.kflow.presentation.assetList
 
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AnimationUtils
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.types.ProgramAsset
 import com.kaltura.kflow.R
@@ -18,25 +18,30 @@ import kotlinx.android.synthetic.main.fragment_vod_list.*
 class AssetListFragment : BaseFragment(R.layout.fragment_vod_list) {
 
     private val args: AssetListFragmentArgs by navArgs()
+    private val adapter = AssetListAdapter().apply {
+        vodClickListener = {
+            navigate(AssetListFragmentDirections.navigateToPlayer(asset = it))
+        }
+        programClickListener = { asset, contextType ->
+            navigate(AssetListFragmentDirections.navigateToPlayer(asset = asset, playbackContextType = contextType.value))
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
         initList()
     }
 
     private fun initList() {
         list.setHasFixedSize(true)
         list.layoutManager = LinearLayoutManager(requireContext())
-        list.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+        list.layoutAnimation =
+                if (adapter.assets.isEmpty()) AnimationUtils.loadLayoutAnimation(context, R.anim.item_layout_animation)
+                else null
 
-        list.adapter = AssetListAdapter(args.assets).apply {
-            vodClickListener = {
-                navigate(AssetListFragmentDirections.navigateToPlayer(asset = it))
-            }
-            programClickListener = { asset, contextType ->
-                navigate(AssetListFragmentDirections.navigateToPlayer(asset = asset, playbackContextType = contextType.value))
-            }
-        }
+        list.adapter = adapter
+        adapter.assets = args.assets
         if (args.isScrollToLive && args.assets.isNotEmpty()) {
             var liveAssetPosition = args.assets.indexOfFirst { it is ProgramAsset && it.isProgramInLive() }
             if (liveAssetPosition < 0) liveAssetPosition = 0

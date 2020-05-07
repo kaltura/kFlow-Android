@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.item_feature.*
  */
 class FeatureAdapter(private val features: Array<Feature>) : RecyclerView.Adapter<FeatureAdapter.MyViewHolder>() {
 
-    var clickListener: (feature: Feature) -> Unit = { }
+    var clickListener: (feature: Feature, image: View, title: View) -> Unit = { _, _, _ -> }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MyViewHolder(parent.inflate(R.layout.item_feature))
 
@@ -22,9 +22,16 @@ class FeatureAdapter(private val features: Array<Feature>) : RecyclerView.Adapte
     override fun getItemCount() = features.size
 
     inner class MyViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+
         fun bind(feature: Feature) {
+            featureText.transitionName = "${feature.text}_title"
+            image.transitionName = "${feature.text}_image"
+
             featureText.text = feature.text
-            featureText.setOnClickListener { clickListener(feature) }
+            if (feature.imageResId != -1) image.setImageResource(feature.imageResId)
+            card.setOnClickListener {
+                clickListener(feature, image, featureText)
+            }
         }
     }
 }

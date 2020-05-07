@@ -4,16 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:paddingStart="16dp"
-    android:paddingTop="10dp"
-    android:paddingEnd="6dp"
-    android:paddingBottom="10dp">
+    android:paddingTop="10dp">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/assetName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toStartOf="@+id/actions"
+        android:paddingStart="16dp"
         android:textColor="@android:color/black"
         android:textSize="18sp" />
 
@@ -23,6 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/assetName"
         android:layout_toStartOf="@+id/actions"
+        android:paddingStart="16dp"
         android:textSize="15sp" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -31,6 +30,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/assetTime"
         android:layout_toStartOf="@+id/actions"
+        android:paddingStart="16dp"
+        android:paddingBottom="10dp"
         android:textSize="15sp" />
 
     <LinearLayout
@@ -39,36 +40,45 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingEnd="6dp"
+        android:paddingBottom="10dp">
 
-        <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/playback"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorAccent"
+            android:backgroundTint="@color/colorPrimary"
             android:gravity="center"
             android:text="Playback"
             android:textColor="@android:color/white"
             android:textSize="12sp" />
 
-        <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/startover"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorAccent"
+            android:backgroundTint="@color/colorPrimary"
             android:gravity="center"
             android:text="Startover"
             android:textColor="@android:color/white"
             android:textSize="12sp" />
 
-        <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/catchUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorAccent"
+            android:backgroundTint="@color/colorPrimary"
             android:gravity="center"
             android:text="Catch up"
             android:textColor="@android:color/white"
             android:textSize="12sp" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:alpha="0.3"
+        android:background="@color/colorPrimary" />
 </RelativeLayout>

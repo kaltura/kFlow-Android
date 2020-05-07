@@ -1,68 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:overScrollMode="never">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Request:"
-        android:textColor="@android:color/black" />
-
-    <RelativeLayout
-        android:id="@+id/requestContainer"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:drawable/editbox_background_normal">
+        android:background="@android:color/white"
+        android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/requestBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Request:"
+            android:textColor="@android:color/black" />
+
+        <RelativeLayout
+            android:id="@+id/requestContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@+id/requestSort"
-            android:textIsSelectable="true"
-            tools:text="Request" />
+            android:background="@android:drawable/editbox_background_normal">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/requestSort"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="3dp"
-            android:src="@drawable/ic_format_indent_increase_black_24dp"
-            android:visibility="invisible" />
-    </RelativeLayout>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/requestBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/requestSort"
+                android:textIsSelectable="true"
+                tools:text="Request" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="Response:"
-        android:textColor="@android:color/black" />
-
-    <RelativeLayout
-        android:id="@+id/responseContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/editbox_background_normal">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/requestSort"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="3dp"
+                android:src="@drawable/ic_format_indent_increase_black_24dp"
+                android:visibility="invisible" />
+        </RelativeLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/responseBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Response:"
+            android:textColor="@android:color/black" />
+
+        <RelativeLayout
+            android:id="@+id/responseContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@+id/responseSort"
-            android:textIsSelectable="true"
-            tools:text="Response" />
+            android:background="@android:drawable/editbox_background_normal">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/responseSort"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="3dp"
-            android:src="@drawable/ic_format_indent_increase_black_24dp"
-            android:visibility="invisible" />
-    </RelativeLayout>
-</LinearLayout>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/responseBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/responseSort"
+                android:textIsSelectable="true"
+                tools:text="Response" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/responseSort"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="3dp"
+                android:src="@drawable/ic_format_indent_increase_black_24dp"
+                android:visibility="invisible" />
+        </RelativeLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

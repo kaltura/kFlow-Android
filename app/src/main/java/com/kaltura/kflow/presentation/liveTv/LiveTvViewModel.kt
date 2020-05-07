@@ -32,7 +32,8 @@ class LiveTvViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel
         apiManager.execute(AssetService.list(filter, filterPager).setCompletion {
             if (it.isSuccess) {
                 if (it.results.objects != null) channelList.value = Resource.Success(it.results.objects as ArrayList<Asset>)
-            }
+                else channelList.value = Resource.Success(arrayListOf())
+            } else channelList.value = Resource.Error(it.error)
         })
     }
 }

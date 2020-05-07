@@ -2,19 +2,22 @@ package com.kaltura.kflow.presentation.recordings
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import com.kaltura.client.enums.RecordingStatus
 import com.kaltura.client.types.Recording
 import com.kaltura.kflow.R
-import com.kaltura.kflow.presentation.debug.DebugFragment
+import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
+import com.kaltura.kflow.presentation.main.Feature
 import kotlinx.android.synthetic.main.fragment_recordings.*
+import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Created by alex_lytvynenko on 12/13/18.
  */
-class RecordingsFragment : DebugFragment(R.layout.fragment_recordings) {
+class RecordingsFragment : SharedTransitionFragment(R.layout.fragment_recordings) {
 
     private val viewModel: RecordingsViewModel by viewModel()
     private var allRecordings = arrayListOf<Recording>()
@@ -28,6 +31,7 @@ class RecordingsFragment : DebugFragment(R.layout.fragment_recordings) {
     }
 
     override fun debugView(): DebugView = debugView
+    override val feature = Feature.RECORDINGS
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,7 +39,7 @@ class RecordingsFragment : DebugFragment(R.layout.fragment_recordings) {
         showRecordings.setOnClickListener {
             hideKeyboard()
             if (filteredRecordings.isNotEmpty()) {
-                navigate(RecordingsFragmentDirections.navigateToRecordingList(filteredRecordings.toTypedArray()))
+                navigate(RecordingsFragmentDirections.navigateToRecordingList(recordings = filteredRecordings.toTypedArray()))
             }
         }
         getRecorded.setOnClickListener {
@@ -56,10 +60,23 @@ class RecordingsFragment : DebugFragment(R.layout.fragment_recordings) {
     }
 
     override fun subscribeUI() {
-        observeResource(viewModel.recordingList) {
-            allRecordings = it
-            filterRecordings()
-        }
+        observeResource(viewModel.recordingList,
+                error = {
+                    when (recordingFilter) {
+                        RecordingsFilter.RECORDED_FILTER -> getRecorded.error(lifecycleScope)
+                        RecordingsFilter.ON_GOING_FILTER -> getOnGoing.error(lifecycleScope)
+                        RecordingsFilter.SCHEDULED_FILTER -> getScheduled.error(lifecycleScope)
+                    }
+                },
+                success = {
+                    when (recordingFilter) {
+                        RecordingsFilter.RECORDED_FILTER -> getRecorded.success(lifecycleScope)
+                        RecordingsFilter.ON_GOING_FILTER -> getOnGoing.success(lifecycleScope)
+                        RecordingsFilter.SCHEDULED_FILTER -> getScheduled.success(lifecycleScope)
+                    }
+                    allRecordings = it
+                    filterRecordings()
+                })
     }
 
     private fun recordingsRequest() {
@@ -69,7 +86,11 @@ class RecordingsFragment : DebugFragment(R.layout.fragment_recordings) {
                 filteredRecordings.clear()
                 showRecordings.gone()
                 clearDebugView()
-                viewModel.getRecordings()
+                when (recordingFilter) {
+                    RecordingsFilter.RECORDED_FILTER -> getRecorded.startAnimation { viewModel.getRecordings() }
+                    RecordingsFilter.ON_GOING_FILTER -> getOnGoing.startAnimation { viewModel.getRecordings() }
+                    RecordingsFilter.SCHEDULED_FILTER -> getScheduled.startAnimation { viewModel.getRecordings() }
+                }
             }
         } else {
             filterRecordings()

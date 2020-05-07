@@ -12,9 +12,15 @@ import kotlinx.android.synthetic.main.item_recording.*
 /**
  * Created by alex_lytvynenko on 30.11.2018.
  */
-class RecordingListAdapter(private val recordings: Array<Recording>) : RecyclerView.Adapter<RecordingListAdapter.MyViewHolder>() {
+class RecordingListAdapter : RecyclerView.Adapter<RecordingListAdapter.MyViewHolder>() {
 
     var recordingClickListener: (recording: Recording) -> Unit = {}
+
+    var recordings: Array<Recording> = arrayOf()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MyViewHolder(parent.inflate(R.layout.item_recording))
 
