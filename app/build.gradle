@@ -10,7 +10,7 @@ android {
         applicationId "com.kaltura.kflow"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 7
+        versionCode 8
         versionName "1.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -32,6 +32,12 @@ android {
 
     androidExtensions {
         experimental = true
+    }
+}
+
+android.applicationVariants.all { variant ->
+    variant.outputs.all {
+        outputFileName = "KFlow-v${variant.versionName} (${variant.versionCode}).apk"
     }
 }
 
@@ -72,9 +78,9 @@ dependencies {
     implementation 'com.kaltura:KalturaOttAndroidJavaClient:5.2.8.14101'
 
     // Playkit
-    implementation 'com.kaltura.playkit:playkit:4.4.0'
-    implementation 'com.kaltura.playkit:playkitproviders:4.4.0'
-    implementation 'com.kaltura.playkit:youboraplugin:4.4.0'
-    implementation 'com.kaltura.playkit:kavaplugin:4.4.0'
-    implementation 'com.kaltura.playkit:vrplugin:4.4.0'
+    implementation 'com.kaltura.playkit:playkit:4.8.0'
+    implementation 'com.kaltura.playkit:playkitproviders:4.8.0'
+    implementation 'com.kaltura.playkit:youboraplugin:4.8.0'
+    implementation 'com.kaltura.playkit:kavaplugin:4.8.0'
+    implementation 'com.kaltura.playkit:vrplugin:4.8.0'
 }
