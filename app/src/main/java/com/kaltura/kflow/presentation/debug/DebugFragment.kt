@@ -3,8 +3,10 @@ package com.kaltura.kflow.presentation.debug
 import android.os.Bundle
 import android.view.*
 import android.widget.RelativeLayout
+import androidx.activity.addCallback
 import androidx.annotation.LayoutRes
 import androidx.core.view.doOnLayout
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.base.BaseFragment
@@ -64,6 +66,12 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
         debugTitle.setOnClickListener { bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED }
         share.setOnClickListener { share() }
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            } else findNavController().navigateUp()
+        }
     }
 
     override fun onDestroyView() {
