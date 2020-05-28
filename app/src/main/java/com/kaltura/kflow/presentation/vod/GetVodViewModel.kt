@@ -3,7 +3,6 @@ package com.kaltura.kflow.presentation.vod
 import androidx.lifecycle.MutableLiveData
 import com.kaltura.client.enums.AssetOrderBy
 import com.kaltura.client.services.AssetService
-import com.kaltura.client.types.APIException
 import com.kaltura.client.types.Asset
 import com.kaltura.client.types.FilterPager
 import com.kaltura.client.types.SearchAssetFilter
@@ -18,10 +17,17 @@ class GetVodViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel
 
     val getAssetList = MutableLiveData<Resource<ArrayList<Asset>>>()
 
-    fun getVodAssetList(kSqlRequest: String) {
+    fun getVodAssetList(name: String, assetType: String) {
+        val assetTypes = assetType.split(",")
+                .map { it.trim() }
+                .filter { it.isNotEmpty() }
         val filter = SearchAssetFilter().apply {
             orderBy = AssetOrderBy.START_DATE_DESC.value
-            kSql = kSqlRequest
+            kSql = "(or name~\'$name\'"
+            assetTypes.forEach {
+                kSql += " asset_type=\'$it\'"
+            }
+            kSql += ")"
         }
 
         val filterPager = FilterPager().apply {

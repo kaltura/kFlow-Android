@@ -66,8 +66,8 @@ class AssetListAdapter : RecyclerView.Adapter<AssetListAdapter.MyViewHolder>() {
                 startover.gone()
                 catchUp.gone()
             } else {
-                playback.gone()
-                startover.visible()
+                playback.visible()
+                startover.gone()
                 catchUp.gone()
             }
             playback.setOnClickListener {

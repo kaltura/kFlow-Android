@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.kaltura.client.types.Asset
+import com.kaltura.client.types.MediaAsset
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
@@ -30,9 +31,10 @@ class GetVodFragment : SharedTransitionFragment(R.layout.fragment_vod) {
         showAssets.navigateOnClick { GetVodFragmentDirections.navigateToAssetList(assets = assets.toTypedArray()) }
         get.setOnClickListener {
             hideKeyboard()
-            makeGetVodRequest(ksqlRequest.string)
+            makeGetVodRequest(name.string, assetType.string)
         }
-        ksqlRequest.string = "(or name~\'Bigg Boss S12\')"
+
+        assetType.string = "1088, 1089, 1091"
     }
 
     override fun subscribeUI() {
@@ -40,25 +42,20 @@ class GetVodFragment : SharedTransitionFragment(R.layout.fragment_vod) {
                 error = { get.error(lifecycleScope) },
                 success = {
                     get.success(lifecycleScope)
-                    assets = it
+                    assets = it.filterIsInstance<MediaAsset>() as ArrayList<Asset>
                     showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
                     showAssets.visible()
                 })
     }
 
-    private fun makeGetVodRequest(kSqlRequest: String) {
+    private fun makeGetVodRequest(name: String, assetType: String) {
         withInternetConnection {
             clearDebugView()
-            clearInputLayouts()
             showAssets.gone()
 
             get.startAnimation {
-                viewModel.getVodAssetList(kSqlRequest)
+                viewModel.getVodAssetList(name, assetType)
             }
         }
-    }
-
-    private fun clearInputLayouts() {
-        kSqlInputLayout.hideError()
     }
 }

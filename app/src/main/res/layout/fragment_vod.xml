@@ -12,7 +12,7 @@
         <include layout="@layout/view_shared_transition_header" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/kSqlInputLayout"
+            android:id="@+id/nameInputLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,12 +23,33 @@
             app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ksqlRequest"
+                android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="kSql request"
+                android:hint="Asset name"
                 android:imeOptions="actionDone"
                 android:singleLine="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/assetTypeInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="10dp"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/assetType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Asset type"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
+                android:text="0" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
