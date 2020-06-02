@@ -21,7 +21,7 @@ class LiveTvViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel
         val filter = SearchAssetFilter().apply {
             orderBy = AssetOrderBy.START_DATE_DESC.value
             name = channelName
-            kSql = "(and name~'$channelName' (and (and customer_type_blacklist != '5' (or region_agnostic_user_types = '5' (or region_whitelist = '1077' (and region_blacklist != '1077' (or region_whitelist !+ '' region_whitelist = '0'))))) asset_type='600'))"
+            kSql = "(and name~'$channelName')"
         }
 
         val filterPager = FilterPager().apply {

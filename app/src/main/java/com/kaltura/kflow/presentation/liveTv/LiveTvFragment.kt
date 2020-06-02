@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.kaltura.client.types.Asset
+import com.kaltura.client.types.LiveAsset
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
@@ -32,7 +33,6 @@ class LiveTvFragment : SharedTransitionFragment(R.layout.fragment_live) {
             hideKeyboard()
             makeGetChannelsRequest(channelName.string)
         }
-        channelName.string = "Отр"
     }
 
     override fun subscribeUI() {
@@ -40,7 +40,7 @@ class LiveTvFragment : SharedTransitionFragment(R.layout.fragment_live) {
                 error = { get.error(lifecycleScope) },
                 success = {
                     get.success(lifecycleScope)
-                    channels = it
+                    channels = it.filterIsInstance<LiveAsset>() as ArrayList<Asset>
                     showChannel.text = getQuantityString(R.plurals.show_channels, channels.size)
                     showChannel.visible()
                 })
