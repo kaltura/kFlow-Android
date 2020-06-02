@@ -34,25 +34,33 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/typeInInputLayout"
+            android:id="@+id/assetTypeInputLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="10dp"
             app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/typeIn"
+                android:id="@+id/assetType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="TypeIn"
+                android:digits="0123456789,"
+                android:hint="Asset type"
                 android:imeOptions="actionDone"
-                android:singleLine="true"
-                android:text="0" />
+                android:inputType="numberDecimal"
+                android:singleLine="true" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="10dp"
+            android:text="Comma separated list of asset types to search within."
+            android:textSize="12sp" />
 
         <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/search"

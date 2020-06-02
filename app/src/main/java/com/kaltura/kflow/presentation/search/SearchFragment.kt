@@ -33,7 +33,7 @@ class SearchFragment : SharedTransitionFragment(R.layout.fragment_search) {
         }
         search.setOnClickListener {
             hideKeyboard()
-            searchRequest(typeIn.string, searchText.string)
+            searchRequest(assetType.string, searchText.string)
         }
         showAssets.navigateOnClick { SearchFragmentDirections.navigateToAssetList(assets = assets.toTypedArray()) }
     }
@@ -60,13 +60,13 @@ class SearchFragment : SharedTransitionFragment(R.layout.fragment_search) {
         )
     }
 
-    private fun searchRequest(typeInSearch: String, kSqlSearch: String) {
+    private fun searchRequest(assetType: String, kSqlSearch: String) {
         withInternetConnection {
             historyCount.gone()
             showAssets.gone()
             clearDebugView()
             search.startAnimation {
-                viewModel.search(typeInSearch, kSqlSearch)
+                viewModel.search(assetType, kSqlSearch)
             }
         }
     }

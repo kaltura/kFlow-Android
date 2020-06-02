@@ -49,7 +49,6 @@ class EpgViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(ap
         }
         val filter = SearchAssetFilter().apply {
             orderBy = AssetOrderBy.START_DATE_DESC.value
-            typeIn = "0"
             kSql = "(and linear_media_id = '$epgChannelId' (and start_date > '$startDate' end_date < '$endDate'))"
         }
         val filterPager = FilterPager().apply {

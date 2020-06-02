@@ -26,8 +26,7 @@ class SubscriptionViewModel(private val apiManager: PhoenixApiManager) : BaseVie
     fun getPackageList(packageType: String) {
         val filter = SearchAssetFilter().apply {
             orderBy = AssetOrderBy.START_DATE_DESC.value
-            kSql = "Base ID > \'0\'"
-            typeIn = packageType
+            kSql = "Base ID > \'0\' asset_type=\'$packageType\')"
         }
 
         val filterPager = FilterPager().apply {

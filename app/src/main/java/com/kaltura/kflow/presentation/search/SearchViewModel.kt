@@ -20,10 +20,16 @@ class SearchViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel
     val assets = MutableLiveData<Resource<ArrayList<Asset>>>()
     val historyAssetsCount = MutableLiveData<Resource<Int>>()
 
-    fun search(typeInSearch: String, kSqlSearch: String) {
+    fun search(assetType: String, kSqlSearch: String) {
         val filter = SearchAssetFilter().apply {
-            typeIn = typeInSearch
-            kSql = "(or description ~ \'$kSqlSearch \' name ~ \'$kSqlSearch \')"
+            val assetTypes = assetType.split(",")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+            kSql = "(or description ~ \'$kSqlSearch\' name ~ \'$kSqlSearch\'"
+            assetTypes.forEach {
+                kSql += " asset_type=\'$it\'"
+            }
+            kSql += ")"
         }
 
         val filterPager = FilterPager().apply {
@@ -34,6 +40,7 @@ class SearchViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel
         apiManager.execute(AssetService.list(filter, filterPager).setCompletion {
             if (it.isSuccess) {
                 if (it.results.objects != null) assets.value = Resource.Success(it.results.objects as ArrayList<Asset>)
+                else assets.value = Resource.Success(arrayListOf())
             } else {
                 assets.value = Resource.Error(it.error)
             }
