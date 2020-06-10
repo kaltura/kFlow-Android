@@ -11,6 +11,7 @@ import com.kaltura.client.enums.AssetOrderBy;
 import com.kaltura.client.services.AssetService;
 import com.kaltura.client.types.Asset;
 import com.kaltura.client.types.FilterPager;
+import com.kaltura.client.types.LiveAsset;
 import com.kaltura.client.types.SearchAssetFilter;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.kflow.R;
@@ -53,7 +54,6 @@ public class LiveTvFragment extends DebugFragment implements View.OnClickListene
         mShowChannelButton.setOnClickListener(this);
         getView().findViewById(R.id.get).setOnClickListener(this);
 
-        mChannelName.setText("Отр");
         mShowChannelButton.setVisibility(mChannels.isEmpty() ? View.GONE : View.VISIBLE);
         mShowChannelButton.setText(getResources().getQuantityString(R.plurals.show_channels,
                 mChannels.size(), NumberFormat.getInstance().format(mChannels.size())));
@@ -84,7 +84,7 @@ public class LiveTvFragment extends DebugFragment implements View.OnClickListene
             SearchAssetFilter filter = new SearchAssetFilter();
             filter.setOrderBy(AssetOrderBy.START_DATE_DESC.getValue());
             filter.setName(channelName);
-            filter.setKSql("(and name~'" + channelName + "' (and (and customer_type_blacklist != '5' (or region_agnostic_user_types = '5' (or region_whitelist = '1077' (and region_blacklist != '1077' (or region_whitelist !+ '' region_whitelist = '0'))))) asset_type='600'))");
+            filter.setKSql("(and name~'" + channelName + "')");
 
             FilterPager filterPager = new FilterPager();
             filterPager.setPageIndex(1);
@@ -94,7 +94,10 @@ public class LiveTvFragment extends DebugFragment implements View.OnClickListene
                     .setCompletion(result -> {
                         if (result.isSuccess()) {
                             if (result.results.getObjects() != null)
-                                mChannels.addAll(result.results.getObjects());
+                                for (Asset asset : result.results.getObjects()) {
+                                    if (asset instanceof LiveAsset)
+                                        mChannels.add(asset);
+                                }
 
                             mShowChannelButton.setText(getResources().getQuantityString(R.plurals.show_channels,
                                     mChannels.size(), NumberFormat.getInstance().format(mChannels.size())));
@@ -105,7 +108,8 @@ public class LiveTvFragment extends DebugFragment implements View.OnClickListene
             PhoenixApiManager.execute(requestBuilder);
         } else {
             Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
-                    .setAction("Dismiss",view -> {})
+                    .setAction("Dismiss", view -> {
+                    })
                     .show();
         }
     }
