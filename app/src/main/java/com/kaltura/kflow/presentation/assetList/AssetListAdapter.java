@@ -106,8 +106,8 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.MyVi
                 mStartover.setVisibility(View.GONE);
                 mCatchup.setVisibility(View.GONE);
             } else {
-                mPlayback.setVisibility(View.GONE);
-                mStartover.setVisibility(View.VISIBLE);
+                mPlayback.setVisibility(View.VISIBLE);
+                mStartover.setVisibility(View.GONE);
                 mCatchup.setVisibility(View.GONE);
             }
 

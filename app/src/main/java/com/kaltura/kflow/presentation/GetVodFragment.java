@@ -12,6 +12,7 @@ import com.kaltura.client.services.AssetService;
 import com.kaltura.client.types.Asset;
 import com.kaltura.client.types.FilterPager;
 import com.kaltura.client.types.ListResponse;
+import com.kaltura.client.types.MediaAsset;
 import com.kaltura.client.types.SearchAssetFilter;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.base.ApiCompletion;
@@ -34,7 +35,8 @@ import androidx.appcompat.widget.AppCompatButton;
  */
 public class GetVodFragment extends DebugFragment implements View.OnClickListener {
 
-    private TextInputEditText mKsqlRequest;
+    private TextInputEditText mNameRequest;
+    private TextInputEditText mTypeRequest;
     private AppCompatButton mShowAssetsButton;
     private ArrayList<Asset> mAssets = new ArrayList<>();
 
@@ -49,13 +51,14 @@ public class GetVodFragment extends DebugFragment implements View.OnClickListene
         super.onViewCreated(view, savedInstanceState);
         ((MainActivity) requireActivity()).getSupportActionBar().setTitle("VOD");
 
-        mKsqlRequest = getView().findViewById(R.id.ksql_request);
+        mNameRequest = getView().findViewById(R.id.name_request);
+        mTypeRequest = getView().findViewById(R.id.type_request);
         mShowAssetsButton = getView().findViewById(R.id.show_assets);
 
         mShowAssetsButton.setOnClickListener(this);
         getView().findViewById(R.id.get).setOnClickListener(this);
 
-        mKsqlRequest.setText("(or name~\'Bigg Boss S12\')");
+        mTypeRequest.setText("1088, 1089, 1091");
         mShowAssetsButton.setVisibility(mAssets.isEmpty() ? View.GONE : View.VISIBLE);
         mShowAssetsButton.setText(getResources().getQuantityString(R.plurals.show_assets,
                 mAssets.size(), NumberFormat.getInstance().format(mAssets.size())));
@@ -71,21 +74,35 @@ public class GetVodFragment extends DebugFragment implements View.OnClickListene
                 break;
             }
             case R.id.get: {
-                makeGetVodRequest(mKsqlRequest.getText().toString());
+                makeGetVodRequest(mNameRequest.getText().toString(), mTypeRequest.getText().toString());
                 break;
             }
         }
     }
 
-    private void makeGetVodRequest(String kSqlRequest) {
+    private void makeGetVodRequest(String name, String type) {
         if (Utils.hasInternetConnection(requireContext())) {
 
             mAssets.clear();
             mShowAssetsButton.setVisibility(View.GONE);
 
+            ArrayList<String> assetTypes = new ArrayList<>();
+            String[] types = type.split(",");
+            for (String t : types) {
+                if (!t.trim().isEmpty()) {
+                    assetTypes.add(t.trim());
+                }
+            }
+
+            StringBuilder kSql = new StringBuilder("(or name~\'" + name + "\'");
+            for (String t : assetTypes) {
+                kSql.append(" asset_type=\'").append(t).append("\'");
+            }
+            kSql.append(")");
+
             SearchAssetFilter filter = new SearchAssetFilter();
             filter.setOrderBy(AssetOrderBy.START_DATE_DESC.getValue());
-            filter.setKSql(kSqlRequest);
+            filter.setKSql(kSql.toString());
 
             FilterPager filterPager = new FilterPager();
             filterPager.setPageIndex(1);
@@ -95,7 +112,10 @@ public class GetVodFragment extends DebugFragment implements View.OnClickListene
                     .setCompletion((ApiCompletion<ListResponse<Asset>>) result -> {
                         if (result.isSuccess()) {
                             if (result.results.getObjects() != null)
-                                mAssets.addAll(result.results.getObjects());
+                                for (Asset asset : result.results.getObjects()) {
+                                    if (asset instanceof MediaAsset)
+                                        mAssets.add(asset);
+                                }
 
                             mShowAssetsButton.setText(getResources().getQuantityString(R.plurals.show_assets,
                                     mAssets.size(), NumberFormat.getInstance().format(mAssets.size())));
@@ -106,7 +126,8 @@ public class GetVodFragment extends DebugFragment implements View.OnClickListene
             PhoenixApiManager.execute(requestBuilder);
         } else {
             Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
-                    .setAction("Dismiss",view -> {})
+                    .setAction("Dismiss", view -> {
+                    })
                     .show();
         }
     }
