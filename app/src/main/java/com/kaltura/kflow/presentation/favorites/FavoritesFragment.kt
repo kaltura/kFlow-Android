@@ -3,12 +3,14 @@ package com.kaltura.kflow.presentation.favorites
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import com.kaltura.client.types.Asset
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
 import kotlinx.android.synthetic.main.fragment_favorites.*
+import kotlinx.android.synthetic.main.fragment_favorites.showAssets
 import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -18,6 +20,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class FavoritesFragment : SharedTransitionFragment(R.layout.fragment_favorites) {
 
     private val viewModel: FavoritesViewModel by viewModel()
+    private var assets = arrayListOf<Asset>()
 
     override fun debugView(): DebugView = debugView
 
@@ -25,6 +28,7 @@ class FavoritesFragment : SharedTransitionFragment(R.layout.fragment_favorites) 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        showAssets.navigateOnClick { FavoritesFragmentDirections.navigateToAssetList(assets = assets.toTypedArray()) }
         getFavorites.setOnClickListener {
             hideKeyboard()
             getFavoritesRequest()
@@ -32,20 +36,20 @@ class FavoritesFragment : SharedTransitionFragment(R.layout.fragment_favorites) 
     }
 
     override fun subscribeUI() {
-        observeResource(viewModel.favoritesCount,
+        observeResource(viewModel.getAssetList,
                 error = { getFavorites.error(lifecycleScope) },
                 success = {
                     getFavorites.success(lifecycleScope)
-
-                    favoriteCount.text = getQuantityString(R.plurals.favorite_count, it)
-                    favoriteCount.visible()
+                    assets = it
+                    showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
+                    showAssets.visible()
                 }
         )
     }
 
     private fun getFavoritesRequest() {
         withInternetConnection {
-            favoriteCount.gone()
+            showAssets.gone()
             clearDebugView()
             getFavorites.startAnimation {
                 viewModel.getFavorites()

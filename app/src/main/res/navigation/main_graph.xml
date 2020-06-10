@@ -171,7 +171,11 @@
         android:id="@+id/favorites"
         android:name="com.kaltura.kflow.presentation.favorites.FavoritesFragment"
         android:label="Favorites"
-        tools:layout="@layout/fragment_favorites" />
+        tools:layout="@layout/fragment_favorites">
+        <action
+            android:id="@+id/navigate_to_asset_list"
+            app:destination="@id/asset_list" />
+    </fragment>
 
     <fragment
         android:id="@+id/vod"
