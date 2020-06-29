@@ -23,6 +23,16 @@
             android:textColor="@android:color/white"
             android:textSize="16sp" />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/show_assets"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginBottom="5dp"
+            android:backgroundTint="@color/colorAccent"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/favorite_count"
             android:layout_width="match_parent"
