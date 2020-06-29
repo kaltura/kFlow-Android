@@ -36,10 +36,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:hint="Asset type"
+                android:digits="0123456789,"
+                android:hint="VOD asset type"
+                android:inputType="numberDecimal"
                 android:imeOptions="actionDone"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="10dp"
+            android:text="Comma separated list of asset types to search within."
+            android:textSize="12sp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/get"

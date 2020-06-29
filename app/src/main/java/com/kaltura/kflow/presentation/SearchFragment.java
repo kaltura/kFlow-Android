@@ -36,7 +36,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 public class SearchFragment extends DebugFragment implements View.OnClickListener {
 
     private AppCompatTextView mHistoryCount;
-    private TextInputEditText mTypeIn;
+    private TextInputEditText mAssetType;
     private TextInputEditText mSearchText;
     private AppCompatButton mShowAssetsButton;
     private ArrayList<Asset> mAssets = new ArrayList<>();
@@ -53,7 +53,7 @@ public class SearchFragment extends DebugFragment implements View.OnClickListene
         ((MainActivity) requireActivity()).getSupportActionBar().setTitle("Search");
 
         mHistoryCount = getView().findViewById(R.id.history_count);
-        mTypeIn = getView().findViewById(R.id.type_in);
+        mAssetType = getView().findViewById(R.id.asset_type);
         mSearchText = getView().findViewById(R.id.search_text);
         mShowAssetsButton = getView().findViewById(R.id.show_assets);
 
@@ -74,7 +74,7 @@ public class SearchFragment extends DebugFragment implements View.OnClickListene
                 break;
             }
             case R.id.search: {
-                searchRequest(mTypeIn.getText().toString(), mSearchText.getText().toString());
+                searchRequest(mAssetType.getText().toString(), mSearchText.getText().toString());
                 break;
             }
             case R.id.show_assets: {
@@ -85,7 +85,7 @@ public class SearchFragment extends DebugFragment implements View.OnClickListene
         Utils.hideKeyboard(getView());
     }
 
-    private void searchRequest(String typeIn, String kSql) {
+    private void searchRequest(String assetType, String kSqlSearch) {
         if (Utils.hasInternetConnection(requireContext())) {
 
             mAssets.clear();
@@ -93,8 +93,18 @@ public class SearchFragment extends DebugFragment implements View.OnClickListene
             mShowAssetsButton.setVisibility(View.GONE);
 
             SearchAssetFilter filter = new SearchAssetFilter();
-            filter.setTypeIn(typeIn);
-            filter.setKSql("(or description ~ \'" + kSql + " \' name ~ \'" + kSql + " \')");
+            ArrayList<String> assetTypes = new ArrayList<>();
+            for (String s : assetType.split(",")) {
+                if (!s.trim().isEmpty())
+                    assetTypes.add(s.trim());
+            }
+            StringBuilder kSql = new StringBuilder("(or description ~ \'" + kSqlSearch + "\' name ~ \'" + kSqlSearch + "\'");
+            for (String s : assetTypes) {
+                kSql.append(" asset_type=\'").append(s).append("\'");
+            }
+            kSql.append(")");
+
+            filter.setKSql(kSql.toString());
 
             FilterPager filterPager = new FilterPager();
             filterPager.setPageIndex(1);
@@ -115,7 +125,8 @@ public class SearchFragment extends DebugFragment implements View.OnClickListene
             clearDebugView();
         } else {
             Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
-                    .setAction("Dismiss",view -> {})
+                    .setAction("Dismiss", view -> {
+                    })
                     .show();
         }
     }
@@ -142,7 +153,8 @@ public class SearchFragment extends DebugFragment implements View.OnClickListene
             PhoenixApiManager.execute(requestBuilder);
         } else {
             Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
-                    .setAction("Dismiss",view -> {})
+                    .setAction("Dismiss", view -> {
+                    })
                     .show();
         }
     }

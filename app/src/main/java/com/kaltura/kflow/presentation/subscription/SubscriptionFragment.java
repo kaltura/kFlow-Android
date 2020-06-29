@@ -119,8 +119,7 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
 
             SearchAssetFilter filter = new SearchAssetFilter();
             filter.setOrderBy(AssetOrderBy.START_DATE_DESC.getValue());
-            filter.setKSql("Base ID > \'0\'");
-            filter.setTypeIn(packageType);
+            filter.setKSql("Base ID > \'0\' asset_type=\'" + packageType + "\')");
 
             FilterPager filterPager = new FilterPager();
             filterPager.setPageIndex(1);
@@ -141,7 +140,8 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
             PhoenixApiManager.execute(requestBuilder);
         } else {
             Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
-                    .setAction("Dismiss",view -> {})
+                    .setAction("Dismiss", view -> {
+                    })
                     .show();
         }
     }
@@ -163,7 +163,8 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
             PhoenixApiManager.execute(requestBuilder);
         } else {
             Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
-                    .setAction("Dismiss",view -> {})
+                    .setAction("Dismiss", view -> {
+                    })
                     .show();
         }
     }
@@ -188,7 +189,8 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
             PhoenixApiManager.execute(requestBuilder);
         } else {
             Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
-                    .setAction("Dismiss",view -> {})
+                    .setAction("Dismiss", view -> {
+                    })
                     .show();
         }
     }
@@ -227,7 +229,8 @@ public class SubscriptionFragment extends DebugFragment implements View.OnClickL
             PhoenixApiManager.execute(multiRequestBuilder);
         } else {
             Snackbar.make(getView(), "No Internet connection", Snackbar.LENGTH_LONG)
-                    .setAction("Dismiss",view -> {})
+                    .setAction("Dismiss", view -> {
+                    })
                     .show();
         }
     }
