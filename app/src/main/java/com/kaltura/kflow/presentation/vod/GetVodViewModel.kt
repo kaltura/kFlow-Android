@@ -7,13 +7,15 @@ import com.kaltura.client.types.Asset
 import com.kaltura.client.types.FilterPager
 import com.kaltura.client.types.SearchAssetFilter
 import com.kaltura.kflow.manager.PhoenixApiManager
+import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
 import com.kaltura.kflow.utils.Resource
 
 /**
  * Created by alex_lytvynenko on 2020-01-16.
  */
-class GetVodViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
+class GetVodViewModel(private val apiManager: PhoenixApiManager,
+                      private val preferenceManager: PreferenceManager) : BaseViewModel(apiManager) {
 
     val getAssetList = MutableLiveData<Resource<ArrayList<Asset>>>()
 
@@ -38,7 +40,11 @@ class GetVodViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel
             if (it.isSuccess) {
                 if (it.results.objects != null) getAssetList.value = Resource.Success(it.results.objects as ArrayList<Asset>)
                 else getAssetList.value = Resource.Success(arrayListOf())
+
+                preferenceManager.vodAssetType = assetType
             } else getAssetList.value = Resource.Error(it.error)
         })
     }
+
+    fun getVodAssetType() = preferenceManager.vodAssetType
 }

@@ -7,6 +7,7 @@ import android.content.Context
  */
 class PreferenceManager(private val context: Context) {
     private val KEY_BASE_URL = "prefs_base_url"
+    private val KEY_VOD_ASSET_TYPE = "prefs_vod_asset_type"
     private val KEY_PARTNER_ID = "prefs_partner_id"
     private val KEY_MAIN_MEDIA_FILE_FORMAT = "prefs_main_media_file_format"
     private val KEY_KS = "prefs_ks"
@@ -26,6 +27,10 @@ class PreferenceManager(private val context: Context) {
     var baseUrl: String
         get() = prefs.getString(KEY_BASE_URL, null) ?: "https://rest-us.ott.kaltura.com/v5_0_3/"
         set(value) = prefs.edit().putString(KEY_BASE_URL, value).apply()
+
+    var vodAssetType: String
+        get() = prefs.getString(KEY_VOD_ASSET_TYPE, null) ?: ""
+        set(value) = prefs.edit().putString(KEY_VOD_ASSET_TYPE, value).apply()
 
     var mediaFileFormat: String
         get() = prefs.getString(KEY_MAIN_MEDIA_FILE_FORMAT, null) ?: ""

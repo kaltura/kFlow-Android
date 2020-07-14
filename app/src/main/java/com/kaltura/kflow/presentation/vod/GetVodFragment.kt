@@ -34,7 +34,7 @@ class GetVodFragment : SharedTransitionFragment(R.layout.fragment_vod) {
             makeGetVodRequest(name.string, assetType.string)
         }
 
-        assetType.string = "1088, 1089, 1091"
+        assetType.string = viewModel.getVodAssetType()
     }
 
     override fun subscribeUI() {

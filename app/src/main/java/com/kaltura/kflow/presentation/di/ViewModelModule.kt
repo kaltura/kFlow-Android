@@ -38,5 +38,5 @@ val viewModelModule = module {
     viewModel { SettingsViewModel(get(), get()) }
     viewModel { SubscriptionViewModel(get()) }
     viewModel { TransactionHistoryViewModel(get()) }
-    viewModel { GetVodViewModel(get()) }
+    viewModel { GetVodViewModel(get(), get()) }
 }
