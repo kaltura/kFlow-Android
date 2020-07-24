@@ -64,7 +64,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
-        
+
         initUI()
         asset = args.asset
         isKeepAlive = args.isKeepAlive
@@ -282,7 +282,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             playerControls.asset = asset
             //playerControls.disableControllersForLive();
         } else {
-            mediaConfig.startPosition = 0L
+            mediaConfig.startPosition = args.startPosition.toLong()
         }
 
         player?.prepare(mediaConfig)

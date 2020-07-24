@@ -39,6 +39,13 @@
             app:popEnterAnim="@anim/fragment_fade_enter"
             app:popExitAnim="@anim/fragment_fade_exit" />
         <action
+            android:id="@+id/navigate_to_continue_watching"
+            app:destination="@id/continue_watching"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit" />
+        <action
             android:id="@+id/navigate_to_epg"
             app:destination="@id/epg"
             app:enterAnim="@anim/fragment_fade_enter"
@@ -188,6 +195,16 @@
     </fragment>
 
     <fragment
+        android:id="@+id/continue_watching"
+        android:name="com.kaltura.kflow.presentation.continueWatching.ContinueWatchingFragment"
+        android:label="Continue Watching"
+        tools:layout="@layout/fragment_continue_watching">
+        <action
+            android:id="@+id/navigate_to_asset_list"
+            app:destination="@id/asset_list" />
+    </fragment>
+
+    <fragment
         android:id="@+id/live_tv"
         android:name="com.kaltura.kflow.presentation.liveTv.LiveTvFragment"
         android:label="Live TV"
@@ -279,7 +296,14 @@
             app:argType="boolean" />
         <argument
             android:name="assets"
-            app:argType="com.kaltura.client.types.Asset[]" />
+            android:defaultValue="@null"
+            app:argType="com.kaltura.client.types.Asset[]"
+            app:nullable="true" />
+        <argument
+            android:name="watchedAssets"
+            android:defaultValue="@null"
+            app:argType="com.kaltura.kflow.entity.WatchedAsset[]"
+            app:nullable="true" />
         <action
             android:id="@+id/navigate_to_player"
             app:destination="@id/player" />
@@ -307,6 +331,10 @@
             android:name="isKeepAlive"
             android:defaultValue="false"
             app:argType="boolean" />
+        <argument
+            android:name="startPosition"
+            android:defaultValue="0"
+            app:argType="integer" />
         <argument
             android:name="asset"
             android:defaultValue="@null"

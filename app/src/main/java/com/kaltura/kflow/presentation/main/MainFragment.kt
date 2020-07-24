@@ -17,9 +17,10 @@ import kotlinx.android.synthetic.main.fragment_main.*
 class MainFragment : Fragment(R.layout.fragment_main) {
 
     private val features = arrayOf(Feature.LOGIN, Feature.ANONYMOUS_LOGIN, Feature.REGISTRATION,
-            Feature.VOD, Feature.EPG, Feature.LIVE, Feature.FAVORITES, Feature.SEARCH, Feature.KEEP_ALIVE,
-            Feature.MEDIA_PAGE, Feature.SUBSCRIPTION, Feature.PRODUCT_PRICE, Feature.CHECK_RECEIPT,
-            Feature.TRANSACTION_HISTORY, Feature.RECORDINGS, Feature.SETTINGS)
+            Feature.VOD, Feature.CONTINUE_WATCHING, Feature.EPG, Feature.LIVE, Feature.FAVORITES,
+            Feature.SEARCH, Feature.KEEP_ALIVE, Feature.MEDIA_PAGE, Feature.SUBSCRIPTION,
+            Feature.PRODUCT_PRICE, Feature.CHECK_RECEIPT, Feature.TRANSACTION_HISTORY,
+            Feature.RECORDINGS, Feature.SETTINGS)
 
     private lateinit var rotationAnimation: SpringAnimation
     private var isDragging = false
@@ -56,6 +57,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 Feature.ANONYMOUS_LOGIN -> MainFragmentDirections.navigateToAnonymousLogin()
                 Feature.REGISTRATION -> MainFragmentDirections.navigateToRegistration()
                 Feature.VOD -> MainFragmentDirections.navigateToVod()
+                Feature.CONTINUE_WATCHING -> MainFragmentDirections.navigateToContinueWatching()
                 Feature.EPG -> MainFragmentDirections.navigateToEpg()
                 Feature.LIVE -> MainFragmentDirections.navigateToLiveTv()
                 Feature.FAVORITES -> MainFragmentDirections.navigateToFavorites()

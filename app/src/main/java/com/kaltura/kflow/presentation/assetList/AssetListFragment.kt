@@ -19,8 +19,10 @@ class AssetListFragment : BaseFragment(R.layout.fragment_vod_list) {
 
     private val args: AssetListFragmentArgs by navArgs()
     private val adapter = AssetListAdapter().apply {
-        vodClickListener = {
-            navigate(AssetListFragmentDirections.navigateToPlayer(asset = it))
+        vodClickListener = { asset ->
+            val startPosition = args.watchedAssets?.firstOrNull { it.asset.id == asset.id }?.position
+                    ?: 0
+            navigate(AssetListFragmentDirections.navigateToPlayer(asset = asset, startPosition = startPosition))
         }
         programClickListener = { asset, contextType ->
             navigate(AssetListFragmentDirections.navigateToPlayer(asset = asset, playbackContextType = contextType.value))
@@ -41,9 +43,11 @@ class AssetListFragment : BaseFragment(R.layout.fragment_vod_list) {
                 else null
 
         list.adapter = adapter
-        adapter.assets = args.assets
-        if (args.isScrollToLive && args.assets.isNotEmpty()) {
-            var liveAssetPosition = args.assets.indexOfFirst { it is ProgramAsset && it.isProgramInLive() }
+        if (args.watchedAssets == null) adapter.assets = args.assets!!
+        else adapter.watchedAssets = args.watchedAssets!!
+
+        if (args.isScrollToLive && args.assets!!.isNotEmpty()) {
+            var liveAssetPosition = args.assets!!.indexOfFirst { it is ProgramAsset && it.isProgramInLive() }
             if (liveAssetPosition < 0) liveAssetPosition = 0
             if (liveAssetPosition > 2) liveAssetPosition -= 3 // minus 3 items from the top, to move live asset to the middle of the screen
             list.scrollToPosition(liveAssetPosition)

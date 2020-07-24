@@ -11,6 +11,7 @@ enum class Feature(val text: String, @DrawableRes val imageResId: Int) {
     ANONYMOUS_LOGIN("Anonymous\nlogin", R.drawable.ic_anonymous),
     REGISTRATION("Registration", R.drawable.ic_registration),
     VOD("VOD gallery", R.drawable.ic_vod),
+    CONTINUE_WATCHING("Continue watching", R.drawable.ic_continue_watching),
     EPG("EPG", R.drawable.ic_epg),
     LIVE("Live TV", R.drawable.ic_live_tv),
     FAVORITES("Favorites", R.drawable.ic_favorite),
