@@ -18,14 +18,16 @@ import kotlinx.android.synthetic.main.fragment_vod_list.*
 class AssetListFragment : BaseFragment(R.layout.fragment_vod_list) {
 
     private val args: AssetListFragmentArgs by navArgs()
-    private val adapter = AssetListAdapter().apply {
-        vodClickListener = { asset ->
-            val startPosition = args.watchedAssets?.firstOrNull { it.asset.id == asset.id }?.position
-                    ?: 0
-            navigate(AssetListFragmentDirections.navigateToPlayer(asset = asset, startPosition = startPosition))
-        }
-        programClickListener = { asset, contextType ->
-            navigate(AssetListFragmentDirections.navigateToPlayer(asset = asset, playbackContextType = contextType.value))
+    private val adapter by lazy {
+        AssetListAdapter(args.isShowActions).apply {
+            vodClickListener = { asset ->
+                val startPosition = args.watchedAssets?.firstOrNull { it.asset.id == asset.id }?.position
+                        ?: 0
+                navigate(AssetListFragmentDirections.navigateToPlayer(asset = asset, startPosition = startPosition))
+            }
+            programClickListener = { asset, contextType ->
+                navigate(AssetListFragmentDirections.navigateToPlayer(asset = asset, playbackContextType = contextType.value))
+            }
         }
     }
 

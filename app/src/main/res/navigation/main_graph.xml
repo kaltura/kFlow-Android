@@ -32,6 +32,13 @@
             app:popEnterAnim="@anim/fragment_fade_enter"
             app:popExitAnim="@anim/fragment_fade_exit" />
         <action
+            android:id="@+id/navigate_to_collections"
+            app:destination="@id/collections"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit" />
+        <action
             android:id="@+id/navigate_to_vod"
             app:destination="@id/vod"
             app:enterAnim="@anim/fragment_fade_enter"
@@ -195,6 +202,16 @@
     </fragment>
 
     <fragment
+        android:id="@+id/collections"
+        android:name="com.kaltura.kflow.presentation.collections.GetCollectionsFragment"
+        android:label="Collections"
+        tools:layout="@layout/fragment_collections">
+        <action
+            android:id="@+id/navigate_to_asset_list"
+            app:destination="@id/asset_list" />
+    </fragment>
+
+    <fragment
         android:id="@+id/continue_watching"
         android:name="com.kaltura.kflow.presentation.continueWatching.ContinueWatchingFragment"
         android:label="Continue Watching"
@@ -290,6 +307,10 @@
         android:name="com.kaltura.kflow.presentation.assetList.AssetListFragment"
         android:label="Asset list"
         tools:layout="@layout/fragment_vod_list">
+        <argument
+            android:name="isShowActions"
+            android:defaultValue="true"
+            app:argType="boolean" />
         <argument
             android:name="isScrollToLive"
             android:defaultValue="false"

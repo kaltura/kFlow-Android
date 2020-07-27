@@ -17,7 +17,7 @@ import java.util.*
 /**
  * Created by alex_lytvynenko on 30.11.2018.
  */
-class AssetListAdapter : RecyclerView.Adapter<AssetListAdapter.MyViewHolder>() {
+class AssetListAdapter(private val isShowActions: Boolean) : RecyclerView.Adapter<AssetListAdapter.MyViewHolder>() {
 
     var vodClickListener: (asset: Asset) -> Unit = {}
     var programClickListener: (asset: Asset, contextType: APIDefines.PlaybackContextType) -> Unit = { _, _ -> Unit }
@@ -95,6 +95,12 @@ class AssetListAdapter : RecyclerView.Adapter<AssetListAdapter.MyViewHolder>() {
             }
             startover.setOnClickListener { programClickListener(asset, APIDefines.PlaybackContextType.StartOver) }
             catchUp.setOnClickListener { programClickListener(asset, APIDefines.PlaybackContextType.Catchup) }
+
+            if (isShowActions.not()) {
+                playback.gone()
+                startover.gone()
+                catchUp.gone()
+            }
         }
     }
 }
