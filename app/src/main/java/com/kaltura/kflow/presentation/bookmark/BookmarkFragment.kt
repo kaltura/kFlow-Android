@@ -1,9 +1,11 @@
 package com.kaltura.kflow.presentation.bookmark
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.Snackbar
 import com.kaltura.client.enums.AssetType
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
@@ -67,16 +69,20 @@ class BookmarkFragment : SharedTransitionFragment(R.layout.fragment_bookmark) {
                     }
                 })
         observeResource(viewModel.asset,
-                error = { play.error(lifecycleScope) },
+                error = {
+                    Snackbar.make(requireView(), "Error fetching asset", Snackbar.LENGTH_LONG).show()
+                },
                 success = {
-                    play.success(lifecycleScope)
-                    play.postDelayed({ playAssets(it) }, 2000)
+                    play.isEnabled = true
+                    playAssets(it)
                 })
         observeResource(viewModel.recording,
-                error = { play.error(lifecycleScope) },
+                error = {
+                    Snackbar.make(requireView(), "Error fetching recording", Snackbar.LENGTH_LONG).show()
+                },
                 success = {
-                    play.success(lifecycleScope)
-                    play.postDelayed({ playRecording(it) }, 2000)
+                    play.isEnabled = true
+                    playRecording(it)
                 })
     }
 
@@ -104,12 +110,13 @@ class BookmarkFragment : SharedTransitionFragment(R.layout.fragment_bookmark) {
         withInternetConnection {
             clearDebugView()
             clearInputLayouts()
-            play.startAnimation {
-                if (assetTypes[assetType.selectedItemPosition] == AssetType.RECORDING)
-                    viewModel.getRecording(recordingId = assetId.string)
-                else
-                    viewModel.getAsset(assetId = assetId.string, assetType = assetTypes[assetType.selectedItemPosition])
-            }
+
+            play.isEnabled = false
+
+            if (assetTypes[assetType.selectedItemPosition] == AssetType.RECORDING)
+                viewModel.getRecording(recordingId = assetId.string)
+            else
+                viewModel.getAsset(assetId = assetId.string, assetType = assetTypes[assetType.selectedItemPosition])
         }
     }
 
@@ -118,14 +125,16 @@ class BookmarkFragment : SharedTransitionFragment(R.layout.fragment_bookmark) {
     }
 
     private fun playAssets(asset: Asset) {
-        if (isAdded.not()) return
-        navigate(BookmarkFragmentDirections.navigateToPlayer(asset = asset,
-                startPosition = bookmarks.firstOrNull()?.position ?: 0))
+        Handler().postDelayed({
+            navigate(BookmarkFragmentDirections.navigateToPlayer(asset = asset,
+                    startPosition = bookmarks.firstOrNull()?.position ?: 0))
+        }, 200)
     }
 
     private fun playRecording(recording: Recording) {
-        if (isAdded.not()) return
-        navigate(BookmarkFragmentDirections.navigateToPlayer(recording = recording,
-                startPosition = bookmarks.firstOrNull()?.position ?: 0))
+        Handler().postDelayed({
+            navigate(BookmarkFragmentDirections.navigateToPlayer(recording = recording,
+                    startPosition = bookmarks.firstOrNull()?.position ?: 0))
+        }, 200)
     }
 }

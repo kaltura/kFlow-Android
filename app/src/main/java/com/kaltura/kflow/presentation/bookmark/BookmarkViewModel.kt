@@ -10,6 +10,7 @@ import com.kaltura.client.types.*
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
 import com.kaltura.kflow.utils.Resource
+import com.kaltura.kflow.utils.SingleLiveEvent
 
 /**
  * Created by alex_lytvynenko on 2020-01-14.
@@ -17,10 +18,11 @@ import com.kaltura.kflow.utils.Resource
 class BookmarkViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
 
     val bookmarkList = MutableLiveData<Resource<ArrayList<Bookmark>>>()
-    val asset = MutableLiveData<Resource<Asset>>()
-    val recording = MutableLiveData<Resource<Recording>>()
+    val asset = SingleLiveEvent<Resource<Asset>>()
+    val recording = SingleLiveEvent<Resource<Recording>>()
 
     fun getBookmarkListRequest(assetId: String, assetType: AssetType) {
+        apiManager.cancelAll()
         val filter = BookmarkFilter().apply {
             assetIdIn = assetId
             assetTypeEqual = assetType
