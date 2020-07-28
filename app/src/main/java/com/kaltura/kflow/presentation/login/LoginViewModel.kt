@@ -2,6 +2,7 @@ package com.kaltura.kflow.presentation.login
 
 import androidx.lifecycle.MutableLiveData
 import com.kaltura.client.services.OttUserService
+import com.kaltura.client.types.StringValue
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
@@ -15,8 +16,8 @@ class LoginViewModel(private val apiManager: PhoenixApiManager,
 
     val loginRequest = MutableLiveData<Resource<Unit>>()
 
-    fun makeLoginRequest(email: String, password: String, udid: String) {
-        apiManager.execute(OttUserService.login(preferenceManager.partnerId, email, password, null, udid)
+    fun makeLoginRequest(email: String, password: String, udid: String, extraParams: HashMap<String, StringValue>? = null) {
+        apiManager.execute(OttUserService.login(preferenceManager.partnerId, email, password, extraParams, udid)
                 .setCompletion {
                     if (it.isSuccess) {
                         preferenceManager.ks = it.results.loginSession.ks

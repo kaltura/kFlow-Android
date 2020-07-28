@@ -3,6 +3,7 @@ package com.kaltura.kflow.presentation.login
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import com.kaltura.client.types.StringValue
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
@@ -27,8 +28,12 @@ class LoginFragment : SharedTransitionFragment(R.layout.fragment_login) {
         super.onViewCreated(view, savedInstanceState)
         login.setOnClickListener {
             hideKeyboard()
-            makeLoginRequest(username.string, password.string)
+            makeLoginRequest(username.string, password.string, extraParamsKey.string,
+                    extraParamsDescription.string, extraParamsValue.string)
         }
+        addExtraParams.setOnClickListener { showExtraParams(true) }
+        removeExtraParams.setOnClickListener { showExtraParams(false) }
+
         username.string = viewModel.getSavedUsername()
         password.string = viewModel.getSavedPassword()
     }
@@ -40,7 +45,8 @@ class LoginFragment : SharedTransitionFragment(R.layout.fragment_login) {
         )
     }
 
-    private fun makeLoginRequest(email: String, password: String) {
+    private fun makeLoginRequest(email: String, password: String, extraParamsKey: String,
+                                 extraParamsDescription: String, extraParamsValue: String) {
         withInternetConnection {
             clearDebugView()
             clearInputLayouts()
@@ -52,14 +58,39 @@ class LoginFragment : SharedTransitionFragment(R.layout.fragment_login) {
                 passwordInputLayout.showError("Empty password")
                 return@withInternetConnection
             }
+
+            var extraParams: HashMap<String, StringValue>? = null
+            if (extraParamsKey.isNotEmpty() && extraParamsDescription.isNotEmpty() && extraParamsValue.isNotEmpty())
+                extraParams = hashMapOf(extraParamsKey to StringValue().apply {
+                    description = extraParamsDescription
+                    value = extraParamsValue
+                })
+
             login.startAnimation {
-                viewModel.makeLoginRequest(email, password, getUUID(requireContext()))
+                viewModel.makeLoginRequest(email, password, getUUID(requireContext()), extraParams)
             }
+        }
+    }
+
+    private fun showExtraParams(isShow: Boolean) {
+        addExtraParams.visibleOrGone(isShow.not())
+        removeExtraParams.visibleOrGone(isShow)
+        extraParamsKeyInputLayout.visibleOrGone(isShow)
+        extraParamsDescriptionInputLayout.visibleOrGone(isShow)
+        extraParamsValueInputLayout.visibleOrGone(isShow)
+
+        if (isShow.not()) {
+            extraParamsKey.text?.clear()
+            extraParamsDescription.text?.clear()
+            extraParamsValue.text?.clear()
         }
     }
 
     private fun clearInputLayouts() {
         usernameInputLayout.hideError()
         passwordInputLayout.hideError()
+        extraParamsKeyInputLayout.hideError()
+        extraParamsDescriptionInputLayout.hideError()
+        extraParamsValueInputLayout.hideError()
     }
 }
