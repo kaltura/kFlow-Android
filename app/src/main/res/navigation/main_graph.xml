@@ -140,6 +140,13 @@
             app:popEnterAnim="@anim/fragment_fade_enter"
             app:popExitAnim="@anim/fragment_fade_exit" />
         <action
+            android:id="@+id/navigate_to_bookmark"
+            app:destination="@id/bookmark"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit" />
+        <action
             android:id="@+id/navigate_to_settings"
             app:destination="@id/settings"
             app:enterAnim="@anim/fragment_fade_enter"
@@ -295,6 +302,16 @@
         android:name="com.kaltura.kflow.presentation.transactionHistory.TransactionHistoryFragment"
         android:label="Transaction history"
         tools:layout="@layout/fragment_transaction_history" />
+
+    <fragment
+        android:id="@+id/bookmark"
+        android:name="com.kaltura.kflow.presentation.bookmark.BookmarkFragment"
+        android:label="Bookmark"
+        tools:layout="@layout/fragment_bookmark">
+        <action
+            android:id="@+id/navigate_to_player"
+            app:destination="@id/player" />
+    </fragment>
 
     <fragment
         android:id="@+id/settings"

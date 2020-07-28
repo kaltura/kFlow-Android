@@ -24,5 +24,6 @@ enum class Feature(val text: String, @DrawableRes val imageResId: Int) {
     CHECK_RECEIPT("Check receipt", R.drawable.ic_check_receipt),
     TRANSACTION_HISTORY("Transaction\nhistory", R.drawable.ic_transaction_history),
     RECORDINGS("Recordings", R.drawable.ic_recordings),
+    BOOKMARK("Bookmark", R.drawable.ic_bookmark),
     SETTINGS("Settings", R.drawable.ic_settings);
 }

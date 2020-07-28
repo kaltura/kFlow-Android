@@ -1,6 +1,7 @@
 package com.kaltura.kflow.presentation.di
 
 import com.kaltura.kflow.presentation.anonymousLogin.AnonymousLoginViewModel
+import com.kaltura.kflow.presentation.bookmark.BookmarkViewModel
 import com.kaltura.kflow.presentation.checkReceipt.CheckReceiptViewModel
 import com.kaltura.kflow.presentation.collections.GetCollectionsViewModel
 import com.kaltura.kflow.presentation.continueWatching.ContinueWatchingViewModel
@@ -43,4 +44,5 @@ val viewModelModule = module {
     viewModel { GetVodViewModel(get(), get()) }
     viewModel { ContinueWatchingViewModel(get()) }
     viewModel { GetCollectionsViewModel(get()) }
+    viewModel { BookmarkViewModel(get()) }
 }
