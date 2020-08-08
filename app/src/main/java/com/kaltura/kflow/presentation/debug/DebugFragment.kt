@@ -11,6 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.base.BaseFragment
 import com.kaltura.kflow.presentation.extension.invisible
+import com.kaltura.kflow.presentation.extension.runOnTv
 import com.kaltura.kflow.presentation.extension.shareFile
 import com.kaltura.kflow.presentation.extension.visible
 import com.kaltura.kflow.utils.saveToFile
@@ -44,10 +45,18 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
                 BottomSheetBehavior.STATE_COLLAPSED -> {
                     debugTitle.width = minTitleWidth
                     share.invisible()
+
+                    runOnTv {
+                        debugTitle.text = "Network log (Click to expand)"
+                    }
                 }
                 BottomSheetBehavior.STATE_EXPANDED -> {
                     debugTitle.width = maxTitleWidth
                     share.visible()
+
+                    runOnTv {
+                        debugTitle.text = "Network log (Click to collapse)"
+                    }
                 }
                 else -> share.invisible()
             }
@@ -63,7 +72,13 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
         bottomSheetBehavior.isHideable = true
         bottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback)
-        debugTitle.setOnClickListener { bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED }
+        debugTitle.setOnClickListener {
+            bottomSheetBehavior.state =
+                    if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
+                        BottomSheetBehavior.STATE_COLLAPSED
+                    else
+                        BottomSheetBehavior.STATE_EXPANDED
+        }
         share.setOnClickListener { share() }
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 

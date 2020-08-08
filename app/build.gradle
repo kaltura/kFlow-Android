@@ -10,7 +10,7 @@ android {
         applicationId "com.kaltura.kflow"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 14
+        versionCode 15
         versionName "2.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -58,8 +58,8 @@ dependencies {
     implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
 
     // Navigation
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.2.2'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
 
     // Koin
     implementation 'org.koin:koin-androidx-viewmodel:2.0.1'

@@ -79,3 +79,8 @@ fun Fragment.showKeyboard(view: View) {
     view.requestFocus()
     view.context.inputManager?.showSoftInput(view, 0)
 }
+
+fun Fragment.isTv() = requireContext().isTv()
+fun Fragment.runOnTv(action: () -> Unit) {
+    if (isTv()) action()
+}

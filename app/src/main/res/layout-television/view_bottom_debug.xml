@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomSheetLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    app:behavior_peekHeight="60dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/debugTitle"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:insetBottom="0dp"
+        android:text="Network log (Click to collapse)"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:backgroundTint="@color/debug_title_selector"
+        app:icon="@drawable/ic_attach_file_black_24dp"
+        app:iconPadding="6dp"
+        app:iconTint="@android:color/white"
+        app:shapeAppearance="@style/ShapeBottomSheetNetworkLog" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/debugTitle"
+        android:layout_alignBottom="@+id/debugTitle"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/ic_share_white_24dp"
+        android:visibility="invisible" />
+
+    <com.kaltura.kflow.presentation.debug.DebugView
+        android:id="@+id/debugView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/debugTitle"
+        android:layout_alignStart="@+id/debugTitle"
+        android:layout_alignEnd="@+id/debugTitle"
+        android:background="@android:color/white" />
+</RelativeLayout>
