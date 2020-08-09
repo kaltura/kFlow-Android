@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "733951676475",
+    "firebase_url": "https://k-flow-7bb54.firebaseio.com",
+    "project_id": "k-flow-7bb54",
+    "storage_bucket": "k-flow-7bb54.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:733951676475:android:9b522ff60f493f0f42cc1e",
+        "android_client_info": {
+          "package_name": "com.kaltura.kflow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "733951676475-b1ito2ume5mc38m40en6b4j8pjgm4rdi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhyxzgF62mA_BNaadJvVxVnU7gnGyjxro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "733951676475-b1ito2ume5mc38m40en6b4j8pjgm4rdi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 29
@@ -83,4 +84,7 @@ dependencies {
     implementation 'com.kaltura.playkit:youboraplugin:4.8.0'
     implementation 'com.kaltura.playkit:kavaplugin:4.8.0'
     implementation 'com.kaltura.playkit:vrplugin:4.8.0'
+
+    // Firebase
+    implementation 'com.google.firebase:firebase-analytics:17.4.4'
 }
