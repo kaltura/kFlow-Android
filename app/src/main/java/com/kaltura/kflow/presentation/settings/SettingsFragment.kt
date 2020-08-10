@@ -38,9 +38,9 @@ class SettingsFragment : SharedTransitionFragment(R.layout.fragment_settings) {
     override fun subscribeUI() {}
 
     private fun initUI() {
-        url.string = viewModel.baseUrl
-        partnerId.string = viewModel.partnerId.toString()
-        mediaFileFormat.string = viewModel.mediaFileFormat
+        url.string = "https://api.prt1.ott.kaltura.com";//viewModel.baseUrl
+        partnerId.string = "3199";//viewModel.partnerId.toString()
+        mediaFileFormat.string = "Bouygues_Live_Dash"; //viewModel.mediaFileFormat
     }
 
     private fun save(baseUrl: String, partnerId: String, mediaFileFormat: String) {
