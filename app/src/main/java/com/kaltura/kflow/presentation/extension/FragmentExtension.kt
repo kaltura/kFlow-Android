@@ -84,3 +84,8 @@ fun Fragment.isTv() = requireContext().isTv()
 fun Fragment.runOnTv(action: () -> Unit) {
     if (isTv()) action()
 }
+
+fun Fragment.isMobile() = requireContext().isMobile()
+fun Fragment.runOnMobile(action: () -> Unit) {
+    if (isMobile()) action()
+}

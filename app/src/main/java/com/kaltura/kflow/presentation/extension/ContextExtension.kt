@@ -36,3 +36,8 @@ fun Context.isTv() = uiModeManager.currentModeType == Configuration.UI_MODE_TYPE
 fun Context.runOnTv(action: () -> Unit) {
     if (isTv()) action()
 }
+
+fun Context.isMobile() = uiModeManager.currentModeType == Configuration.UI_MODE_TYPE_NORMAL
+fun Context.runOnMobile(action: () -> Unit) {
+    if (isMobile()) action()
+}

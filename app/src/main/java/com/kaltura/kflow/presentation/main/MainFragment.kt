@@ -8,6 +8,7 @@ import androidx.dynamicanimation.animation.SpringForce
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.*
 import com.kaltura.kflow.R
+import com.kaltura.kflow.presentation.extension.isTv
 import com.kaltura.kflow.presentation.extension.navigateWithExtras
 import kotlinx.android.synthetic.main.fragment_main.*
 
@@ -49,7 +50,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     private fun initList() {
         list.setHasFixedSize(true)
-        list.layoutManager = GridLayoutManager(requireContext(), 2)
+        list.layoutManager = GridLayoutManager(requireContext(), if (isTv()) 4 else 2)
         val adapter = FeatureAdapter(features)
         adapter.clickListener = { feature, image, title ->
             navigateWithExtras(when (feature) {

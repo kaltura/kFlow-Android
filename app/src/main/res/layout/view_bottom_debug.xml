@@ -14,7 +14,6 @@
         android:layout_width="wrap_content"
         android:layout_height="60dp"
         android:layout_alignParentEnd="true"
-        android:background="@android:color/black"
         android:gravity="center_vertical"
         android:insetBottom="0dp"
         android:text="Network log"

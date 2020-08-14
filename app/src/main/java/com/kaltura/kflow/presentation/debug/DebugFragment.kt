@@ -10,10 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.base.BaseFragment
-import com.kaltura.kflow.presentation.extension.invisible
-import com.kaltura.kflow.presentation.extension.runOnTv
-import com.kaltura.kflow.presentation.extension.shareFile
-import com.kaltura.kflow.presentation.extension.visible
+import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.utils.saveToFile
 import com.kaltura.kflow.utils.screenWidth
 import kotlinx.android.synthetic.main.view_bottom_debug.*
@@ -45,18 +42,10 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
                 BottomSheetBehavior.STATE_COLLAPSED -> {
                     debugTitle.width = minTitleWidth
                     share.invisible()
-
-                    runOnTv {
-                        debugTitle.text = "Network log (Click to expand)"
-                    }
                 }
                 BottomSheetBehavior.STATE_EXPANDED -> {
                     debugTitle.width = maxTitleWidth
                     share.visible()
-
-                    runOnTv {
-                        debugTitle.text = "Network log (Click to collapse)"
-                    }
                 }
                 else -> share.invisible()
             }
@@ -65,10 +54,18 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        runOnMobile {
+            initMobile()
+        }
+        share.setOnClickListener { share() }
+        apiManager.setDebugListener(this)
+    }
+
+    private fun initMobile() {
         maxTitleWidth = screenWidth()
         debugTitle.doOnLayout { minTitleWidth = debugTitle.width }
 
-        apiManager.setDebugListener(this)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
         bottomSheetBehavior.isHideable = true
         bottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback)
@@ -79,7 +76,6 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
                     else
                         BottomSheetBehavior.STATE_EXPANDED
         }
-        share.setOnClickListener { share() }
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
@@ -91,7 +87,9 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
 
     override fun onDestroyView() {
         super.onDestroyView()
-        bottomSheetBehavior.removeBottomSheetCallback(bottomSheetCallback)
+        runOnMobile {
+            bottomSheetBehavior.removeBottomSheetCallback(bottomSheetCallback)
+        }
         apiManager.removeDebugListener()
     }
 
@@ -103,7 +101,9 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
 
     override fun setRequestBody(jsonObject: JSONObject) {
         debugView().setRequestBody(jsonObject)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        runOnMobile {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
     }
 
     override fun setResponseBody(jsonObject: JSONObject) {
@@ -121,6 +121,8 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
 
     protected fun clearDebugView() {
         debugView().clear()
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        runOnMobile {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
     }
 }

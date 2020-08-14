@@ -12,7 +12,7 @@ enum class Feature(val text: String, @DrawableRes val imageResId: Int) {
     REGISTRATION("Registration", R.drawable.ic_registration),
     COLLECTIONS("Collections", R.drawable.ic_collections),
     VOD("VOD gallery", R.drawable.ic_vod),
-    CONTINUE_WATCHING("Continue watching", R.drawable.ic_continue_watching),
+    CONTINUE_WATCHING("Continue\nwatching", R.drawable.ic_continue_watching),
     EPG("EPG", R.drawable.ic_epg),
     LIVE("Live TV", R.drawable.ic_live_tv),
     FAVORITES("Favorites", R.drawable.ic_favorite),
