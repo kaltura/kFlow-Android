@@ -1,6 +1,7 @@
 package com.kaltura.kflow.presentation.di
 
 import com.kaltura.kflow.presentation.anonymousLogin.AnonymousLoginViewModel
+import com.kaltura.kflow.presentation.aws.IotViewModel
 import com.kaltura.kflow.presentation.bookmark.BookmarkViewModel
 import com.kaltura.kflow.presentation.checkReceipt.CheckReceiptViewModel
 import com.kaltura.kflow.presentation.collections.GetCollectionsViewModel
@@ -45,4 +46,5 @@ val viewModelModule = module {
     viewModel { ContinueWatchingViewModel(get()) }
     viewModel { GetCollectionsViewModel(get()) }
     viewModel { BookmarkViewModel(get()) }
+    viewModel { IotViewModel(get(), get()) }
 }
