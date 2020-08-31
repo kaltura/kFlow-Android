@@ -17,22 +17,22 @@ fun hasInternetConnection(context: Context): Boolean {
 }
 
 fun getUUID(context: Context): String {
-//    val androidId = Settings.Secure.getString(context.contentResolver,
-//            Settings.Secure.ANDROID_ID)
-//    val uuid: UUID
-//    uuid = try {
-//        if ("9774d56d682e549c" != androidId) {
-//            UUID.nameUUIDFromBytes(androidId.toByteArray(charset("utf8")))
-//        } else {
-//            val deviceId = (context
-//                    .getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager)
-//                    .deviceId
-//            UUID.nameUUIDFromBytes(deviceId.toByteArray(charset("utf8")))
-//        }
-//    } catch (e: UnsupportedEncodingException) {
-//        throw RuntimeException(e)
-//    }
-    return "e5338f7d-1829-307c-a43a-59438c61c775"
+    val androidId = Settings.Secure.getString(context.contentResolver,
+            Settings.Secure.ANDROID_ID)
+    val uuid: UUID
+    uuid = try {
+        if ("9774d56d682e549c" != androidId) {
+            UUID.nameUUIDFromBytes(androidId.toByteArray(charset("utf8")))
+        } else {
+            val deviceId = (context
+                    .getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager)
+                    .deviceId
+            UUID.nameUUIDFromBytes(deviceId.toByteArray(charset("utf8")))
+        }
+    } catch (e: UnsupportedEncodingException) {
+        throw RuntimeException(e)
+    }
+    return uuid.toString()
 }
 
 /**
