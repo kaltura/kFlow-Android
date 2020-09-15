@@ -291,10 +291,12 @@ public class PlayerFragment extends DebugFragment {
     }
 
     private String getAssetIdByFlowType() {
-        if (mAsset instanceof ProgramAsset && getPlaybackContextType() == APIDefines.PlaybackContextType.Playback)
+
+        if(mRecording != null)
+            return String.valueOf(mRecording.getId());
+        else if (mAsset instanceof ProgramAsset && getPlaybackContextType() == APIDefines.PlaybackContextType.Playback)
             return String.valueOf(((ProgramAsset) mAsset).getLinearAssetId());
-        else if (mRecording == null) return String.valueOf(mAsset.getId());
-        else return String.valueOf(mRecording.getId());
+        else return String.valueOf(mAsset.getId());
     }
 
     private APIDefines.KalturaAssetType getAssetType(APIDefines.PlaybackContextType playbackContextType) {
@@ -307,6 +309,9 @@ public class PlayerFragment extends DebugFragment {
 
     private APIDefines.PlaybackContextType getPlaybackContextType() {
         if (initialPlaybackContextType != null) return initialPlaybackContextType;
+
+        if(mRecording != null)
+            return APIDefines.PlaybackContextType.Playback;
 
         if (mAsset instanceof ProgramAsset && Utils.isProgramInPast(mAsset))
             return APIDefines.PlaybackContextType.Catchup;

@@ -35,7 +35,7 @@ dependencies {
         exclude module: 'log4j-core'
     }
     implementation 'com.kaltura.playkit:playkit:3.9.4'
-    implementation 'com.kaltura.playkit:playkitproviders:3.9.10'
+    implementation 'com.kaltura.playkit:playkitproviders:3.9.11'
     implementation 'com.kaltura.playkit:youboraplugin:3.9.4'
     implementation 'com.kaltura.playkit:kavaplugin:3.9.4'
     implementation 'com.kaltura.playkit:vrplugin:3.9.4'
