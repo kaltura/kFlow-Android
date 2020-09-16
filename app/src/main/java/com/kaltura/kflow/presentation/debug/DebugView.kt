@@ -19,6 +19,11 @@ class DebugView @JvmOverloads constructor(
         defStyleAttr: Int = 0) : LinearLayout(context, attrs, defStyleAttr) {
 
     var requestUrl: String = ""
+        set(value) {
+            field = value
+            updateServiceUrl()
+        }
+
     var requestMethod: String = ""
     var responseCode = 0
     private var requestJson: JSONObject = JSONObject()
@@ -85,6 +90,7 @@ class DebugView @JvmOverloads constructor(
         responseJson = JSONObject()
         requestBody.text = ""
         responseBody.text = ""
+        serviceUrlBody.text = ""
         requestSort.invisible()
         responseSort.invisible()
     }
@@ -99,4 +105,9 @@ class DebugView @JvmOverloads constructor(
     private fun getRequestJsonAsText() = if (requestSort.isSelected) requestJson.toString(2) else requestJson.toString()
 
     private fun getResponseJsonAsText() = if (responseSort.isSelected) responseJson.toString(2) else responseJson.toString()
+
+    private fun updateServiceUrl() {
+        val serviceUrl = requestUrl.split("service")
+        serviceUrlBody.text = serviceUrl.getOrNull(1) ?: ""
+    }
 }
