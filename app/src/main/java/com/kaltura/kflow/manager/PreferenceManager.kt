@@ -25,7 +25,7 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit().putString(KEY_AUTH_PASSWORD, value).apply()
 
     var baseUrl: String
-        get() = prefs.getString(KEY_BASE_URL, null) ?: "https://rest-us.ott.kaltura.com/v5_0_3/"
+        get() = prefs.getString(KEY_BASE_URL, null) ?: "https://442.frp1.ott.kaltura.com"
         set(value) = prefs.edit().putString(KEY_BASE_URL, value).apply()
 
     var vodAssetType: String
@@ -33,11 +33,11 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit().putString(KEY_VOD_ASSET_TYPE, value).apply()
 
     var mediaFileFormat: String
-        get() = prefs.getString(KEY_MAIN_MEDIA_FILE_FORMAT, null) ?: ""
+        get() = prefs.getString(KEY_MAIN_MEDIA_FILE_FORMAT, "Web_High") ?: ""
         set(value) = prefs.edit().putString(KEY_MAIN_MEDIA_FILE_FORMAT, value).apply()
 
     var partnerId: Int
-        get() = prefs.getInt(KEY_PARTNER_ID, 3009)
+        get() = prefs.getInt(KEY_PARTNER_ID, 442)
         set(value) = prefs.edit().putInt(KEY_PARTNER_ID, value).apply()
 
     var ks: String?

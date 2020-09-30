@@ -4,13 +4,16 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import com.kaltura.client.enums.*
-import com.kaltura.client.types.*
+import com.kaltura.client.enums.AssetIndexStatus
+import com.kaltura.client.enums.RuleType
+import com.kaltura.client.types.Asset
+import com.kaltura.client.types.ProgramAsset
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
@@ -18,6 +21,7 @@ import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.playkit.*
 import com.kaltura.playkit.PlayerEvent.StateChanged
 import com.kaltura.playkit.PlayerEvent.TracksAvailable
+import com.kaltura.playkit.player.ABRSettings
 import com.kaltura.playkit.player.PKTracks
 import com.kaltura.playkit.player.TextTrack
 import com.kaltura.playkit.plugins.SamplePlugin
@@ -241,6 +245,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                 settings.setSecureSurface(false)
                 settings.setAllowCrossProtocolRedirect(true)
                 settings.setCea608CaptionsEnabled(true) // default is false
+                settings.setABRSettings(ABRSettings().setInitialBitrateEstimate(400000))
             }
 
             addPlayerListeners()
