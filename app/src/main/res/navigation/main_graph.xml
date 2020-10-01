@@ -154,6 +154,13 @@
             app:popEnterAnim="@anim/fragment_fade_enter"
             app:popExitAnim="@anim/fragment_fade_exit" />
         <action
+            android:id="@+id/navigate_to_device_management"
+            app:destination="@id/device_management"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit" />
+        <action
             android:id="@+id/navigate_to_settings"
             app:destination="@id/settings"
             app:enterAnim="@anim/fragment_fade_enter"
@@ -331,6 +338,12 @@
         android:name="com.kaltura.kflow.presentation.aws.IotFragment"
         android:label="IoT"
         tools:layout="@layout/fragment_iot" />
+
+    <fragment
+        android:id="@+id/device_management"
+        android:name="com.kaltura.kflow.presentation.deviceManagement.DeviceManagementFragment"
+        android:label="Device Management"
+        tools:layout="@layout/fragment_device_management" />
 
     <fragment
         android:id="@+id/asset_list"

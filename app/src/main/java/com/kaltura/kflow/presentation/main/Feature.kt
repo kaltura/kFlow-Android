@@ -26,5 +26,6 @@ enum class Feature(val text: String, @DrawableRes val imageResId: Int) {
     RECORDINGS("Recordings", R.drawable.ic_recordings),
     BOOKMARK("Bookmark", R.drawable.ic_bookmark),
     IOT("IOT", R.drawable.ic_iot),
+    DEVICE_MANAGEMENT("Device\nmanagement", R.drawable.ic_device_management),
     SETTINGS("Settings", R.drawable.ic_settings);
 }

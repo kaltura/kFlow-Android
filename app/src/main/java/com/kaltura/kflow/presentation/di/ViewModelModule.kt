@@ -6,6 +6,7 @@ import com.kaltura.kflow.presentation.bookmark.BookmarkViewModel
 import com.kaltura.kflow.presentation.checkReceipt.CheckReceiptViewModel
 import com.kaltura.kflow.presentation.collections.GetCollectionsViewModel
 import com.kaltura.kflow.presentation.continueWatching.ContinueWatchingViewModel
+import com.kaltura.kflow.presentation.deviceManagement.DeviceManagementViewModel
 import com.kaltura.kflow.presentation.epg.EpgViewModel
 import com.kaltura.kflow.presentation.favorites.FavoritesViewModel
 import com.kaltura.kflow.presentation.liveTv.LiveTvViewModel
@@ -47,4 +48,5 @@ val viewModelModule = module {
     viewModel { GetCollectionsViewModel(get()) }
     viewModel { BookmarkViewModel(get()) }
     viewModel { IotViewModel(get(), get()) }
+    viewModel { DeviceManagementViewModel(get()) }
 }
