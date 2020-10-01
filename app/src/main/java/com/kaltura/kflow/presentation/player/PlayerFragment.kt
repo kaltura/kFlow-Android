@@ -245,7 +245,6 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                 settings.setSecureSurface(false)
                 settings.setAllowCrossProtocolRedirect(true)
                 settings.setCea608CaptionsEnabled(true) // default is false
-                settings.setABRSettings(ABRSettings().setInitialBitrateEstimate(400000))
             }
 
             addPlayerListeners()
