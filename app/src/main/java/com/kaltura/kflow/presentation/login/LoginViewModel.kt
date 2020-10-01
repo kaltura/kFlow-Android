@@ -7,6 +7,7 @@ import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
 import com.kaltura.kflow.utils.Resource
+import com.kaltura.playkit.player.PKHttpClientManager
 
 /**
  * Created by alex_lytvynenko on 2020-01-09.
@@ -25,6 +26,20 @@ class LoginViewModel(private val apiManager: PhoenixApiManager,
                         preferenceManager.authUser = email
                         preferenceManager.authPassword = password
                         loginRequest.value = Resource.Success(Unit)
+
+                        //
+                        PKHttpClientManager.setHttpProvider("okhttp");
+                        PKHttpClientManager.warmUp(
+                                "https://rest-as.ott.kaltura.com/crossdomain.xml",
+                                "https://cdnapisec.kaltura.com/favicon.ico",
+                                "https://rgeichannel2ipv6.akamaized.net",
+                                "https://kidsvod.akamaized.net",
+                                "https://cdnapisec.kaltura.com",
+                                "https://442.frp1.ott.kaltura.com",
+                                "https://udrm.kaltura.com"
+                        );
+                        //
+
                     } else {
                         loginRequest.value = Resource.Error(it.error)
                     }
