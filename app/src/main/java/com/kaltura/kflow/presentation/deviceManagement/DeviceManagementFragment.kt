@@ -29,7 +29,7 @@ class DeviceManagementFragment : SharedTransitionFragment(R.layout.fragment_devi
 
         removeDeviceRequest.setOnClickListener {
             hideKeyboard()
-            removeDeviceFromHousehold(udidDeviceToRemove.string)
+            removeDeviceFromHousehold()
         }
         addDeviceRequest.setOnClickListener {
             hideKeyboard()
@@ -52,18 +52,12 @@ class DeviceManagementFragment : SharedTransitionFragment(R.layout.fragment_devi
                 })
     }
 
-    private fun removeDeviceFromHousehold(udid: String) {
+    private fun removeDeviceFromHousehold() {
         withInternetConnection {
             clearDebugView()
-            clearInputLayouts()
-
-            if (udid.isEmpty()) {
-                udidDeviceToRemoveInputLayout.showError("Empty UDID")
-                return@withInternetConnection
-            }
 
             removeDeviceRequest.startAnimation {
-                viewModel.removeDeviceFromHousehold(udid)
+                viewModel.removeDeviceFromHousehold(getUUID(requireContext()))
             }
         }
     }
@@ -71,15 +65,10 @@ class DeviceManagementFragment : SharedTransitionFragment(R.layout.fragment_devi
     private fun addDeviceToHousehold() {
         withInternetConnection {
             clearDebugView()
-            clearInputLayouts()
 
             addDeviceRequest.startAnimation {
                 viewModel.addDeviceToHousehold("${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}", getUUID(requireContext()))
             }
         }
-    }
-
-    private fun clearInputLayouts() {
-        udidDeviceToRemoveInputLayout.hideError()
     }
 }

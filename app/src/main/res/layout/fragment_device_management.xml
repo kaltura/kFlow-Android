@@ -23,26 +23,6 @@
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/udidDeviceToRemoveInputLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="10dp"
-            app:endIconMode="clear_text">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/udidDeviceToRemove"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="UDID"
-                android:imeOptions="actionDone"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
-
         <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/removeDeviceRequest"
             android:layout_width="match_parent"
@@ -62,18 +42,6 @@
             app:spinning_bar_color="#FFF"
             app:spinning_bar_padding="6dp"
             app:spinning_bar_width="2dp" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingStart="16dp"
-            android:paddingTop="10dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="10dp"
-            android:text="or"
-            android:textColor="@android:color/black"
-            android:textSize="20sp" />
 
         <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/addDeviceRequest"
