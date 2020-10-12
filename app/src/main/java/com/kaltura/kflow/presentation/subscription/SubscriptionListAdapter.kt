@@ -21,6 +21,8 @@ import com.kaltura.kflow.presentation.ui.expandableRecyclerView.ParentViewHolder
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_package.*
 import kotlinx.android.synthetic.main.item_subscription.*
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -47,7 +49,7 @@ class SubscriptionListAdapter(parentItemList: ArrayList<ParentRecyclerViewItem<A
     fun addSubscriptionToPackage(packageBaseId: Double, subscriptions: ArrayList<Subscription>) {
         parentItemList.forEach {
             val parentRecyclerViewItem = it as ParentRecyclerViewItem<Asset, Subscription>
-            val baseId = (parentRecyclerViewItem.parent).metas["Base ID"]
+            val baseId = (parentRecyclerViewItem.parent).metas["BaseID"]
             if (baseId != null && (baseId as DoubleValue).value == packageBaseId) {
                 expandParent(it)
                 parentRecyclerViewItem.children.addAll(subscriptions)
@@ -65,7 +67,7 @@ class SubscriptionListAdapter(parentItemList: ArrayList<ParentRecyclerViewItem<A
             isExpanded = isExpandable
             packageName.text = asset.name
             packageId.text = "Package ID: ${asset.id}"
-            val metaBaseId = asset.metas["Base ID"]
+            val metaBaseId = asset.metas["BaseID"]
             baseId.text = "Base ID: ${(metaBaseId as? DoubleValue)?.value?.toInt() ?: "No ID"}"
             get.visibleOrGone(metaBaseId != null)
             get.setOnClickListener {
@@ -105,15 +107,20 @@ class SubscriptionListAdapter(parentItemList: ArrayList<ParentRecyclerViewItem<A
     inner class SubscriptionViewHolder(override val containerView: View) : ChildViewHolder(containerView), LayoutContainer {
 
         fun bind(subscription: Subscription) {
-            subsName.text = subscription.name
+            subsName.text = if (subscription.name.isNotEmpty()) subscription.name else "NO NAME"
             subsId.text = "Subscription ID: ${subscription.id}"
-            val stringBuilder = StringBuilder("Channels ID: [")
-            subscription.channels?.forEach {
-                if (subscription.channels.indexOf(it) != 0) stringBuilder.append(", ")
-                stringBuilder.append(it.id.toString())
-            }
-            stringBuilder.append("]")
-            channelIds.text = stringBuilder
+            subsPrice.text = "Subscription Price: ${subscription.price.name}"
+
+            val dateFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.US)
+
+            val startDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+            startDayCalendar.timeInMillis = subscription.startDate * 1000
+            startDate.text = "Start: ${dateFormat.format(startDayCalendar.time)}"
+
+            val endDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+            endDayCalendar.timeInMillis = subscription.endDate * 1000
+            endDate.text = "End: ${dateFormat.format(endDayCalendar.time)}"
+
             arrow.visibleOrGone(subscription.channels.isNotEmpty())
             itemView.setOnClickListener {
                 val channelsId = arrayListOf<Long>()

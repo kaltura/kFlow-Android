@@ -15,6 +15,7 @@ abstract class ExpandableRecyclerAdapter<PVH : ParentViewHolder, CVH : ChildView
      * available in [ExpandableRecyclerAdapter]
      */
     protected var itemList: ArrayList<Any> = generateParentChildItemList(parentItemList)
+
     /**
      * Gets the list of ParentItems that is backing this adapter.
      * Changes can be made to the list and the adapter notified via the
@@ -101,8 +102,10 @@ abstract class ExpandableRecyclerAdapter<PVH : ParentViewHolder, CVH : ChildView
             }
             parentViewHolder.isExpanded = listItem.isExpanded
             onBindParentViewHolder(parentViewHolder, position, listItem.parentListItem)
-        } else checkNotNull(listItem) { "Incorrect ViewHolder found" }
-        onBindChildViewHolder(holder as CVH, position, listItem)
+        } else {
+            checkNotNull(listItem) { "Incorrect ViewHolder found" }
+            onBindChildViewHolder(holder as CVH, position, listItem)
+        }
     }
 
     /**

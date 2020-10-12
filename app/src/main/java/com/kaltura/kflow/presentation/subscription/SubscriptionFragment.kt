@@ -30,7 +30,7 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
         packageGetSubscriptionListener = ::onPackageGetSubscriptionClicked
         subscriptionListener = ::onSubscriptionClicked
     }
-    private lateinit var progressDialog: ProgressDialog
+    private val progressDialog by lazy { ProgressDialog(activity) }
     private var selectedPackageBaseId: Double = 0.0
 
     override fun debugView(): DebugView = debugView
@@ -52,7 +52,6 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
             hideKeyboard()
             makeGetEntitlementListRequest()
         }
-        progressDialog = ProgressDialog(requireContext())
     }
 
     override fun subscribeUI() {
@@ -163,7 +162,7 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
     }
 
     private fun showLoadingDialog() {
-        if (!progressDialog.isShowing) progressDialog.show()
+        if (progressDialog.isShowing.not()) progressDialog.show()
     }
 
     private fun hideLoadingDialog() {

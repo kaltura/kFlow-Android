@@ -12,6 +12,7 @@ import com.kaltura.client.utils.request.MultiRequestBuilder
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
 import com.kaltura.kflow.utils.Resource
+import com.kaltura.kflow.utils.SingleLiveEvent
 
 /**
  * Created by alex_lytvynenko on 2020-01-14.
@@ -19,14 +20,14 @@ import com.kaltura.kflow.utils.Resource
 class SubscriptionViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
 
     val assetList = MutableLiveData<Resource<ArrayList<Asset>>>()
-    val assetsInSubscription = MutableLiveData<Resource<List<Asset>>>()
+    val assetsInSubscription = SingleLiveEvent<Resource<List<Asset>>>()
     val subscriptionList = MutableLiveData<Resource<ArrayList<Subscription>>>()
     val entitlementList = MutableLiveData<Resource<ArrayList<Entitlement>>>()
 
     fun getPackageList(packageType: String) {
         val filter = SearchAssetFilter().apply {
             orderBy = AssetOrderBy.START_DATE_DESC.value
-            kSql = "Base ID > \'0\' asset_type=\'$packageType\')"
+            kSql = "(and BaseID > \'0\' asset_type=\'$packageType\')"
         }
 
         val filterPager = FilterPager().apply {
@@ -74,20 +75,20 @@ class SubscriptionViewModel(private val apiManager: PhoenixApiManager) : BaseVie
 
     fun getAssetsInSubscription(subscriptionChannelsId: ArrayList<Long>) {
         val multiRequestBuilder = MultiRequestBuilder()
-        val channelFilter = ChannelFilter()
         val filterPager = FilterPager().apply {
             pageIndex = 1
             pageSize = 40
         }
 
         subscriptionChannelsId.forEach {
+            val channelFilter = ChannelFilter()
             channelFilter.idEqual = it.toInt()
             multiRequestBuilder.add(AssetService.list(channelFilter, filterPager))
         }
         multiRequestBuilder.setCompletion {
             if (it.isSuccess && it.results != null) {
                 val assets = arrayListOf<Asset>()
-                it.results.forEach { assets.addAll((it as ListResponse<Asset>).objects) }
+                it.results.forEach { (it as ListResponse<Asset>).objects?.let { assets.addAll(it) } }
                 assetsInSubscription.value = Resource.Success(assets)
             }
         }

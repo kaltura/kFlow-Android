@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:paddingStart="16dp"
+    android:paddingStart="32dp"
     android:paddingTop="10dp"
     android:paddingEnd="16dp"
     android:paddingBottom="10dp">
@@ -26,10 +26,26 @@
         android:textSize="15sp" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/channelIds"
+        android:id="@+id/subsPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/subsId"
+        android:layout_toStartOf="@+id/arrow"
+        android:textSize="15sp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/startDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/subsPrice"
+        android:layout_toStartOf="@+id/arrow"
+        android:textSize="15sp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/endDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/startDate"
         android:layout_toStartOf="@+id/arrow"
         android:textSize="15sp" />
 
