@@ -37,7 +37,9 @@ class SubscriptionViewModel(private val apiManager: PhoenixApiManager) : BaseVie
 
         apiManager.execute(AssetService.list(filter, filterPager).setCompletion {
             if (it.isSuccess) {
-                if (it.results.objects != null) assetList.value = Resource.Success(it.results.objects as ArrayList<Asset>)
+                assetList.value =
+                        if (it.results.objects != null) Resource.Success(it.results.objects as ArrayList<Asset>)
+                        else Resource.Success(arrayListOf())
             } else assetList.value = Resource.Error(it.error)
         })
     }
