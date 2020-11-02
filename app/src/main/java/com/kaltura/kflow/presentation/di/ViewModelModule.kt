@@ -9,6 +9,7 @@ import com.kaltura.kflow.presentation.continueWatching.ContinueWatchingViewModel
 import com.kaltura.kflow.presentation.deviceManagement.DeviceManagementViewModel
 import com.kaltura.kflow.presentation.epg.EpgViewModel
 import com.kaltura.kflow.presentation.favorites.FavoritesViewModel
+import com.kaltura.kflow.presentation.ks.KsViewModel
 import com.kaltura.kflow.presentation.liveTv.LiveTvViewModel
 import com.kaltura.kflow.presentation.login.LoginViewModel
 import com.kaltura.kflow.presentation.mediaPage.MediaPageViewModel
@@ -34,6 +35,7 @@ val viewModelModule = module {
     viewModel { FavoritesViewModel(get()) }
     viewModel { LiveTvViewModel(get()) }
     viewModel { LoginViewModel(get(), get()) }
+    viewModel { KsViewModel(get(), get()) }
     viewModel { MediaPageViewModel(get()) }
     viewModel { PlayerViewModel(get(), get()) }
     viewModel { ProductPriceViewModel(get()) }
