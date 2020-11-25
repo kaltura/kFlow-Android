@@ -27,7 +27,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="1st Media ID"
-                android:imeOptions="actionDone"
+                android:imeOptions="actionNext"
+                android:inputType="number"
+                android:singleLine="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/fileIdIdInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="10dp"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/fileId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="1st File ID"
+                android:imeOptions="actionNext"
                 android:inputType="number"
                 android:singleLine="true" />
 
@@ -49,6 +71,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="2nd Media ID"
+                android:imeOptions="actionNext"
+                android:inputType="number"
+                android:singleLine="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/fileIdInputLayoutSecond"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="10dp"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/fileIdSecond"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="2nd File ID"
                 android:imeOptions="actionDone"
                 android:inputType="number"
                 android:singleLine="true" />

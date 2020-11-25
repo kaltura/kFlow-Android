@@ -8,7 +8,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import br.com.simplepass.loadingbutton.presentation.State
 import com.kaltura.client.enums.RuleType
-import com.kaltura.client.types.*
+import com.kaltura.client.types.Asset
+import com.kaltura.client.types.UserAssetRule
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
@@ -42,15 +43,27 @@ class MediaPageFragment : SharedTransitionFragment(R.layout.fragment_media_page)
 
         playAsset.setOnClickListener {
             if (mediaId.string.isEmpty()) {
-                mediaIdInputLayout.showError("Empty media ID")
+                mediaIdInputLayout.showError("Empty 1st media ID")
+                return@setOnClickListener
+            }
+
+            if (fileId.string.isEmpty()) {
+                fileIdIdInputLayout.showError("Empty 1st File ID")
                 return@setOnClickListener
             }
 
             if (mediaIdSecond.string.isEmpty()) {
-                mediaIdInputLayoutSecond.showError("Empty media ID")
+                mediaIdInputLayoutSecond.showError("Empty 2nd media ID")
                 return@setOnClickListener
             }
-            navigate(MediaPageFragmentDirections.navigateToPlayer(args.isKeepAlive, mediaIdOne = mediaId.string, mediaIdTwo = mediaIdSecond.string))
+
+            if (fileIdSecond.string.isEmpty()) {
+                fileIdInputLayoutSecond.showError("Empty 2nd File ID")
+                return@setOnClickListener
+            }
+
+            navigate(MediaPageFragmentDirections.navigateToPlayer(args.isKeepAlive, mediaIdOne = mediaId.string, fileIdOne = fileId.string,
+                    mediaIdTwo = mediaIdSecond.string, fileIdTwo = fileIdSecond.string))
         }
         getProductPrice.setOnClickListener {
             hideKeyboard()

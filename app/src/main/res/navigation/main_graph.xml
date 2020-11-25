@@ -418,7 +418,17 @@
             app:argType="string"
             app:nullable="false"/>
         <argument
+            android:name="fileIdOne"
+            android:defaultValue="0"
+            app:argType="string"
+            app:nullable="false"/>
+        <argument
             android:name="mediaIdTwo"
+            android:defaultValue="0"
+            app:argType="string"
+            app:nullable="false"/>
+        <argument
+            android:name="fileIdTwo"
             android:defaultValue="0"
             app:argType="string"
             app:nullable="false"/>

@@ -1,19 +1,14 @@
 package com.kaltura.kflow.presentation.player
 
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException
-import com.google.android.gms.common.GooglePlayServicesRepairableException
-import com.google.android.gms.security.ProviderInstaller
 import com.kaltura.client.enums.RuleType
-import com.kaltura.client.types.Asset
-import com.kaltura.client.types.IntegerValue
-import com.kaltura.client.types.ProgramAsset
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
@@ -22,7 +17,6 @@ import com.kaltura.playkit.BuildConfig
 import com.kaltura.playkit.PKMediaEntry
 import com.kaltura.playkit.PKPluginConfigs
 import com.kaltura.playkit.PlayerEvent
-import com.kaltura.playkit.player.MediaSupport
 import com.kaltura.playkit.plugins.kava.KavaAnalyticsConfig
 import com.kaltura.playkit.plugins.kava.KavaAnalyticsPlugin
 import com.kaltura.playkit.providers.api.phoenix.APIDefines
@@ -61,16 +55,16 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     private val FRONT_ALIGNMENT = 0
     private val BACKGROUND_ALIGNMENT = 1
     private var firstPlayback: Boolean = true
-    private val cutOffTime: Long = 20000L
-    private val showTimerTime: Long = 15000L
+    private val cutOffTime: Long = 60 * 1000
 
     private var playerInitOptions: PlayerInitOptions? = null
     private var pkPluginConfigs = PKPluginConfigs()
 
     private lateinit var mediaIdOne: String
+    private lateinit var fileIdOne: String
     private lateinit var mediaIdTwo: String
+    private lateinit var fileIdTwo: String
     private lateinit var ks: String
-    private lateinit var mediaFormat: String
     private var OTT_PARTNER_ID_POC: Int? = 0
 
 
@@ -81,9 +75,11 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
 
         mediaIdOne = args.mediaIdOne
+        fileIdOne = args.fileIdOne
         mediaIdTwo = args.mediaIdTwo
+        fileIdTwo = args.fileIdTwo
+
         ks = viewModel.getKs()!!
-        mediaFormat = viewModel.getMediaFileFormat()
         OTT_PARTNER_ID_POC = viewModel.getPartnerId()
 
         isKeepAlive = args.isKeepAlive
@@ -236,12 +232,12 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
         if (firstPlayback) {
             Log.d(TAG,"POC Loading Front Player with OTT")
-            startOttMediaLoading(frontPlayer, mediaIdOne, ks, PhoenixMediaProvider.HttpProtocol.Https, mediaFormat)
+            startOttMediaLoading(frontPlayer, mediaIdOne, ks, PhoenixMediaProvider.HttpProtocol.Https, fileIdOne)
         } else {
             Log.d(TAG,"POC In Change media : playerAlignment => $playerAlignment")
             if (playerAlignment == BACKGROUND_ALIGNMENT) {
                 Log.d(TAG,"POC Loading Background Player with OTT in Change Media")
-                startOttMediaLoading(backgroundplayer, mediaIdTwo, ks, PhoenixMediaProvider.HttpProtocol.Https, mediaFormat)
+                startOttMediaLoading(backgroundplayer, mediaIdTwo, ks, PhoenixMediaProvider.HttpProtocol.Https, fileIdTwo)
             } /*else {
                 log.d("POC Loading Front Player with OTT in Change Media")
                 startOttMediaLoading(frontPlayer, PartnersConfig.mediaId.get(0), PartnersConfig.ks, PhoenixMediaProvider.HttpProtocol.Https, PartnersConfig.fileId.get(0))
@@ -249,8 +245,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         }
     }
 
-    private fun startOttMediaLoading(player: KalturaPlayer? , assetId: String, ks: String?, protocol: String, mediaFormat: String) {
-        buildOttMediaOptions(player, assetId, ks, protocol, mediaFormat)
+    private fun startOttMediaLoading(player: KalturaPlayer? , assetId: String, ks: String?, protocol: String, fileId: String) {
+        buildOttMediaOptions(player, assetId, ks, protocol, fileId)
     }
 
     private fun setPlayerViews(player: KalturaPlayer?) {
@@ -259,7 +255,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         addPlayerListeners(progressBar, player)
     }
 
-    private fun buildOttMediaOptions(player: KalturaPlayer?, assetId: String, ks: String?, protocol: String, mediaFormat: String) {
+    private fun buildOttMediaOptions(player: KalturaPlayer?, assetId: String, ks: String?, protocol: String, fileId: String) {
         val ottMediaAsset = OTTMediaAsset()
         ottMediaAsset.assetId = assetId
         ottMediaAsset.assetType = APIDefines.KalturaAssetType.Media
@@ -268,7 +264,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         ottMediaAsset.urlType = APIDefines.KalturaUrlType.Direct
         ottMediaAsset.protocol = protocol //PhoenixMediaProvider.HttpProtocol.Http/s
         ottMediaAsset.ks = ks
-        ottMediaAsset.formats = listOf(mediaFormat)
+        ottMediaAsset.mediaFileIds = listOf(fileId)
 
         val ottMediaOptions = OTTMediaOptions(ottMediaAsset)
         ottMediaOptions.startPosition = 0L
@@ -286,6 +282,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                 firstPlayback = false
                 setPlayerViews(player)
                 playerControls.setPlayer(player)
+                startCountDown()
                 loadKalturaPlayer(OTT_PARTNER_ID_POC, KalturaPlayer.Type.ott, pkPluginConfigs, BACKGROUND_ALIGNMENT)
             }
 
@@ -297,14 +294,9 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         }
     }
 
-    private fun addPlayerListeners(appProgressBar: ProgressBar, player: KalturaPlayer?) {
-        player?.addListener(this, PlayerEvent.playheadUpdated) { event ->
-            Log.d(TAG, "playheadUpdated event  position = " + event.position + " duration = " + event.duration)
-            if (!firstPlayback && event.position > showTimerTime) {
-                toast("Will load the next media in ${(kotlin.math.round(((cutOffTime - event.position)/1000).toDouble())).toInt()} second")
-            }
-
-            if (!firstPlayback && event.position > cutOffTime) {
+    private fun startCountDown() {
+        object : CountDownTimer(cutOffTime, 1000) {
+            override fun onFinish() {
                 if (playerAlignment == BACKGROUND_ALIGNMENT) {
                     Log.d(TAG, "POC Position reached destroying Front Player. Setting Background Player")
                     frontPlayer?.destroy()
@@ -317,6 +309,20 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                     playerAlignment = FRONT_ALIGNMENT
                 }
             }
+
+            override fun onTick(millisUntilFinished: Long) {
+                var timeLeft: Int = kotlin.math.round(((millisUntilFinished)/1000).toDouble()).toInt()
+                if (timeLeft < 10) {
+                    toast("Will load the next media in  $timeLeft second")
+                }
+            }
+
+        }.start()
+    }
+
+    private fun addPlayerListeners(appProgressBar: ProgressBar, player: KalturaPlayer?) {
+        player?.addListener(this, PlayerEvent.playheadUpdated) { event ->
+            // Log.d(TAG, "playheadUpdated event  position = " + event.position + " duration = " + event.duration)
         }
     }
 }
