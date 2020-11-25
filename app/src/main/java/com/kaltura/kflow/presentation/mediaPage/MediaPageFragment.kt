@@ -41,7 +41,16 @@ class MediaPageFragment : SharedTransitionFragment(R.layout.fragment_media_page)
         super.onViewCreated(view, savedInstanceState)
 
         playAsset.setOnClickListener {
-            navigate(MediaPageFragmentDirections.navigateToPlayer(args.isKeepAlive, asset = asset!!))
+            if (mediaId.string.isEmpty()) {
+                mediaIdInputLayout.showError("Empty media ID")
+                return@setOnClickListener
+            }
+
+            if (mediaIdSecond.string.isEmpty()) {
+                mediaIdInputLayoutSecond.showError("Empty media ID")
+                return@setOnClickListener
+            }
+            navigate(MediaPageFragmentDirections.navigateToPlayer(args.isKeepAlive, mediaIdOne = mediaId.string, mediaIdTwo = mediaIdSecond.string))
         }
         getProductPrice.setOnClickListener {
             hideKeyboard()
@@ -69,7 +78,7 @@ class MediaPageFragment : SharedTransitionFragment(R.layout.fragment_media_page)
         }
         get.setOnClickListener {
             hideKeyboard()
-            getAssetRequest(mediaId.string)
+            getAssetRequest(mediaId.string, mediaIdSecond.string)
         }
         validateButtons()
     }
@@ -101,13 +110,18 @@ class MediaPageFragment : SharedTransitionFragment(R.layout.fragment_media_page)
                 })
     }
 
-    private fun getAssetRequest(assetId: String) {
+    private fun getAssetRequest(assetId: String, assetIdSecond: String) {
         withInternetConnection {
             clearDebugView()
             clearInputLayouts()
 
             if (assetId.isEmpty()) {
                 mediaIdInputLayout.showError("Empty media ID")
+                return@withInternetConnection
+            }
+
+            if (assetIdSecond.isEmpty()) {
+                mediaIdInputLayoutSecond.showError("Empty media ID")
                 return@withInternetConnection
             }
 
@@ -206,6 +220,7 @@ class MediaPageFragment : SharedTransitionFragment(R.layout.fragment_media_page)
 
     private fun clearInputLayouts() {
         mediaIdInputLayout.hideError()
+        mediaIdInputLayoutSecond.hideError()
     }
 
     private fun showPinInput() {
@@ -216,11 +231,11 @@ class MediaPageFragment : SharedTransitionFragment(R.layout.fragment_media_page)
 
     private fun validateButtons() {
         val isVisible = asset != null
-        playAsset.visibleOrGone(isVisible)
-        getProductPrice.visibleOrGone(isVisible)
-        getBookmark.visibleOrGone(isVisible)
-        getAssetRules.visibleOrGone(isVisible)
-        checkAll.visibleOrGone(isVisible)
+        playAsset.visibleOrGone(true)
+        getProductPrice.visibleOrGone(false)
+        getBookmark.visibleOrGone(false)
+        getAssetRules.visibleOrGone(false)
+        checkAll.visibleOrGone(false)
         validatePinLayout()
     }
 

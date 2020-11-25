@@ -26,7 +26,29 @@
                 android:id="@+id/mediaId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Media ID"
+                android:hint="1st Media ID"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:singleLine="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/mediaIdInputLayoutSecond"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="10dp"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/mediaIdSecond"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="2nd Media ID"
                 android:imeOptions="actionDone"
                 android:inputType="number"
                 android:singleLine="true" />
@@ -46,6 +68,7 @@
             android:elevation="4dp"
             android:foreground="?selectableItemBackground"
             android:text="Get"
+            android:visibility="gone"
             android:textColor="@android:color/white"
             android:textSize="16sp"
             app:initialCornerAngle="4dp"
@@ -75,6 +98,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
+            android:visibility="gone"
             android:layout_marginBottom="4dp"
             android:background="@drawable/bg_primary_rounded"
             android:elevation="4dp"
@@ -91,6 +115,7 @@
             android:id="@+id/getBookmark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
@@ -109,6 +134,7 @@
 
         <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/getAssetRules"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -133,6 +159,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="16dp"
+            android:visibility="gone"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="4dp"
@@ -151,6 +178,7 @@
             android:id="@+id/pinLayout"
             android:layout_width="match_parent"
             android:layout_height="60dp"
+            android:visibility="gone"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
@@ -192,6 +220,7 @@
 
     </LinearLayout>
 
-    <include layout="@layout/view_bottom_debug" />
+    <include layout="@layout/view_bottom_debug"
+        android:visibility="gone"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

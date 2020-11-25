@@ -11,6 +11,7 @@ import com.kaltura.kflow.presentation.extension.hideError
 import com.kaltura.kflow.presentation.extension.showError
 import com.kaltura.kflow.presentation.extension.string
 import com.kaltura.kflow.presentation.main.Feature
+import com.kaltura.tvplayer.KalturaOttPlayer
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.jetbrains.anko.support.v4.toast
@@ -67,6 +68,8 @@ class SettingsFragment : SharedTransitionFragment(R.layout.fragment_settings) {
         viewModel.baseUrl = baseUrl
         viewModel.partnerId = partnerId.toInt()
         viewModel.mediaFileFormat = mediaFileFormat
+
+        KalturaOttPlayer.initialize(activity, viewModel.partnerId, viewModel.baseUrl)
 
         val config = Configuration().apply { endpoint = viewModel.baseUrl }
         viewModel.setConfiguration(config)

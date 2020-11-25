@@ -30,6 +30,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/assetTitle"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
@@ -52,11 +53,10 @@
                     android:id="@+id/playerLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp" />
+                    android:layout_above="@+id/playerControls"/>
 
                 <com.kaltura.kflow.presentation.player.PlaybackControlsView
-                    android:id="@+id/playerControls"
+                    android:id="@id/playerControls"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true" />
@@ -67,6 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -90,6 +91,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="Like"
+                android:visibility="gone"
                 app:switchPadding="10dp" />
 
             <androidx.appcompat.widget.SwitchCompat
@@ -98,6 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:text="Favorite"
+                android:visibility="gone"
                 app:switchPadding="10dp" />
 
             <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
@@ -111,6 +114,7 @@
                 android:layout_marginBottom="4dp"
                 android:background="@drawable/bg_primary_rounded"
                 android:elevation="4dp"
+                android:visibility="gone"
                 android:foreground="?selectableItemBackground"
                 android:text="Check all validations"
                 android:textColor="@android:color/white"
@@ -165,6 +169,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <include layout="@layout/view_bottom_debug" />
+    <include layout="@layout/view_bottom_debug"
+        android:visibility="gone"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

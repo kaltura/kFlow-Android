@@ -28,7 +28,7 @@ class LoginFragment : SharedTransitionFragment(R.layout.fragment_login) {
         super.onViewCreated(view, savedInstanceState)
         login.setOnClickListener {
             hideKeyboard()
-            makeLoginRequest(username.string, password.string, extraParamsKey.string,
+            makeLoginRequest(username.string, password.string, udid.string, extraParamsKey.string,
                     extraParamsDescription.string, extraParamsValue.string)
         }
         addExtraParams.setOnClickListener { showExtraParams(true) }
@@ -45,7 +45,7 @@ class LoginFragment : SharedTransitionFragment(R.layout.fragment_login) {
         )
     }
 
-    private fun makeLoginRequest(email: String, password: String, extraParamsKey: String,
+    private fun makeLoginRequest(email: String, password: String, udid:String, extraParamsKey: String,
                                  extraParamsDescription: String, extraParamsValue: String) {
         withInternetConnection {
             clearDebugView()
@@ -59,6 +59,11 @@ class LoginFragment : SharedTransitionFragment(R.layout.fragment_login) {
                 return@withInternetConnection
             }
 
+            if (udid.isEmpty()) {
+                udidInputLayout.showError("Empty UDID")
+                return@withInternetConnection
+            }
+
             var extraParams: HashMap<String, StringValue>? = null
             if (extraParamsKey.isNotEmpty() && extraParamsDescription.isNotEmpty() && extraParamsValue.isNotEmpty())
                 extraParams = hashMapOf(extraParamsKey to StringValue().apply {
@@ -67,7 +72,7 @@ class LoginFragment : SharedTransitionFragment(R.layout.fragment_login) {
                 })
 
             login.startAnimation {
-                viewModel.makeLoginRequest(email, password, getUUID(requireContext()), extraParams)
+                viewModel.makeLoginRequest(email, password, udid, extraParams)
             }
         }
     }

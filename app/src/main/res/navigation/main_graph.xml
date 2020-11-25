@@ -413,6 +413,16 @@
             android:defaultValue="0"
             app:argType="integer" />
         <argument
+            android:name="mediaIdOne"
+            android:defaultValue="0"
+            app:argType="string"
+            app:nullable="false"/>
+        <argument
+            android:name="mediaIdTwo"
+            android:defaultValue="0"
+            app:argType="string"
+            app:nullable="false"/>
+        <argument
             android:name="asset"
             android:defaultValue="@null"
             app:argType="com.kaltura.client.types.Asset"
