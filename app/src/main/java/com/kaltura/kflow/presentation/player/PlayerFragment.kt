@@ -199,10 +199,12 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         val mediaProvider: MediaEntryProvider = PhoenixMediaProvider()
                 .setSessionProvider(SimpleSessionProvider(viewModel.getBaseUrl() + "/api_v3/", viewModel.getPartnerId(), viewModel.getKs()))
                 .setAssetId(getAssetIdByFlowType())
-                .setProtocol(PhoenixMediaProvider.HttpProtocol.All)
+                .setProtocol(PhoenixMediaProvider.HttpProtocol.Https)
                 .setContextType(playbackContextType)
                 .setAssetReferenceType(getAssetReferenceType(playbackContextType))
                 .setAssetType(getAssetType(playbackContextType))
+                .setPKUrlType(APIDefines.KalturaUrlType.Direct).
+                setPKStreamerType(APIDefines.KalturaStreamerType.Mpegdash)
                 .setFormats(viewModel.getMediaFileFormat())
         mediaProvider.load(completion)
     }
