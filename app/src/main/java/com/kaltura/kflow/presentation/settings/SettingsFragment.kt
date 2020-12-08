@@ -11,8 +11,11 @@ import com.kaltura.kflow.presentation.extension.hideError
 import com.kaltura.kflow.presentation.extension.showError
 import com.kaltura.kflow.presentation.extension.string
 import com.kaltura.kflow.presentation.main.Feature
+import com.kaltura.playkit.providers.api.phoenix.APIDefines
+import com.kaltura.playkit.providers.ott.PhoenixMediaProvider
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.view_bottom_debug.*
+import org.jetbrains.anko.support.v4.longToast
 import org.jetbrains.anko.support.v4.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -41,6 +44,25 @@ class SettingsFragment : SharedTransitionFragment(R.layout.fragment_settings) {
         url.string = viewModel.baseUrl
         partnerId.string = viewModel.partnerId.toString()
         mediaFileFormat.string = viewModel.mediaFileFormat
+
+        when (viewModel.urlType) {
+            APIDefines.KalturaUrlType.Direct.value -> urlTypeRedirect.isChecked = true
+            APIDefines.KalturaUrlType.PlayManifest.value -> urlTypeManifest.isChecked = true
+            else -> urlTypeNone.isChecked = true
+        }
+        when (viewModel.streamerType) {
+            APIDefines.KalturaStreamerType.Mpegdash.value -> streamerTypeMpegDash.isChecked = true
+            else -> streamerTypeNone.isChecked = true
+        }
+        when (viewModel.mediaProtocol) {
+            PhoenixMediaProvider.HttpProtocol.Http -> mediaProtocolHttp.isChecked = true
+            PhoenixMediaProvider.HttpProtocol.Https -> mediaProtocolHttps.isChecked = true
+            else -> mediaProtocolAll.isChecked = true
+        }
+
+        urlTypeTitle.setOnClickListener { longToast("Determine if the source url require redirection or not.") }
+        streamerTypeTitle.setOnClickListener { longToast("Require specified stream type") }
+        mediaProtocolTitle.setOnClickListener { longToast("Which protocol scheme is being used for accessing sources") }
     }
 
     private fun save(baseUrl: String, partnerId: String, mediaFileFormat: String) {
@@ -67,6 +89,24 @@ class SettingsFragment : SharedTransitionFragment(R.layout.fragment_settings) {
         viewModel.baseUrl = baseUrl
         viewModel.partnerId = partnerId.toInt()
         viewModel.mediaFileFormat = mediaFileFormat
+
+        viewModel.urlType = when (urlTypeLayout.checkedRadioButtonId) {
+            urlTypeRedirect.id -> APIDefines.KalturaUrlType.Direct.value
+            urlTypeManifest.id -> APIDefines.KalturaUrlType.PlayManifest.value
+            else -> ""
+        }
+
+        viewModel.streamerType = when (streamerType.checkedRadioButtonId) {
+            streamerTypeMpegDash.id -> APIDefines.KalturaStreamerType.Mpegdash.value
+            else -> ""
+        }
+
+        viewModel.mediaProtocol = when (mediaProtocol.checkedRadioButtonId) {
+            mediaProtocolAll.id -> PhoenixMediaProvider.HttpProtocol.All
+            mediaProtocolHttp.id -> PhoenixMediaProvider.HttpProtocol.Http
+            mediaProtocolHttps.id -> PhoenixMediaProvider.HttpProtocol.Https
+            else -> ""
+        }
 
         val config = Configuration().apply { endpoint = viewModel.baseUrl }
         viewModel.setConfiguration(config)

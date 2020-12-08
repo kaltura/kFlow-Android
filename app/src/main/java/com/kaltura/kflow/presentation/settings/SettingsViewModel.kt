@@ -29,6 +29,24 @@ class SettingsViewModel(private val apiManager: PhoenixApiManager,
             preferenceManager.mediaFileFormat = value
         }
 
+    var urlType: String
+        get() = preferenceManager.urlType
+        set(value) {
+            preferenceManager.urlType = value
+        }
+
+    var streamerType: String
+        get() = preferenceManager.streamerType
+        set(value) {
+            preferenceManager.streamerType = value
+        }
+
+    var mediaProtocol: String
+        get() = preferenceManager.mediaProtocol
+        set(value) {
+            preferenceManager.mediaProtocol = value
+        }
+
     fun clearKs() {
         preferenceManager.clearKs()
         apiManager.ks = null

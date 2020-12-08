@@ -4,102 +4,296 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <include layout="@layout/view_shared_transition_header" />
-
-        <androidx.appcompat.widget.AppCompatTextView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingStart="16dp"
-            android:paddingTop="10dp"
-            android:paddingEnd="16dp"
-            android:text="Please set here your account details. After changing your account, please re-login to be able to continue work with the app."
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
+            android:paddingBottom="15dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/baseUrlInputLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="10dp"
-            app:endIconMode="clear_text">
+            <include layout="@layout/view_shared_transition_header" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/url"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="END Point URL"
-                android:imeOptions="actionNext"
-                android:nextFocusDown="@id/partnerId"
-                android:singleLine="true" />
+                android:gravity="center"
+                android:paddingStart="16dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="16dp"
+                android:text="Please set here your account details. After changing your account, please re-login to be able to continue work with the app."
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/header" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/partnerIdInputLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="10dp"
-            app:endIconMode="clear_text">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/partnerId"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/baseUrlInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Partner ID"
-                android:imeOptions="actionNext"
-                android:inputType="number"
-                android:nextFocusDown="@id/mediaFileFormat"
-                android:singleLine="true" />
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="16dp"
+                app:endIconMode="clear_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/description">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="END Point URL"
+                    android:imeOptions="actionNext"
+                    android:nextFocusDown="@id/partnerId"
+                    android:singleLine="true" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/mediaFileFormatInputLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="10dp"
-            app:endIconMode="clear_text">
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/mediaFileFormat"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/partnerIdInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Main media file format"
-                android:imeOptions="actionDone"
-                android:singleLine="true" />
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="16dp"
+                app:endIconMode="clear_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/baseUrlInputLayout">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/partnerId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Partner ID"
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:nextFocusDown="@id/mediaFileFormat"
+                    android:singleLine="true" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/save"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="4dp"
-            android:backgroundTint="@color/colorPrimary"
-            android:gravity="center"
-            android:text="Save"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
-    </LinearLayout>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="@id/playerConfigTitle"
+                app:layout_constraintTop_toTopOf="@id/playerConfigTitle" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/playerConfigTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@android:color/white"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="Player Configurations"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/partnerIdInputLayout" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/mediaFileFormatInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="10dp"
+                app:endIconMode="clear_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/playerConfigTitle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/mediaFileFormat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Main media file format"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <RadioGroup
+                android:id="@+id/urlTypeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/bg_rounded"
+                android:padding="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mediaFileFormatInputLayout">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/urlTypeNone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:minHeight="0dp"
+                    android:paddingStart="5dp"
+                    android:text="Not adding the field" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/urlTypeRedirect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:paddingStart="5dp"
+                    android:text="Redirect" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/urlTypeManifest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:paddingStart="5dp"
+                    android:text="Play manifest" />
+            </RadioGroup>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/urlTypeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/white"
+                android:drawableEnd="@drawable/ic_baseline_help_24"
+                android:drawablePadding="7dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:paddingStart="7dp"
+                android:paddingEnd="7dp"
+                android:text="URL type"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mediaFileFormatInputLayout" />
+
+            <RadioGroup
+                android:id="@+id/streamerType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/bg_rounded"
+                android:padding="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/urlTypeLayout">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/streamerTypeNone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:minHeight="0dp"
+                    android:paddingStart="5dp"
+                    android:text="Not adding the field" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/streamerTypeMpegDash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:paddingStart="5dp"
+                    android:text="MpegDash" />
+            </RadioGroup>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/streamerTypeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/white"
+                android:drawableEnd="@drawable/ic_baseline_help_24"
+                android:drawablePadding="7dp"
+                android:gravity="center"
+                android:paddingStart="7dp"
+                android:paddingEnd="7dp"
+                android:text="Streamer Type"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/urlTypeLayout" />
+
+            <RadioGroup
+                android:id="@+id/mediaProtocol"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/bg_rounded"
+                android:padding="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/streamerType">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/mediaProtocolAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:minHeight="0dp"
+                    android:paddingStart="5dp"
+                    android:text="All" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/mediaProtocolHttp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:paddingStart="5dp"
+                    android:text="Http" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/mediaProtocolHttps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:paddingStart="5dp"
+                    android:text="Https" />
+            </RadioGroup>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/mediaProtocolTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/white"
+                android:drawableEnd="@drawable/ic_baseline_help_24"
+                android:drawablePadding="7dp"
+                android:gravity="center"
+                android:paddingStart="7dp"
+                android:paddingEnd="7dp"
+                android:text="Media protocol"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/streamerType" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/save"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="16dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:gravity="center"
+                android:text="Save"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mediaProtocol" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <include layout="@layout/view_bottom_debug" />
 

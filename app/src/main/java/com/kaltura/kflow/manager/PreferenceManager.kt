@@ -10,6 +10,9 @@ class PreferenceManager(private val context: Context) {
     private val KEY_VOD_ASSET_TYPE = "prefs_vod_asset_type"
     private val KEY_PARTNER_ID = "prefs_partner_id"
     private val KEY_MAIN_MEDIA_FILE_FORMAT = "prefs_main_media_file_format"
+    private val KEY_URL_TYPE = "prefs_url_type"
+    private val KEY_STREAMER_TYPE = "prefs_streamer_type"
+    private val KEY_MEDIA_PROTOCOL = "prefs_media_protocol"
     private val KEY_KS = "prefs_ks"
     private val KEY_AUTH_USER = "prefs_auth_user"
     private val KEY_AUTH_PASSWORD = "prefs_auth_password"
@@ -43,6 +46,18 @@ class PreferenceManager(private val context: Context) {
     var ks: String?
         get() = prefs.getString(KEY_KS, null)
         set(value) = prefs.edit().putString(KEY_KS, value).apply()
+
+    var urlType: String
+        get() = prefs.getString(KEY_URL_TYPE, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_URL_TYPE, value).apply()
+
+    var streamerType: String
+        get() = prefs.getString(KEY_STREAMER_TYPE, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_STREAMER_TYPE, value).apply()
+
+    var mediaProtocol: String
+        get() = prefs.getString(KEY_MEDIA_PROTOCOL, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_MEDIA_PROTOCOL, value).apply()
 
     fun clearKs() {
         prefs.edit().putString(KEY_KS, null).apply()

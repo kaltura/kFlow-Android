@@ -199,11 +199,26 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         val mediaProvider: MediaEntryProvider = PhoenixMediaProvider()
                 .setSessionProvider(SimpleSessionProvider(viewModel.getBaseUrl() + "/api_v3/", viewModel.getPartnerId(), viewModel.getKs()))
                 .setAssetId(getAssetIdByFlowType())
-                .setProtocol(PhoenixMediaProvider.HttpProtocol.All)
                 .setContextType(playbackContextType)
                 .setAssetReferenceType(getAssetReferenceType(playbackContextType))
                 .setAssetType(getAssetType(playbackContextType))
-                .setFormats(viewModel.getMediaFileFormat())
+                .setFormats(viewModel.getMediaFileFormat()).apply {
+                    when (viewModel.urlType) {
+                        APIDefines.KalturaUrlType.Direct.value -> setPKUrlType(APIDefines.KalturaUrlType.Direct)
+                        APIDefines.KalturaUrlType.PlayManifest.value -> setPKUrlType(APIDefines.KalturaUrlType.PlayManifest)
+                        else -> Unit
+                    }
+                    when (viewModel.streamerType) {
+                        APIDefines.KalturaStreamerType.Mpegdash.value -> setPKStreamerType(APIDefines.KalturaStreamerType.Mpegdash)
+                        else -> Unit
+                    }
+                    when (viewModel.mediaProtocol) {
+                        PhoenixMediaProvider.HttpProtocol.Http -> setProtocol(PhoenixMediaProvider.HttpProtocol.Http)
+                        PhoenixMediaProvider.HttpProtocol.Https -> setProtocol(PhoenixMediaProvider.HttpProtocol.Https)
+                        else -> setProtocol(PhoenixMediaProvider.HttpProtocol.All)
+                    }
+                }
+
         mediaProvider.load(completion)
     }
 
@@ -291,7 +306,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     private fun getKeepAliveHeaderUrl(url: URL, listener: ((status: Boolean, url: String) -> Unit)) {
-        Thread(Runnable {
+        Thread {
             try {
                 val conn = url.openConnection() as HttpURLConnection
                 conn.instanceFollowRedirects = false
@@ -307,7 +322,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                 listener(false, "Failed to retreive Location header : " + e.message)
                 e.printStackTrace()
             }
-        }).start()
+        }.start()
     }
 
     private fun addPlayerListeners() {
