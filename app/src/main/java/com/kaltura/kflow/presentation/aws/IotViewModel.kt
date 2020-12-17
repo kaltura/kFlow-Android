@@ -2,9 +2,11 @@ package com.kaltura.kflow.presentation.aws
 
 import com.amazonaws.mobile.client.results.SignInState
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttClientStatusCallback
+import com.kaltura.kflow.entity.Iot
 import com.kaltura.kflow.entity.IotClientConfiguration
 import com.kaltura.kflow.manager.AwsManager
 import com.kaltura.kflow.manager.PhoenixApiManager
+import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
 import com.kaltura.kflow.service.IotService
 import com.kaltura.kflow.utils.*
@@ -14,11 +16,15 @@ import org.json.JSONObject
  * Created by alex_lytvynenko on 2020-01-14.
  */
 class IotViewModel(private val apiManager: PhoenixApiManager,
+                   private val preferenceManager: PreferenceManager,
                    private val awsManager: AwsManager) : BaseViewModel(apiManager) {
 
     private var announcementTopic = ""
-    private var thing = ""
-    private var iotEndpoint = ""
+    private var iotThing = preferenceManager.iotThing
+    private var iotEndpoint = preferenceManager.iotEndpoint
+    private var iotUsername = preferenceManager.iotUsername
+    private var iotPassword = preferenceManager.iotPassword
+
     val registrationEvent = SingleLiveEvent<Resource<SignInState>>()
     val connectEvent = SingleLiveEvent<Resource<AWSIotMqttClientStatusCallback.AWSIotMqttClientStatus>>()
     val shadowMessageEvent = SingleLiveEvent<Resource<String>>()
@@ -33,7 +39,7 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
     }
 
     fun connect() {
-        awsManager.getThingShadow(thing) {
+        awsManager.getThingShadow(iotThing) {
             if (it.isSuccess())
                 shadowMessageEvent.postValue(it)
 
@@ -50,7 +56,7 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
     }
 
     fun subscribeToThingShadow() {
-        awsManager.subscribeToTopicShadowAccepted(thing) {
+        awsManager.subscribeToTopicShadowAccepted(iotThing) {
             shadowMessageEvent.postValue(it)
         }
     }
@@ -65,23 +71,40 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
     private fun registerIot(clientConfiguration: IotClientConfiguration) {
         announcementTopic = clientConfiguration.announcementTopic
         startAwsInitProcess(JSONObject(clientConfiguration.json))
-        apiManager.execute(IotService.RegisterIotBuilder().setCompletion {
-            if (it.isSuccess) {
-                val iot = it.results
-                thing = getThingName(iot.thingArn)
-                iotEndpoint = iot.endPoint
-                awsManager.setAwsClientEndpoint(iot.endPoint)
-                awsManager.signInAws(iot.username, iot.userPassword) {
-                    if (it.isSuccess()) {
-                        registrationEvent.postValue(Resource.Success(it.getSuccessData()))
-                    } else registrationEvent.postValue(Resource.Error(it.getErrorData()))
-                }
-            } else registrationEvent.postValue(Resource.Error(it.error))
-        })
+
+        if (iotThing.isNotEmpty() && iotEndpoint.isNotEmpty() && iotUsername.isNotEmpty() && iotPassword.isNotEmpty()) {
+            signInAws()
+        } else {
+            apiManager.execute(IotService.RegisterIotBuilder().setCompletion {
+                if (it.isSuccess) {
+                    val iot = it.results
+                    saveIotInfo(iot)
+                    signInAws()
+                } else registrationEvent.postValue(Resource.Error(it.error))
+            })
+        }
+    }
+
+    private fun saveIotInfo(iot: Iot) {
+        iotThing = getThingName(iot.thingArn)
+        iotEndpoint = iot.endPoint
+        preferenceManager.iotThing = iotThing
+        preferenceManager.iotEndpoint = iotEndpoint
+        preferenceManager.iotUsername = iot.username
+        preferenceManager.iotPassword = iot.userPassword
     }
 
     private fun startAwsInitProcess(json: JSONObject) {
         awsManager.startAwsInitProcess(json)
+    }
+
+    private fun signInAws() {
+        awsManager.setAwsClientEndpoint(iotEndpoint)
+        awsManager.signInAws(preferenceManager.iotUsername, preferenceManager.iotPassword) {
+            if (it.isSuccess()) {
+                registrationEvent.postValue(Resource.Success(it.getSuccessData()))
+            } else registrationEvent.postValue(Resource.Error(it.getErrorData()))
+        }
     }
 
     private fun getThingName(thingARN: String): String {

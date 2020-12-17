@@ -1,6 +1,10 @@
 package com.kaltura.kflow.manager
 
 import android.content.Context
+import android.content.SharedPreferences
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
+import com.kaltura.kflow.R
 
 /**
  * Created by alex_lytvynenko on 2019-06-24.
@@ -16,8 +20,22 @@ class PreferenceManager(private val context: Context) {
     private val KEY_KS = "prefs_ks"
     private val KEY_AUTH_USER = "prefs_auth_user"
     private val KEY_AUTH_PASSWORD = "prefs_auth_password"
+    private val KEY_IOT_THING = "prefs_iot_thing"
+    private val KEY_IOT_ENDPOINT = "prefs_iot_endpoint"
+    private val KEY_IOT_USERNAME = "prefs_iot_username"
+    private val KEY_IOT_PASSWORD = "prefs_iot_password"
 
-    private val prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
+    private val prefs: SharedPreferences by lazy {
+        EncryptedSharedPreferences.create(
+                context,
+                "encrypted_shared_prefs",
+                MasterKey.Builder(context)
+                        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                        .build(),
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+    }
 
     var authUser: String
         get() = prefs.getString(KEY_AUTH_USER, null) ?: ""
@@ -28,7 +46,7 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit().putString(KEY_AUTH_PASSWORD, value).apply()
 
     var baseUrl: String
-        get() = prefs.getString(KEY_BASE_URL, null) ?: "https://rest-us.ott.kaltura.com/v5_0_3/"
+        get() = prefs.getString(KEY_BASE_URL, null) ?: context.getString(R.string.default_base_url)
         set(value) = prefs.edit().putString(KEY_BASE_URL, value).apply()
 
     var vodAssetType: String
@@ -36,11 +54,11 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit().putString(KEY_VOD_ASSET_TYPE, value).apply()
 
     var mediaFileFormat: String
-        get() = prefs.getString(KEY_MAIN_MEDIA_FILE_FORMAT, null) ?: ""
+        get() = prefs.getString(KEY_MAIN_MEDIA_FILE_FORMAT, null) ?: context.getString(R.string.default_media_file_format)
         set(value) = prefs.edit().putString(KEY_MAIN_MEDIA_FILE_FORMAT, value).apply()
 
     var partnerId: Int
-        get() = prefs.getInt(KEY_PARTNER_ID, 3009)
+        get() = prefs.getInt(KEY_PARTNER_ID, context.resources.getInteger(R.integer.default_partner_id))
         set(value) = prefs.edit().putInt(KEY_PARTNER_ID, value).apply()
 
     var ks: String?
@@ -58,6 +76,29 @@ class PreferenceManager(private val context: Context) {
     var mediaProtocol: String
         get() = prefs.getString(KEY_MEDIA_PROTOCOL, "") ?: ""
         set(value) = prefs.edit().putString(KEY_MEDIA_PROTOCOL, value).apply()
+
+    var iotThing: String
+        get() = prefs.getString(KEY_IOT_THING, null) ?: ""
+        set(value) = prefs.edit().putString(KEY_IOT_THING, value).apply()
+
+    var iotEndpoint: String
+        get() = prefs.getString(KEY_IOT_ENDPOINT, null) ?: ""
+        set(value) = prefs.edit().putString(KEY_IOT_ENDPOINT, value).apply()
+
+    var iotUsername: String
+        get() = prefs.getString(KEY_IOT_USERNAME, null) ?: ""
+        set(value) = prefs.edit().putString(KEY_IOT_USERNAME, value).apply()
+
+    var iotPassword: String
+        get() = prefs.getString(KEY_IOT_PASSWORD, null) ?: ""
+        set(value) = prefs.edit().putString(KEY_IOT_PASSWORD, value).apply()
+
+    fun clearIotInfo() {
+        prefs.edit().putString(KEY_IOT_THING, null).apply()
+        prefs.edit().putString(KEY_IOT_ENDPOINT, null).apply()
+        prefs.edit().putString(KEY_IOT_USERNAME, null).apply()
+        prefs.edit().putString(KEY_IOT_PASSWORD, null).apply()
+    }
 
     fun clearKs() {
         prefs.edit().putString(KEY_KS, null).apply()

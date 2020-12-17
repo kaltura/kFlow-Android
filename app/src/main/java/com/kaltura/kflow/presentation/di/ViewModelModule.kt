@@ -49,6 +49,6 @@ val viewModelModule = module {
     viewModel { ContinueWatchingViewModel(get()) }
     viewModel { GetCollectionsViewModel(get()) }
     viewModel { BookmarkViewModel(get()) }
-    viewModel { IotViewModel(get(), get()) }
+    viewModel { IotViewModel(get(), get(), get()) }
     viewModel { DeviceManagementViewModel(get()) }
 }
