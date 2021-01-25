@@ -22,7 +22,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             Feature.FAVORITES, Feature.SEARCH, Feature.KEEP_ALIVE, Feature.MEDIA_PAGE,
             Feature.SUBSCRIPTION, Feature.PRODUCT_PRICE, Feature.CHECK_RECEIPT,
             Feature.TRANSACTION_HISTORY, Feature.RECORDINGS, Feature.BOOKMARK,
-            Feature.IOT, Feature.DEVICE_MANAGEMENT, Feature.PUSH_NOTIFICATIONS, Feature.SETTINGS)
+            Feature.IOT, Feature.DEVICE_MANAGEMENT, Feature.SETTINGS)
 
     private lateinit var rotationAnimation: SpringAnimation
     private var isDragging = false
@@ -76,7 +76,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 Feature.BOOKMARK -> MainFragmentDirections.navigateToBookmark()
                 Feature.IOT -> MainFragmentDirections.navigateToIot()
                 Feature.DEVICE_MANAGEMENT -> MainFragmentDirections.navigateToDeviceManagement()
-                Feature.PUSH_NOTIFICATIONS -> MainFragmentDirections.navigateToPushNotifications()
                 Feature.SETTINGS -> MainFragmentDirections.navigateToSettings()
             }, image, title)
         }

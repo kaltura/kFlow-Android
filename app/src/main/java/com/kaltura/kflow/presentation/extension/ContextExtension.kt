@@ -1,12 +1,10 @@
 package com.kaltura.kflow.presentation.extension
 
-import android.app.NotificationManager
 import android.app.UiModeManager
 import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Context.UI_MODE_SERVICE
 import android.content.res.Configuration
-import android.os.Build
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
@@ -28,9 +26,6 @@ inline val Context.inputManager: InputMethodManager?
 inline val Context.uiModeManager: UiModeManager
     get() = getSystemService(UI_MODE_SERVICE) as UiModeManager
 
-inline val Context.notificationManager: NotificationManager
-    get() = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
 fun Context.getQuantityString(@PluralsRes id: Int, count: Int): String =
         resources.getQuantityString(id, count, NumberFormat.getInstance().format(count.toLong()))
 
@@ -45,10 +40,4 @@ fun Context.runOnTv(action: () -> Unit) {
 fun Context.isMobile() = uiModeManager.currentModeType == Configuration.UI_MODE_TYPE_NORMAL
 fun Context.runOnMobile(action: () -> Unit) {
     if (isMobile()) action()
-}
-
-fun isOreo() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-
-inline fun runSinceOreo(action: () -> Unit) {
-    if (isOreo()) action()
 }

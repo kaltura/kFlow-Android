@@ -15,7 +15,6 @@ import com.kaltura.kflow.presentation.login.LoginViewModel
 import com.kaltura.kflow.presentation.mediaPage.MediaPageViewModel
 import com.kaltura.kflow.presentation.player.PlayerViewModel
 import com.kaltura.kflow.presentation.productPrice.ProductPriceViewModel
-import com.kaltura.kflow.presentation.pushNotifications.PushNotificationsViewModel
 import com.kaltura.kflow.presentation.recordings.RecordingsViewModel
 import com.kaltura.kflow.presentation.registration.RegistrationViewModel
 import com.kaltura.kflow.presentation.search.SearchViewModel
@@ -52,5 +51,4 @@ val viewModelModule = module {
     viewModel { BookmarkViewModel(get()) }
     viewModel { IotViewModel(get(), get(), get()) }
     viewModel { DeviceManagementViewModel(get()) }
-    viewModel { PushNotificationsViewModel(get()) }
 }
