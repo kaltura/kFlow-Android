@@ -15,7 +15,6 @@ import com.kaltura.kflow.presentation.main.Feature
 import com.kaltura.kflow.presentation.ui.ProgressDialog
 import kotlinx.android.synthetic.main.fragment_subscription.*
 import kotlinx.android.synthetic.main.view_bottom_debug.*
-import org.jetbrains.anko.support.v4.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.collections.ArrayList
 

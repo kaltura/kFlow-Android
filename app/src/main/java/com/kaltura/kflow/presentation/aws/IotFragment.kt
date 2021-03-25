@@ -16,7 +16,6 @@ import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
 import kotlinx.android.synthetic.main.fragment_iot.*
 import kotlinx.android.synthetic.main.view_bottom_debug.*
-import org.jetbrains.anko.support.v4.longToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -66,11 +65,11 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
         observeResource(viewModel.connectEvent,
                 error = {
                     it.printStackTrace()
-                    longToast("Mqtt Connection error: $it").show()
+                    longToast("Mqtt Connection error: $it")
                 },
                 success = {
                     if (it == AWSIotMqttClientStatusCallback.AWSIotMqttClientStatus.Connected) {
-                        longToast("Mqtt Is Connected").show()
+                        longToast("Mqtt Is Connected")
                         viewModel.subscribeToTopicAnnouncement()
                         viewModel.subscribeToThingShadow()
                     }
@@ -80,19 +79,19 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                 val parser = JsonParser()
                 val jsonObject = parser.parse(it) as JsonObject
                 val setPoint = jsonObject.getAsJsonObject(KEY_STATE).getAsJsonObject(KEY_DESIRED)[KEY_NEW_MESSAGE].asString
-                longToast(setPoint).show()
+                longToast(setPoint)
             } catch (e: JsonSyntaxException) {
                 e.printStackTrace()
-                longToast("Error Parsing Message : $e").show()
+                longToast("Error Parsing Message : $e")
             }
         }
         observeResource(viewModel.announcementMessageEvent,
                 error = {
                     it.printStackTrace()
-                    longToast("Subscribe to topic error: $it").show()
+                    longToast("Subscribe to topic error: $it")
                 },
                 success = {
-                    longToast(it).show()
+                    longToast(it)
                 })
     }
 

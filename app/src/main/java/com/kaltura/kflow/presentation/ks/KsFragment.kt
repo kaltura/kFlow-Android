@@ -9,7 +9,6 @@ import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
 import kotlinx.android.synthetic.main.fragment_ks.*
 import kotlinx.android.synthetic.main.view_bottom_debug.*
-import org.jetbrains.anko.support.v4.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**

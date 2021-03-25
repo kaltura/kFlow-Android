@@ -17,6 +17,7 @@ class LoginViewModel(private val apiManager: PhoenixApiManager,
     val loginRequest = MutableLiveData<Resource<Unit>>()
 
     fun makeLoginRequest(email: String, password: String, udid: String, extraParams: HashMap<String, StringValue>? = null) {
+        apiManager.ks = null
         apiManager.execute(OttUserService.login(preferenceManager.partnerId, email, password, extraParams, udid)
                 .setCompletion {
                     if (it.isSuccess) {

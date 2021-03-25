@@ -7,16 +7,12 @@ import com.kaltura.client.Configuration
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
-import com.kaltura.kflow.presentation.extension.hideError
-import com.kaltura.kflow.presentation.extension.showError
-import com.kaltura.kflow.presentation.extension.string
+import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
 import com.kaltura.playkit.providers.api.phoenix.APIDefines
 import com.kaltura.playkit.providers.ott.PhoenixMediaProvider
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.view_bottom_debug.*
-import org.jetbrains.anko.support.v4.longToast
-import org.jetbrains.anko.support.v4.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**

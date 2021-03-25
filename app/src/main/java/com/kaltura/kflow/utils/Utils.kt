@@ -2,6 +2,8 @@ package com.kaltura.kflow.utils
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.provider.Settings
 import android.telephony.TelephonyManager
 import java.io.File
@@ -12,20 +14,43 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 fun hasInternetConnection(context: Context): Boolean {
-    val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    return cm.activeNetworkInfo != null && cm.activeNetworkInfo.isAvailable && cm.activeNetworkInfo.isConnected
+    var result = false
+    val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val networkCapabilities = connectivityManager.activeNetwork ?: return false
+        val actNw =
+                connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+        result = when {
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+            else -> false
+        }
+    } else {
+        connectivityManager.run {
+            connectivityManager.activeNetworkInfo?.run {
+                result = when (type) {
+                    ConnectivityManager.TYPE_WIFI -> true
+                    ConnectivityManager.TYPE_MOBILE -> true
+                    ConnectivityManager.TYPE_ETHERNET -> true
+                    else -> false
+                }
+
+            }
+        }
+    }
+
+    return result
 }
 
 fun getUUID(context: Context): String {
-    val androidId = Settings.Secure.getString(context.contentResolver,
-            Settings.Secure.ANDROID_ID)
-    val uuid: UUID
-    uuid = try {
+    val androidId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+    val uuid: UUID = try {
         if ("9774d56d682e549c" != androidId) {
             UUID.nameUUIDFromBytes(androidId.toByteArray(charset("utf8")))
         } else {
-            val deviceId = (context
-                    .getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager)
+            val deviceId = (context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager)
                     .deviceId
             UUID.nameUUIDFromBytes(deviceId.toByteArray(charset("utf8")))
         }

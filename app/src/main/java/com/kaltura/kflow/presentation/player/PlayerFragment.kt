@@ -35,7 +35,6 @@ import com.kaltura.playkit.providers.base.OnMediaLoadCompletion
 import com.kaltura.playkit.providers.ott.PhoenixMediaProvider
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_bottom_debug.*
-import org.jetbrains.anko.support.v4.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
@@ -78,11 +77,11 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         favorite.setOnCheckedChangeListener { _, _ ->
             if (favorite.isPressed) actionFavorite()
         }
-        playerControls.setOnStartOverClickListener(View.OnClickListener {
+        playerControls.setOnStartOverClickListener {
             if (mediaEntry.mediaType == PKMediaEntry.MediaEntryType.Vod) player?.replay()
             else if (asset is ProgramAsset && (asset as ProgramAsset).isProgramInPast()) initPlayer(APIDefines.PlaybackContextType.Catchup)
             else if (asset is ProgramAsset && (asset as ProgramAsset).isProgramInLive()) initPlayer(APIDefines.PlaybackContextType.StartOver)
-        })
+        }
         checkAll.setOnClickListener {
             hideKeyboard()
             checkAllTogetherRequest()
@@ -160,7 +159,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     private fun initPlayer(playbackContextType: APIDefines.PlaybackContextType) {
-        startOttMediaLoading(playbackContextType, OnMediaLoadCompletion {
+        startOttMediaLoading(playbackContextType) {
             if (isAdded) {
                 requireActivity().runOnUiThread {
                     if (it.response != null) {
@@ -172,7 +171,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                     }
                 }
             }
-        })
+        }
     }
 
     private fun registerPlugins() {

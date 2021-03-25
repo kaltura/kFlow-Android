@@ -1,6 +1,7 @@
 package com.kaltura.kflow.presentation.extension
 
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.PluralsRes
@@ -88,4 +89,12 @@ fun Fragment.runOnTv(action: () -> Unit) {
 fun Fragment.isMobile() = requireContext().isMobile()
 fun Fragment.runOnMobile(action: () -> Unit) {
     if (isMobile()) action()
+}
+
+fun Fragment.longToast(text: String) {
+    Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
+}
+
+fun Fragment.toast(text: String) {
+    Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
 }
