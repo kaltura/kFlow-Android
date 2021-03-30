@@ -1,16 +1,26 @@
 package com.kaltura.kflow.presentation.player
 
+import android.app.Activity
+import android.content.Context
+import android.graphics.Point
+import android.hardware.display.DisplayManager
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.DisplayMetrics
 import android.util.Log
+import android.view.Display
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import com.kaltura.client.enums.*
-import com.kaltura.client.types.*
+import com.kaltura.client.enums.AssetIndexStatus
+import com.kaltura.client.enums.RuleType
+import com.kaltura.client.types.Asset
+import com.kaltura.client.types.ProgramAsset
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
@@ -37,9 +47,11 @@ import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.jetbrains.anko.support.v4.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
+import java.util.*
 
 /**
  * Created by alex_lytvynenko on 04.12.2018.
@@ -47,7 +59,6 @@ import java.net.URL
 class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     private val viewModel: PlayerViewModel by viewModel()
-
     private val TAG = PlayerFragment::class.java.canonicalName
     private val args: PlayerFragmentArgs by navArgs()
     private var player: Player? = null
@@ -64,11 +75,66 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
-
         initUI()
         asset = args.asset
         isKeepAlive = args.isKeepAlive
         if (asset == null && args.recording != null) loadAsset(args.recording!!.assetId) else onAssetLoaded()
+        hdmiLogic()
+    }
+
+    private fun hdmiLogic(){
+        val mDisplayListener: DisplayManager.DisplayListener = object : DisplayManager.DisplayListener {
+            override fun onDisplayAdded(displayId: Int) {
+                Log.d(TAG, "Display #$displayId added.")
+                player?.stop()
+            }
+
+            override fun onDisplayChanged(displayId: Int) {
+                Log.d(TAG, "Display #$displayId changed.")
+            }
+
+            override fun onDisplayRemoved(displayId: Int) {
+                Log.d(TAG, "Display #$displayId removed.")
+                onAssetLoaded()
+            }
+        }
+        val displayManager = activity?.getSystemService(Context.DISPLAY_SERVICE) as? DisplayManager
+        displayManager?.registerDisplayListener(mDisplayListener,null)
+        if (displayManager != null) {
+            isHDMI(displayManager)
+        }
+    }
+
+    private fun isHDMI(displayManager :DisplayManager ){
+
+        val outPoint = getScreenSize()
+
+        val iterator = displayManager?.getDisplays()?.iterator()
+
+        // do something with the rest of elements
+        iterator?.forEach {
+            Log.d(TAG, "Display Name is #${it.name}")
+            Log.d(TAG, "Display State is #${it.state}")
+            Log.d(TAG, "Display ScreenHeight is #${it.getSize(outPoint)}")
+
+            if (it.name.contains("HDMI", true)) {
+                Log.d(TAG, "HDMI Was Detected, Stopping The Player")
+                player?.destroy()
+            }
+
+        }
+
+    }
+
+    fun getScreenSize(): Point? {
+        val display: Display = activity?.getWindowManager()?.getDefaultDisplay()!!
+        val size = Point()
+        if (Build.VERSION.SDK_INT >= 13) {
+            display.getSize(size)
+        } else {
+            size[display.getWidth()] = display.getHeight()
+        }
+        return size
     }
 
     private fun initUI() {

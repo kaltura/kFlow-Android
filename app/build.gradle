@@ -78,7 +78,7 @@ dependencies {
     implementation 'org.jetbrains.anko:anko-commons:0.10.8'
 
     // Client library
-    implementation 'com.kaltura:KalturaOttAndroidJavaClient:5.2.8.14101'
+    implementation 'com.kaltura:KalturaOttAndroidJavaClient:5.4.0.28193'
 
     // Playkit
     implementation 'com.kaltura.playkit:playkit:4.10.0'

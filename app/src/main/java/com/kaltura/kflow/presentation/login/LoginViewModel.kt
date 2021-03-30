@@ -1,6 +1,7 @@
 package com.kaltura.kflow.presentation.login
 
 import androidx.lifecycle.MutableLiveData
+import com.kaltura.client.services.AssetHistoryService
 import com.kaltura.client.services.OttUserService
 import com.kaltura.client.types.StringValue
 import com.kaltura.kflow.manager.PhoenixApiManager
@@ -31,6 +32,8 @@ class LoginViewModel(private val apiManager: PhoenixApiManager,
                         loginRequest.value = Resource.Error(it.error)
                     }
                 })
+
+        apiManager.execute(AssetHistoryService.getNextEpisode(44444444))
     }
 
     fun getSavedUsername() = preferenceManager.authUser
