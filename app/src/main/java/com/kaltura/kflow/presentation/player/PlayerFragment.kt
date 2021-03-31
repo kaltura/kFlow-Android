@@ -91,7 +91,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             }
 
             override fun onDisplayChanged(displayId: Int) {
-                
+
             }
 
             override fun onDisplayRemoved(displayId: Int) {
