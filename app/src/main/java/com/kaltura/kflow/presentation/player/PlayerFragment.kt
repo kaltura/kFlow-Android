@@ -7,7 +7,6 @@ import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Display
 import android.view.View
@@ -64,6 +63,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     private var player: Player? = null
     private var asset: Asset? = null
     private var likeId = ""
+    private var isHdmiConnected = false
     private lateinit var mediaEntry: PKMediaEntry
     private var parentalRuleId = 0
     private var isKeepAlive = false
@@ -86,15 +86,17 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         val mDisplayListener: DisplayManager.DisplayListener = object : DisplayManager.DisplayListener {
             override fun onDisplayAdded(displayId: Int) {
                 Log.d(TAG, "Display #$displayId added.")
+                isHdmiConnected = true
                 player?.stop()
             }
 
             override fun onDisplayChanged(displayId: Int) {
-                Log.d(TAG, "Display #$displayId changed.")
+                
             }
 
             override fun onDisplayRemoved(displayId: Int) {
                 Log.d(TAG, "Display #$displayId removed.")
+                isHdmiConnected = false
                 onAssetLoaded()
             }
         }
@@ -119,7 +121,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
             if (it.name.contains("HDMI", true)) {
                 Log.d(TAG, "HDMI Was Detected, Stopping The Player")
-                player?.destroy()
+                isHdmiConnected = true
+                player?.stop()
             }
 
         }
@@ -367,8 +370,12 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             mediaConfig.startPosition = args.startPosition.toLong()
         }
 
-        player?.prepare(mediaConfig)
-        player?.play()
+        if (!isHdmiConnected) {
+            player?.prepare(mediaConfig)
+            player?.play()
+        }else{
+            player?.stop()
+        }
     }
 
     private fun getKeepAliveHeaderUrl(url: URL, listener: ((status: Boolean, url: String) -> Unit)) {
@@ -514,6 +521,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     override fun onDestroyView() {
         super.onDestroyView()
+
         if (isKeepAlive) {
             playerKeepAliveService.cancelFireKeepAliveService()
             isKeepAlive = false
