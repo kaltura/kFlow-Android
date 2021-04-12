@@ -2,13 +2,13 @@ package com.kaltura.kflow.presentation.aws
 
 import com.amazonaws.mobile.client.results.SignInState
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttClientStatusCallback
-import com.kaltura.kflow.entity.Iot
-import com.kaltura.kflow.entity.IotClientConfiguration
+import com.kaltura.client.services.IotService
+import com.kaltura.client.types.Iot
+import com.kaltura.client.types.IotClientConfiguration
 import com.kaltura.kflow.manager.AwsManager
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
-import com.kaltura.kflow.service.IotService
 import com.kaltura.kflow.utils.*
 import org.json.JSONObject
 
