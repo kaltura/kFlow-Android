@@ -72,7 +72,7 @@ dependencies {
     implementation 'br.com.simplepass:loading-button-android:2.2.0'
 
     // Client library
-    implementation 'com.kaltura:KalturaOttAndroidJavaClient:5.4.0.28193'
+    implementation 'com.kaltura:KalturaOttAndroidJavaClient:6.2.0.28956'
 
     // Playkit
     implementation 'com.kaltura.playkit:playkit:4.10.0'

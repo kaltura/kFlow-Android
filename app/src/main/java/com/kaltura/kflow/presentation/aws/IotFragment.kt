@@ -9,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException
+import com.kaltura.client.types.Epg
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
@@ -27,22 +28,32 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
     private val KEY_STATE = "state"
     private val KEY_DESIRED = "desired"
     private val KEY_NEW_MESSAGE = "NewMessage"
+    private val KEY_HEADER = "header"
+    private val KEY_EVENT_TYPE = "event_type"
+    private val KEY_LIVE_ASSET_ID = "live_asset_id"
 
     //Topic Announcments Keys
     private val KEY_ANNONCMENT_TOPIC = "message"
 
     private val viewModel: IotViewModel by viewModel()
+    private var epgUpdates = arrayListOf<Epg>()
 
     override fun debugView(): DebugView = debugView
     override val feature = Feature.IOT
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        connect.visibleOrGone(epgUpdates.isNotEmpty())
         register.setOnClickListener {
+            showAssets.gone()
             makeRegisterRequest()
         }
         connect.setOnClickListener {
+            showAssets.gone()
             viewModel.connect()
+        }
+        showAssets.navigateOnClick {
+            IotFragmentDirections.navigateToAssetList(assets = epgUpdates.toTypedArray())
         }
     }
 
@@ -76,9 +87,9 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                 })
         observeResource(viewModel.shadowMessageEvent) {
             try {
-                val parser = JsonParser()
-                val jsonObject = parser.parse(it) as JsonObject
+                val jsonObject = JsonParser().parse(it) as JsonObject
                 val setPoint = jsonObject.getAsJsonObject(KEY_STATE).getAsJsonObject(KEY_DESIRED)[KEY_NEW_MESSAGE].asString
+                handleEventType(setPoint)
                 longToast(setPoint)
             } catch (e: JsonSyntaxException) {
                 e.printStackTrace()
@@ -93,6 +104,15 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                 success = {
                     longToast(it)
                 })
+        observeResource(viewModel.epgUpdates,
+                error = {
+                    toast("Failed to fetch EPG updates: ${it.message ?: ""}")
+                },
+                success = {
+                    epgUpdates = it
+                    showAssets.text = getQuantityString(R.plurals.show_updates, epgUpdates.size)
+                    showAssets.visible()
+                })
     }
 
     private fun makeRegisterRequest() {
@@ -102,6 +122,23 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
             register.startAnimation {
                 viewModel.register()
             }
+        }
+    }
+
+    private fun handleEventType(jsonString: String) {
+        try {
+            val jsonObject = JsonParser().parse(jsonString) as JsonObject
+            if (jsonObject.has(KEY_HEADER)) {
+                val header = jsonObject.getAsJsonObject(KEY_HEADER)
+                if (header.has(KEY_EVENT_TYPE)) {
+                    val eventType = header.getAsJsonPrimitive(KEY_EVENT_TYPE).asInt
+                    if (eventType == 1) {
+                        val liveAssetId = jsonObject.getAsJsonPrimitive(KEY_LIVE_ASSET_ID).asLong
+                        viewModel.getEpgUpdates(liveAssetId)
+                    }
+                }
+            }
+        } catch (ex: JsonSyntaxException) {
         }
     }
 }

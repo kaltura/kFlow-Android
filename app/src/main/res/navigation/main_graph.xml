@@ -350,7 +350,11 @@
         android:id="@+id/iot"
         android:name="com.kaltura.kflow.presentation.aws.IotFragment"
         android:label="IoT"
-        tools:layout="@layout/fragment_iot" />
+        tools:layout="@layout/fragment_iot">
+        <action
+            android:id="@+id/navigate_to_asset_list"
+            app:destination="@id/asset_list" />
+    </fragment>
 
     <fragment
         android:id="@+id/device_management"

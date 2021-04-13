@@ -1,16 +1,19 @@
 package com.kaltura.kflow.presentation.aws
 
+import androidx.lifecycle.MutableLiveData
 import com.amazonaws.mobile.client.results.SignInState
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttClientStatusCallback
+import com.kaltura.client.services.EpgService
 import com.kaltura.client.services.IotService
-import com.kaltura.client.types.Iot
-import com.kaltura.client.types.IotClientConfiguration
+import com.kaltura.client.types.*
 import com.kaltura.kflow.manager.AwsManager
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
 import com.kaltura.kflow.utils.*
 import org.json.JSONObject
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by alex_lytvynenko on 2020-01-14.
@@ -29,6 +32,7 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
     val connectEvent = SingleLiveEvent<Resource<AWSIotMqttClientStatusCallback.AWSIotMqttClientStatus>>()
     val shadowMessageEvent = SingleLiveEvent<Resource<String>>()
     val announcementMessageEvent = SingleLiveEvent<Resource<String>>()
+    val epgUpdates = MutableLiveData<Resource<ArrayList<Epg>>>()
 
     fun register() {
         getClientConfigIot()
@@ -59,6 +63,27 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
         awsManager.subscribeToTopicShadowAccepted(iotThing) {
             shadowMessageEvent.postValue(it)
         }
+    }
+
+    fun getEpgUpdates(liveAssetId: Long) {
+        val todayMidnightCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+            this[Calendar.MILLISECOND] = 0
+            this[Calendar.SECOND] = 0
+            this[Calendar.MINUTE] = 0
+            this[Calendar.HOUR_OF_DAY] = 0
+        }
+
+        val filter = EpgFilter().apply {
+            dateEqual = todayMidnightCalendar.timeInMillis / 1000 //Need to be date since beginning of the day 00:00:00
+            liveAssetIdEqual = liveAssetId
+        }
+
+        apiManager.execute(EpgService.list(filter).setCompletion {
+            if (it.isSuccess && it.results.objects != null) {
+                if (it.results.objects.size > 0) epgUpdates.value = Resource.Success(it.results.objects as ArrayList<Epg>)
+                else epgUpdates.value = Resource.Success(arrayListOf())
+            } else epgUpdates.value = Resource.Error(it.error)
+        })
     }
 
     private fun getClientConfigIot() {
