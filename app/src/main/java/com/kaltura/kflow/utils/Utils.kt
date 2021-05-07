@@ -10,6 +10,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.UnsupportedEncodingException
+import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -105,3 +106,5 @@ fun saveToFile(context: Context, text: String): File {
 fun utcToLocal(utcTime: Long): Long {
     return utcTime + TimeZone.getDefault().getOffset(utcTime)
 }
+
+fun sha256(input: String) = MessageDigest.getInstance("SHA-256").digest(input.toByteArray())

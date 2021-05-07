@@ -18,6 +18,8 @@ class PreferenceManager(private val context: Context) {
     private val KEY_STREAMER_TYPE = "prefs_streamer_type"
     private val KEY_MEDIA_PROTOCOL = "prefs_media_protocol"
     private val KEY_KS = "prefs_ks"
+    private val KEY_APP_TOKEN = "prefs_app_token"
+    private val KEY_APP_TOKEN_ID = "prefs_app_token_id"
     private val KEY_AUTH_USER = "prefs_auth_user"
     private val KEY_AUTH_PASSWORD = "prefs_auth_password"
     private val KEY_IOT_THING = "prefs_iot_thing"
@@ -54,7 +56,8 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit().putString(KEY_VOD_ASSET_TYPE, value).apply()
 
     var mediaFileFormat: String
-        get() = prefs.getString(KEY_MAIN_MEDIA_FILE_FORMAT, null) ?: context.getString(R.string.default_media_file_format)
+        get() = prefs.getString(KEY_MAIN_MEDIA_FILE_FORMAT, null)
+                ?: context.getString(R.string.default_media_file_format)
         set(value) = prefs.edit().putString(KEY_MAIN_MEDIA_FILE_FORMAT, value).apply()
 
     var partnerId: Int
@@ -64,6 +67,14 @@ class PreferenceManager(private val context: Context) {
     var ks: String?
         get() = prefs.getString(KEY_KS, null)
         set(value) = prefs.edit().putString(KEY_KS, value).apply()
+
+    var appToken: String?
+        get() = prefs.getString(KEY_APP_TOKEN, null)
+        set(value) = prefs.edit().putString(KEY_APP_TOKEN, value).apply()
+
+    var appTokenId: String?
+        get() = prefs.getString(KEY_APP_TOKEN_ID, null)
+        set(value) = prefs.edit().putString(KEY_APP_TOKEN_ID, value).apply()
 
     var urlType: String
         get() = prefs.getString(KEY_URL_TYPE, "") ?: ""
@@ -102,6 +113,8 @@ class PreferenceManager(private val context: Context) {
 
     fun clearKs() {
         prefs.edit().putString(KEY_KS, null).apply()
+        prefs.edit().putString(KEY_APP_TOKEN, null).apply()
+        prefs.edit().putString(KEY_APP_TOKEN_ID, null).apply()
     }
 
     fun clear() {

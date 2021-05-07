@@ -1,10 +1,7 @@
 package com.kaltura.kflow.presentation.anonymousLogin
 
 import androidx.lifecycle.MutableLiveData
-import com.kaltura.client.enums.AppTokenHashType
-import com.kaltura.client.services.AppTokenService
 import com.kaltura.client.services.OttUserService
-import com.kaltura.client.types.AppToken
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
@@ -29,14 +26,5 @@ class AnonymousLoginViewModel(private val apiManager: PhoenixApiManager,
                         loginRequest.value = Resource.Error(it.error)
                     }
                 })
-    }
-
-    fun generateAppToken() {
-        val appToken = AppToken()
-        appToken.hashType = AppTokenHashType.SHA256
-        appToken.sessionDuration = 604800 // 604800 seconds = 7 days
-        appToken.expiry = 1832668157
-        val requestBuilder = AppTokenService.add(appToken).setCompletion { }
-        apiManager.execute(requestBuilder)
     }
 }

@@ -17,11 +17,11 @@ import kotlinx.android.synthetic.main.fragment_main.*
  */
 class MainFragment : Fragment(R.layout.fragment_main) {
 
-    private val features = arrayOf(Feature.LOGIN, Feature.WORK_WITH_KS, Feature.ANONYMOUS_LOGIN, Feature.REGISTRATION,
-            Feature.COLLECTIONS, Feature.VOD, Feature.CONTINUE_WATCHING, Feature.EPG, Feature.LIVE,
-            Feature.FAVORITES, Feature.SEARCH, Feature.KEEP_ALIVE, Feature.MEDIA_PAGE,
-            Feature.SUBSCRIPTION, Feature.PRODUCT_PRICE, Feature.CHECK_RECEIPT,
-            Feature.TRANSACTION_HISTORY, Feature.RECORDINGS, Feature.BOOKMARK,
+    private val features = arrayOf(Feature.LOGIN, Feature.LOGIN_APP_TOKEN, Feature.WORK_WITH_KS,
+            Feature.ANONYMOUS_LOGIN, Feature.REGISTRATION, Feature.COLLECTIONS, Feature.VOD,
+            Feature.CONTINUE_WATCHING, Feature.EPG, Feature.LIVE, Feature.FAVORITES, Feature.SEARCH,
+            Feature.KEEP_ALIVE, Feature.MEDIA_PAGE, Feature.SUBSCRIPTION, Feature.PRODUCT_PRICE,
+            Feature.CHECK_RECEIPT, Feature.TRANSACTION_HISTORY, Feature.RECORDINGS, Feature.BOOKMARK,
             Feature.IOT, Feature.DEVICE_MANAGEMENT, Feature.SETTINGS)
 
     private lateinit var rotationAnimation: SpringAnimation
@@ -56,6 +56,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         adapter.clickListener = { feature, image, title ->
             navigateWithExtras(when (feature) {
                 Feature.LOGIN -> MainFragmentDirections.navigateToLogin()
+                Feature.LOGIN_APP_TOKEN -> MainFragmentDirections.navigateToAppToken()
                 Feature.WORK_WITH_KS -> MainFragmentDirections.navigateToKs()
                 Feature.ANONYMOUS_LOGIN -> MainFragmentDirections.navigateToAnonymousLogin()
                 Feature.REGISTRATION -> MainFragmentDirections.navigateToRegistration()

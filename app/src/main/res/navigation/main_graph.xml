@@ -18,6 +18,13 @@
             app:popEnterAnim="@anim/fragment_fade_enter"
             app:popExitAnim="@anim/fragment_fade_exit" />
         <action
+            android:id="@+id/navigate_to_app_token"
+            app:destination="@id/loginAppToken"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit" />
+        <action
             android:id="@+id/navigate_to_ks"
             app:destination="@id/ks"
             app:enterAnim="@anim/fragment_fade_enter"
@@ -181,6 +188,12 @@
         android:name="com.kaltura.kflow.presentation.login.LoginFragment"
         android:label="Login"
         tools:layout="@layout/fragment_login" />
+
+    <fragment
+        android:id="@+id/loginAppToken"
+        android:name="com.kaltura.kflow.presentation.appToken.AppTokenFragment"
+        android:label="AppToken"
+        tools:layout="@layout/fragment_app_token" />
 
     <fragment
         android:id="@+id/ks"

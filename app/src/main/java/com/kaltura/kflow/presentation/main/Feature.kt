@@ -8,6 +8,7 @@ import com.kaltura.kflow.R
  */
 enum class Feature(val text: String, @DrawableRes val imageResId: Int) {
     LOGIN("Login", R.drawable.ic_login),
+    LOGIN_APP_TOKEN("Login & AppToken", R.drawable.ic_login),
     WORK_WITH_KS("Work with KS", R.drawable.ic_ks),
     ANONYMOUS_LOGIN("Anonymous\nlogin", R.drawable.ic_anonymous),
     REGISTRATION("Registration", R.drawable.ic_registration),

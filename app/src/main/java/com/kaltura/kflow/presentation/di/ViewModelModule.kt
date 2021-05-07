@@ -1,6 +1,7 @@
 package com.kaltura.kflow.presentation.di
 
 import com.kaltura.kflow.presentation.anonymousLogin.AnonymousLoginViewModel
+import com.kaltura.kflow.presentation.appToken.AppTokenViewModel
 import com.kaltura.kflow.presentation.aws.IotViewModel
 import com.kaltura.kflow.presentation.bookmark.BookmarkViewModel
 import com.kaltura.kflow.presentation.checkReceipt.CheckReceiptViewModel
@@ -35,6 +36,7 @@ val viewModelModule = module {
     viewModel { FavoritesViewModel(get()) }
     viewModel { LiveTvViewModel(get()) }
     viewModel { LoginViewModel(get(), get()) }
+    viewModel { AppTokenViewModel(get(), get()) }
     viewModel { KsViewModel(get(), get()) }
     viewModel { MediaPageViewModel(get()) }
     viewModel { PlayerViewModel(get(), get()) }
