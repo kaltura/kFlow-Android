@@ -17,8 +17,10 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by alex_lytvynenko on 2020-01-09.
  */
-class AppTokenViewModel(private val apiManager: PhoenixApiManager,
-                        private val preferenceManager: PreferenceManager) : BaseViewModel(apiManager) {
+class AppTokenViewModel(
+    private val apiManager: PhoenixApiManager,
+    private val preferenceManager: PreferenceManager
+) : BaseViewModel(apiManager) {
 
     private val EXCEEDED_LIMIT_ERROR_CODE = "1001"
 
@@ -29,19 +31,24 @@ class AppTokenViewModel(private val apiManager: PhoenixApiManager,
     fun makeExplicitLoginRequest(email: String, password: String, udid: String) {
         apiManager.ks = null
         preferenceManager.clearKs()
-        apiManager.execute(OttUserService.login(preferenceManager.partnerId, email, password, null, udid)
-                .setCompletion {
-                    if (it.isSuccess) {
-                        preferenceManager.clearIotInfo()
+        apiManager.execute(OttUserService.login(
+            preferenceManager.partnerId,
+            email,
+            password,
+            null,
+            udid
+        ).setCompletion {
+            if (it.isSuccess) {
+                preferenceManager.clearIotInfo()
 
-                        preferenceManager.ks = it.results.loginSession.ks
-                        apiManager.ks = it.results.loginSession.ks
+                preferenceManager.ks = it.results.loginSession.ks
+                apiManager.ks = it.results.loginSession.ks
 
-                        getHouseholdDevices(udid)
-                    } else {
-                        loginRequest.value = Resource.Error(it.error)
-                    }
-                })
+                getHouseholdDevices(udid, true)
+            } else {
+                loginRequest.value = Resource.Error(it.error)
+            }
+        })
     }
 
     fun makeAppTokenStartRequest(udid: String) {
@@ -49,7 +56,7 @@ class AppTokenViewModel(private val apiManager: PhoenixApiManager,
             anonymousLogin(udid)
         } else {
             apiManager.execute(OttUserService.get().setCompletion {
-                if (it.isSuccess) getHouseholdDevices(udid)
+                if (it.isSuccess) getHouseholdDevices(udid, false)
                 else startSession(udid)
             })
         }
@@ -57,7 +64,8 @@ class AppTokenViewModel(private val apiManager: PhoenixApiManager,
 
     fun makeRevokeSessionRequest() {
         apiManager.execute(SessionService.revoke().setCompletion {
-            revokeSessionRequest.value = if (it.isSuccess) Resource.Success(Unit) else Resource.Error(it.error)
+            revokeSessionRequest.value =
+                if (it.isSuccess) Resource.Success(Unit) else Resource.Error(it.error)
         })
     }
 
@@ -72,69 +80,91 @@ class AppTokenViewModel(private val apiManager: PhoenixApiManager,
 
     private fun startSession(udid: String) {
         apiManager.ks = null
-        apiManager.execute(OttUserService.anonymousLogin(preferenceManager.partnerId, udid).setCompletion {
-            if (it.isSuccess) {
-                preferenceManager.ks = it.results.ks
-                apiManager.ks = it.results.ks
+        apiManager.execute(
+            OttUserService.anonymousLogin(preferenceManager.partnerId, udid).setCompletion {
+                if (it.isSuccess) {
+                    preferenceManager.ks = it.results.ks
+                    apiManager.ks = it.results.ks
 
-                apiManager.execute(AppTokenService.startSession(
+                    apiManager.execute(AppTokenService.startSession(
                         preferenceManager.appTokenId,
                         sha256(it.results.ks + preferenceManager.appToken).toHex()
-                ).setCompletion {
-                    if (it.isSuccess) {
-                        preferenceManager.ks = it.results.ks
-                        apiManager.ks = it.results.ks
-                        getHouseholdDevices(udid)
-                    } else {
-                        loginRequest.value = Resource.Error(it.error)
-                    }
-                })
-            } else {
-                loginRequest.value = Resource.Error(it.error)
-            }
-        })
+                    ).setCompletion {
+                        if (it.isSuccess) {
+                            preferenceManager.ks = it.results.ks
+                            apiManager.ks = it.results.ks
+                            getHouseholdDevices(udid, false)
+                        } else {
+                            loginRequest.value = Resource.Error(it.error)
+                        }
+                    })
+                } else {
+                    loginRequest.value = Resource.Error(it.error)
+                }
+            })
     }
 
-    private fun getHouseholdDevices(currentUdid: String) {
+    private fun getHouseholdDevices(currentUdid: String, fromExplicitLogin: Boolean) {
         apiManager.execute(HouseholdDeviceService.list().setCompletion {
             if (it.isSuccess && it.results.objects != null) {
-                if (it.results.objects.any { it.udid == currentUdid }) addAppToken()
-                else addDeviceToHousehold(currentUdid)
+                if (it.results.objects.any { it.udid == currentUdid }) {
+                    if (fromExplicitLogin) {
+                        addAppToken()
+                    } else {
+                        loginRequest.value = Resource.Success(Unit)
+                    }
+                } else addDeviceToHousehold(currentUdid, fromExplicitLogin)
             } else {
                 loginRequest.value = Resource.Error(it.error)
             }
         })
     }
 
-    private fun removeDeviceFromHousehold(currentUdid: String, udidToRemove: String) {
+    private fun removeDeviceFromHousehold(
+        currentUdid: String,
+        udidToRemove: String,
+        fromExplicitLogin: Boolean
+    ) {
         apiManager.execute(HouseholdDeviceService.delete(udidToRemove).setCompletion {
-            if (it.isSuccess) addDeviceToHousehold(currentUdid)
+            if (it.isSuccess) addDeviceToHousehold(currentUdid, fromExplicitLogin)
             else logout(currentUdid)
         })
     }
 
-    private fun addDeviceToHousehold(udid: String) {
+    private fun addDeviceToHousehold(udid: String, fromExplicitLogin: Boolean) {
         apiManager.execute(DeviceBrandService.list().setCompletion {
             if (it.isSuccess) {
-                addDeviceToHousehold(udid,
-                        it.results.objects.firstOrNull { it.name == "Android" }?.id?.toInt() ?: 1)
-            } else addDeviceToHousehold(udid, 1)
+                addDeviceToHousehold(
+                    udid,
+                    it.results.objects.firstOrNull { it.name == "Android" }?.id?.toInt() ?: 1,
+                    fromExplicitLogin
+                )
+            } else addDeviceToHousehold(udid, 1, fromExplicitLogin)
         })
     }
 
-    private fun addDeviceToHousehold(udid: String, brandId: Int) {
+    private fun addDeviceToHousehold(udid: String, brandId: Int, fromExplicitLogin: Boolean) {
         val device = HouseholdDevice().apply {
             setBrandId(brandId)
             name = "${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}"
             setUdid(udid)
         }
         apiManager.execute(HouseholdDeviceService.add(device).setCompletion {
-            if (it.isSuccess) addAppToken()
-            else {
+            if (it.isSuccess) {
+                if (fromExplicitLogin) {
+                    addAppToken()
+                } else {
+                    loginRequest.value = Resource.Success(Unit)
+                }
+            } else {
                 if (it.error.code == EXCEEDED_LIMIT_ERROR_CODE) {
                     apiManager.execute(HouseholdDeviceService.list().setCompletion {
                         if (it.isSuccess && it.results.objects != null)
-                            removeDeviceFromHousehold(udid, it.results.objects.last().udid)
+                            removeDeviceFromHousehold(
+                                udid,
+                                it.results.objects.last().udid,
+                                fromExplicitLogin
+                            )
                         else logout(udid)
                     })
                 } else {
@@ -172,14 +202,14 @@ class AppTokenViewModel(private val apiManager: PhoenixApiManager,
     private fun anonymousLogin(udid: String) {
         apiManager.ks = null
         apiManager.execute(OttUserService.anonymousLogin(preferenceManager.partnerId, udid)
-                .setCompletion {
-                    if (it.isSuccess) {
-                        preferenceManager.ks = it.results.ks
-                        apiManager.ks = it.results.ks
-                        anonymousLoginRequest.value = Resource.Success(Unit)
-                    } else {
-                        anonymousLoginRequest.value = Resource.Error(it.error)
-                    }
-                })
+            .setCompletion {
+                if (it.isSuccess) {
+                    preferenceManager.ks = it.results.ks
+                    apiManager.ks = it.results.ks
+                    anonymousLoginRequest.value = Resource.Success(Unit)
+                } else {
+                    anonymousLoginRequest.value = Resource.Error(it.error)
+                }
+            })
     }
 }
