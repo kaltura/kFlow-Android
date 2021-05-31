@@ -24,7 +24,7 @@ class EpgFragment : SharedTransitionFragment(R.layout.fragment_epg) {
     private var selectedDateFilter = DateFilter.TODAY
 
     enum class DateFilter {
-        YESTERDAY, TODAY, TOMORROW
+        YESTERDAY, TODAY, TOMORROW, HOURS48
     }
 
     override fun debugView(): DebugView = debugView
@@ -34,9 +34,10 @@ class EpgFragment : SharedTransitionFragment(R.layout.fragment_epg) {
         super.onViewCreated(view, savedInstanceState)
 
         showChannel.navigateOnClick { EpgFragmentDirections.navigateToAssetList(assets = channels.toTypedArray()) }
-        yesterday.setOnClickListener { makeGetChannelsRequest(linearMediaId.string, DateFilter.YESTERDAY) }
-        today.setOnClickListener { makeGetChannelsRequest(linearMediaId.string, DateFilter.TODAY) }
-        tomorrow.setOnClickListener { makeGetChannelsRequest(linearMediaId.string, DateFilter.TOMORROW) }
+//        yesterday.setOnClickListener { makeGetChannelsRequest(linearMediaId.string, DateFilter.YESTERDAY) }
+//        today.setOnClickListener { makeGetChannelsRequest(linearMediaId.string, DateFilter.TODAY) }
+//        tomorrow.setOnClickListener { makeGetChannelsRequest(linearMediaId.string, DateFilter.TOMORROW) }
+        hours48.setOnClickListener { makeGetChannelsRequest(itemPerPage.string, DateFilter.HOURS48) }
     }
 
     override fun subscribeUI() {
@@ -46,6 +47,7 @@ class EpgFragment : SharedTransitionFragment(R.layout.fragment_epg) {
                         DateFilter.YESTERDAY -> yesterday
                         DateFilter.TODAY -> today
                         DateFilter.TOMORROW -> tomorrow
+                        DateFilter.HOURS48 -> hours48
                     }.error(lifecycleScope)
                 },
                 success = {
@@ -53,6 +55,7 @@ class EpgFragment : SharedTransitionFragment(R.layout.fragment_epg) {
                         DateFilter.YESTERDAY -> yesterday
                         DateFilter.TODAY -> today
                         DateFilter.TOMORROW -> tomorrow
+                        DateFilter.HOURS48 -> hours48
                     }.success(lifecycleScope)
                     channels = it
                     showChannel.text = getQuantityString(R.plurals.show_programs, channels.size)
@@ -69,7 +72,7 @@ class EpgFragment : SharedTransitionFragment(R.layout.fragment_epg) {
             selectedDateFilter = dateFilter
 
             if (epgChannelId.isEmpty()) {
-                linearMediaIdInputLayout.showError("Empty linear media ID")
+                itemPerPageInputLayout.showError("Empty items per page")
                 return@withInternetConnection
             }
 
@@ -77,13 +80,15 @@ class EpgFragment : SharedTransitionFragment(R.layout.fragment_epg) {
                 DateFilter.YESTERDAY -> yesterday
                 DateFilter.TODAY -> today
                 DateFilter.TOMORROW -> tomorrow
+                DateFilter.HOURS48 -> hours48
             }.startAnimation {
-                viewModel.getChannelsRequest(epgChannelId, selectedDateFilter)
+                viewModel.cancel()
+                viewModel.getChannelsRequest(epgChannelId.toInt(), selectedDateFilter)
             }
         }
     }
 
     private fun clearInputLayouts() {
-        linearMediaIdInputLayout.hideError()
+        itemPerPageInputLayout.hideError()
     }
 }

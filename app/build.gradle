@@ -65,8 +65,8 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.4'
 
     // Koin
-    implementation 'org.koin:koin-androidx-viewmodel:2.2.2'
-    implementation 'org.koin:koin-androidx-scope:2.2.2'
+    implementation 'io.insert-koin:koin-android:3.0.1'
+    implementation 'io.insert-koin:koin-android-ext:3.0.1'
 
     // Loading button
     implementation 'br.com.simplepass:loading-button-android:2.2.0'

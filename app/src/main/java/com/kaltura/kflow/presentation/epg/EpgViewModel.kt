@@ -18,8 +18,14 @@ import kotlin.collections.ArrayList
 class EpgViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
 
     val getAssetList = MutableLiveData<Resource<ArrayList<Asset>>>()
+    private val assets = arrayListOf<Asset>()
 
-    fun getChannelsRequest(epgChannelId: String, dateFilter: EpgFragment.DateFilter) {
+    fun cancel() {
+        apiManager.cancelAll()
+        assets.clear()
+    }
+
+    fun getChannelsRequest(itemPerPage: Int, dateFilter: EpgFragment.DateFilter) {
         var startDate = 0L
         var endDate = 0L
         val todayMidnightCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
@@ -29,39 +35,42 @@ class EpgViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(ap
             this[Calendar.HOUR_OF_DAY] = 0
         }
 
-        when (dateFilter) {
-            EpgFragment.DateFilter.YESTERDAY -> {
-                endDate = todayMidnightCalendar.timeInMillis / 1000
-                todayMidnightCalendar.add(Calendar.DAY_OF_YEAR, -1)
-                startDate = todayMidnightCalendar.timeInMillis / 1000
-            }
-            EpgFragment.DateFilter.TODAY -> {
-                startDate = todayMidnightCalendar.timeInMillis / 1000
-                todayMidnightCalendar.add(Calendar.DAY_OF_YEAR, 1)
-                endDate = todayMidnightCalendar.timeInMillis / 1000
-            }
-            EpgFragment.DateFilter.TOMORROW -> {
-                todayMidnightCalendar.add(Calendar.DAY_OF_YEAR, 1)
-                startDate = todayMidnightCalendar.timeInMillis / 1000
-                todayMidnightCalendar.add(Calendar.DAY_OF_YEAR, 1)
-                endDate = todayMidnightCalendar.timeInMillis / 1000
-            }
-        }
+//        when (dateFilter) {
+//            EpgFragment.DateFilter.YESTERDAY -> {
+//                endDate = todayMidnightCalendar.timeInMillis / 1000
+//                todayMidnightCalendar.add(Calendar.DAY_OF_YEAR, -1)
+//                startDate = todayMidnightCalendar.timeInMillis / 1000
+//            }
+//            EpgFragment.DateFilter.TODAY -> {
+//                startDate = todayMidnightCalendar.timeInMillis / 1000
+//                todayMidnightCalendar.add(Calendar.DAY_OF_YEAR, 1)
+//                endDate = todayMidnightCalendar.timeInMillis / 1000
+//            }
+//            EpgFragment.DateFilter.TOMORROW -> {
+//                todayMidnightCalendar.add(Calendar.DAY_OF_YEAR, 1)
+//                startDate = todayMidnightCalendar.timeInMillis / 1000
+//                todayMidnightCalendar.add(Calendar.DAY_OF_YEAR, 1)
+//                endDate = todayMidnightCalendar.timeInMillis / 1000
+//            }
+//        }
         val filter = SearchAssetFilter().apply {
             orderBy = AssetOrderBy.START_DATE_DESC.value
-            kSql = "(and linear_media_id = '$epgChannelId' (and start_date > '$startDate' end_date < '$endDate'))"
+            kSql = "asset_type='epg'"
         }
         val filterPager = FilterPager().apply {
-            pageSize = 100
-            pageIndex = 1
+            pageSize = itemPerPage
+            pageIndex = assets.size / itemPerPage + 1
         }
 
         apiManager.execute(AssetService.list(filter, filterPager)
-                .setCompletion {
-                    if (it.isSuccess) {
-                        if (it.results.objects != null) getAssetList.value = Resource.Success(it.results.objects as ArrayList<Asset>)
-                        else getAssetList.value = Resource.Success(arrayListOf())
-                    } else getAssetList.value = Resource.Error(it.error)
-                })
+            .setCompletion {
+                if (it.isSuccess) {
+                    if (it.results.objects != null) assets.addAll(it.results.objects as ArrayList<Asset>)
+                    getAssetList.value = Resource.Success(assets)
+
+                    if (it.results.totalCount > assets.size)
+                        getChannelsRequest(itemPerPage, dateFilter)
+                } else getAssetList.value = Resource.Error(it.error)
+            })
     }
 }
