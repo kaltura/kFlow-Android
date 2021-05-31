@@ -96,7 +96,7 @@
             app:spinning_bar_width="2dp" />
 
         <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-            android:id="@+id/hours48"
+            android:id="@+id/hours24"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -107,7 +107,7 @@
             android:background="@drawable/bg_primary_rounded"
             android:elevation="4dp"
             android:foreground="?selectableItemBackground"
-            android:text="48 Hours"
+            android:text="24 Hours"
             android:textColor="@android:color/white"
             android:textSize="16sp"
             app:initialCornerAngle="4dp"
@@ -129,6 +129,12 @@
             android:textColor="@android:color/white"
             android:textSize="16sp"
             android:visibility="gone" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/totalTime"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <include layout="@layout/view_bottom_debug" />

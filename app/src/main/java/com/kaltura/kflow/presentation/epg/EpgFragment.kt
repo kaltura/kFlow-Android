@@ -24,7 +24,7 @@ class EpgFragment : SharedTransitionFragment(R.layout.fragment_epg) {
     private var selectedDateFilter = DateFilter.TODAY
 
     enum class DateFilter {
-        YESTERDAY, TODAY, TOMORROW, HOURS48
+        YESTERDAY, TODAY, TOMORROW, HOURS24
     }
 
     override fun debugView(): DebugView = debugView
@@ -37,36 +37,45 @@ class EpgFragment : SharedTransitionFragment(R.layout.fragment_epg) {
 //        yesterday.setOnClickListener { makeGetChannelsRequest(linearMediaId.string, DateFilter.YESTERDAY) }
 //        today.setOnClickListener { makeGetChannelsRequest(linearMediaId.string, DateFilter.TODAY) }
 //        tomorrow.setOnClickListener { makeGetChannelsRequest(linearMediaId.string, DateFilter.TOMORROW) }
-        hours48.setOnClickListener { makeGetChannelsRequest(itemPerPage.string, DateFilter.HOURS48) }
+        hours24.setOnClickListener {
+            makeGetChannelsRequest(
+                itemPerPage.string,
+                DateFilter.HOURS24
+            )
+        }
     }
 
     override fun subscribeUI() {
         observeResource(viewModel.getAssetList,
-                error = {
-                    when (selectedDateFilter) {
-                        DateFilter.YESTERDAY -> yesterday
-                        DateFilter.TODAY -> today
-                        DateFilter.TOMORROW -> tomorrow
-                        DateFilter.HOURS48 -> hours48
-                    }.error(lifecycleScope)
-                },
-                success = {
-                    when (selectedDateFilter) {
-                        DateFilter.YESTERDAY -> yesterday
-                        DateFilter.TODAY -> today
-                        DateFilter.TOMORROW -> tomorrow
-                        DateFilter.HOURS48 -> hours48
-                    }.success(lifecycleScope)
-                    channels = it
-                    showChannel.text = getQuantityString(R.plurals.show_programs, channels.size)
-                    showChannel.visible()
-                })
+            error = {
+                when (selectedDateFilter) {
+                    DateFilter.YESTERDAY -> yesterday
+                    DateFilter.TODAY -> today
+                    DateFilter.TOMORROW -> tomorrow
+                    DateFilter.HOURS24 -> hours24
+                }.error(lifecycleScope)
+            },
+            success = {
+                when (selectedDateFilter) {
+                    DateFilter.YESTERDAY -> yesterday
+                    DateFilter.TODAY -> today
+                    DateFilter.TOMORROW -> tomorrow
+                    DateFilter.HOURS24 -> hours24
+                }.success(lifecycleScope)
+                channels = it
+                showChannel.text = getQuantityString(R.plurals.show_programs, channels.size)
+                showChannel.visible()
+            })
+        observeLiveData(viewModel.executionTimeMs) {
+            totalTime.text = "Total execution time is $it ms"
+        }
     }
 
     private fun makeGetChannelsRequest(epgChannelId: String, dateFilter: DateFilter) {
         withInternetConnection {
             hideKeyboard()
             showChannel.gone()
+            totalTime.text = ""
             clearDebugView()
             clearInputLayouts()
             selectedDateFilter = dateFilter
@@ -80,7 +89,7 @@ class EpgFragment : SharedTransitionFragment(R.layout.fragment_epg) {
                 DateFilter.YESTERDAY -> yesterday
                 DateFilter.TODAY -> today
                 DateFilter.TOMORROW -> tomorrow
-                DateFilter.HOURS48 -> hours48
+                DateFilter.HOURS24 -> hours24
             }.startAnimation {
                 viewModel.cancel()
                 viewModel.getChannelsRequest(epgChannelId.toInt(), selectedDateFilter)

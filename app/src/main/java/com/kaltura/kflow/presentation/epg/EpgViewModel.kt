@@ -9,6 +9,7 @@ import com.kaltura.client.types.SearchAssetFilter
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
 import com.kaltura.kflow.utils.Resource
+import com.kaltura.kflow.utils.SingleLiveEvent
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -18,14 +19,18 @@ import kotlin.collections.ArrayList
 class EpgViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(apiManager) {
 
     val getAssetList = MutableLiveData<Resource<ArrayList<Asset>>>()
+    val executionTimeMs = SingleLiveEvent<Long>()
     private val assets = arrayListOf<Asset>()
+    private var executionStartTime = 0L
 
     fun cancel() {
         apiManager.cancelAll()
         assets.clear()
+        executionStartTime = 0L
     }
 
     fun getChannelsRequest(itemPerPage: Int, dateFilter: EpgFragment.DateFilter) {
+        if (executionStartTime == 0L) executionStartTime = System.currentTimeMillis()
         var startDate = 0L
         var endDate = 0L
         val todayMidnightCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
@@ -70,6 +75,7 @@ class EpgViewModel(private val apiManager: PhoenixApiManager) : BaseViewModel(ap
 
                     if (it.results.totalCount > assets.size)
                         getChannelsRequest(itemPerPage, dateFilter)
+                    else executionTimeMs.value = System.currentTimeMillis() - executionStartTime
                 } else getAssetList.value = Resource.Error(it.error)
             })
     }
