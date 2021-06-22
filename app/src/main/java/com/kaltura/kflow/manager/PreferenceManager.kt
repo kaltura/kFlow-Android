@@ -27,17 +27,7 @@ class PreferenceManager(private val context: Context) {
     private val KEY_IOT_USERNAME = "prefs_iot_username"
     private val KEY_IOT_PASSWORD = "prefs_iot_password"
 
-    private val prefs: SharedPreferences by lazy {
-        EncryptedSharedPreferences.create(
-                context,
-                "encrypted_shared_prefs",
-                MasterKey.Builder(context)
-                        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                        .build(),
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
-    }
+    private val prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
 
     var authUser: String
         get() = prefs.getString(KEY_AUTH_USER, null) ?: ""
