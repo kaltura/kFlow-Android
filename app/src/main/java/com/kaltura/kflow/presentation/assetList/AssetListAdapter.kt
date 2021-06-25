@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kaltura.client.types.Asset
 import com.kaltura.client.types.ProgramAsset
 import com.kaltura.kflow.R
-import com.kaltura.kflow.entity.WatchedAsset
+import com.kaltura.kflow.data.entity.WatchedAsset
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.playkit.providers.api.phoenix.APIDefines
 import kotlinx.android.extensions.LayoutContainer

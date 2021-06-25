@@ -1,4 +1,4 @@
-package com.kaltura.kflow.entity
+package com.kaltura.kflow.data.entity
 
 import com.kaltura.kflow.presentation.ui.expandableRecyclerView.ParentListItem
 

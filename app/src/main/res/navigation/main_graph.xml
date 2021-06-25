@@ -396,7 +396,7 @@
         <argument
             android:name="watchedAssets"
             android:defaultValue="@null"
-            app:argType="com.kaltura.kflow.entity.WatchedAsset[]"
+            app:argType="com.kaltura.kflow.data.entity.WatchedAsset[]"
             app:nullable="true" />
         <action
             android:id="@+id/navigate_to_player"

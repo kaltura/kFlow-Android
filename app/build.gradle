@@ -58,7 +58,6 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
-    implementation 'androidx.security:security-crypto:1.1.0-alpha03'
 
     // Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.4'
@@ -84,7 +83,12 @@ dependencies {
     // Firebase
     implementation 'com.google.firebase:firebase-analytics:18.0.2'
 
+    // Room
+    implementation 'androidx.room:room-runtime:2.3.0'
+    implementation 'androidx.room:room-ktx:2.3.0'
+    kapt 'androidx.room:room-compiler:2.3.0'
+
     // AWS IoT
-    implementation ('com.amazonaws:aws-android-sdk-iot:2.16.13@aar') { transitive = true }
-    implementation ('com.amazonaws:aws-android-sdk-mobile-client:2.16.13@aar') { transitive = true }
+    implementation('com.amazonaws:aws-android-sdk-iot:2.16.13@aar') { transitive = true }
+    implementation('com.amazonaws:aws-android-sdk-mobile-client:2.16.13@aar') { transitive = true }
 }

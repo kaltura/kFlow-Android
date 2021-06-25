@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
-import com.kaltura.kflow.entity.ParentRecyclerViewItem
+import com.kaltura.kflow.data.entity.ParentRecyclerViewItem
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*

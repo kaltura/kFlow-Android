@@ -5,7 +5,7 @@ import com.kaltura.client.enums.WatchStatus
 import com.kaltura.client.services.AssetHistoryService
 import com.kaltura.client.services.AssetService
 import com.kaltura.client.types.*
-import com.kaltura.kflow.entity.WatchedAsset
+import com.kaltura.kflow.data.entity.WatchedAsset
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
 import com.kaltura.kflow.utils.Resource

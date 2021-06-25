@@ -7,7 +7,7 @@ import com.kaltura.client.types.Asset
 import com.kaltura.client.types.DoubleValue
 import com.kaltura.client.types.Subscription
 import com.kaltura.kflow.R
-import com.kaltura.kflow.entity.ParentRecyclerViewItem
+import com.kaltura.kflow.data.entity.ParentRecyclerViewItem
 import com.kaltura.kflow.presentation.extension.gone
 import com.kaltura.kflow.presentation.extension.inflate
 import com.kaltura.kflow.presentation.extension.visible

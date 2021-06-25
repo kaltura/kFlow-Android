@@ -1,4 +1,4 @@
-package com.kaltura.kflow.entity
+package com.kaltura.kflow.data.entity
 
 import android.os.Parcelable
 import com.kaltura.client.types.Asset

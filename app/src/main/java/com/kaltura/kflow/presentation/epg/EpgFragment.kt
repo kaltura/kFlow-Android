@@ -3,7 +3,7 @@ package com.kaltura.kflow.presentation.epg
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
-import com.kaltura.client.types.Asset
+import com.kaltura.client.types.ProgramAsset
 import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
@@ -20,7 +20,7 @@ import java.util.*
 class EpgFragment : SharedTransitionFragment(R.layout.fragment_epg) {
 
     private val viewModel: EpgViewModel by viewModel()
-    private var channels = ArrayList<Asset>()
+    private var channels = ArrayList<ProgramAsset>()
     private var selectedDateFilter = DateFilter.TODAY
 
     enum class DateFilter {
@@ -38,10 +38,8 @@ class EpgFragment : SharedTransitionFragment(R.layout.fragment_epg) {
 //        today.setOnClickListener { makeGetChannelsRequest(linearMediaId.string, DateFilter.TODAY) }
 //        tomorrow.setOnClickListener { makeGetChannelsRequest(linearMediaId.string, DateFilter.TOMORROW) }
         hours24.setOnClickListener {
-            makeGetChannelsRequest(
-                itemPerPage.string,
-                DateFilter.HOURS24
-            )
+            if (fromDatabase.isChecked) makeGetChannelsCache()
+            else makeGetChannelsRequest(itemPerPage.string, DateFilter.HOURS24)
         }
     }
 
@@ -66,8 +64,17 @@ class EpgFragment : SharedTransitionFragment(R.layout.fragment_epg) {
                 showChannel.text = getQuantityString(R.plurals.show_programs, channels.size)
                 showChannel.visible()
             })
-        observeLiveData(viewModel.executionTimeMs) {
-            totalTime.text = "Total execution time is $it ms"
+        observeLiveData(viewModel.cloudFetchTimeMs) {
+            cloudTotalTime.text = "Total execution time from cloud is $it ms"
+            cloudTotalTime.visible()
+        }
+        observeLiveData(viewModel.databaseSaveTimeMs) {
+            databaseSaveTotalTime.text = "Time to save in database is $it ms"
+            databaseSaveTotalTime.visible()
+        }
+        observeLiveData(viewModel.databaseFetchTimeMs) {
+            databaseFetchTotalTime.text = "Total execution time from database is $it ms"
+            databaseFetchTotalTime.visible()
         }
     }
 
@@ -75,7 +82,12 @@ class EpgFragment : SharedTransitionFragment(R.layout.fragment_epg) {
         withInternetConnection {
             hideKeyboard()
             showChannel.gone()
-            totalTime.text = ""
+            cloudTotalTime.text = ""
+            databaseSaveTotalTime.text = ""
+            databaseFetchTotalTime.text = ""
+            cloudTotalTime.gone()
+            databaseSaveTotalTime.gone()
+            databaseFetchTotalTime.gone()
             clearDebugView()
             clearInputLayouts()
             selectedDateFilter = dateFilter
@@ -92,8 +104,33 @@ class EpgFragment : SharedTransitionFragment(R.layout.fragment_epg) {
                 DateFilter.HOURS24 -> hours24
             }.startAnimation {
                 viewModel.cancel()
-                viewModel.getChannelsRequest(epgChannelId.toInt(), selectedDateFilter)
+                viewModel.getChannelsCloud(epgChannelId.toInt(), selectedDateFilter)
             }
+        }
+    }
+
+    private fun makeGetChannelsCache() {
+        hideKeyboard()
+        showChannel.gone()
+        cloudTotalTime.text = ""
+        databaseSaveTotalTime.text = ""
+        databaseFetchTotalTime.text = ""
+        cloudTotalTime.gone()
+        databaseSaveTotalTime.gone()
+        databaseFetchTotalTime.gone()
+        clearDebugView()
+        clearInputLayouts()
+
+        selectedDateFilter = DateFilter.HOURS24
+
+        when (selectedDateFilter) {
+            DateFilter.YESTERDAY -> yesterday
+            DateFilter.TODAY -> today
+            DateFilter.TOMORROW -> tomorrow
+            DateFilter.HOURS24 -> hours24
+        }.startAnimation {
+            viewModel.cancel()
+            viewModel.getChannelsDatabase()
         }
     }
 

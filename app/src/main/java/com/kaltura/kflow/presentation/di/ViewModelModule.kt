@@ -32,7 +32,7 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModel { AnonymousLoginViewModel(get(), get()) }
     viewModel { CheckReceiptViewModel(get()) }
-    viewModel { EpgViewModel(get()) }
+    viewModel { EpgViewModel(get(), get(), get()) }
     viewModel { FavoritesViewModel(get()) }
     viewModel { LiveTvViewModel(get()) }
     viewModel { LoginViewModel(get(), get()) }
