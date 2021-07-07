@@ -39,9 +39,11 @@ fun Fragment.navigate(direction: NavDirections, vararg additionalParams: Pair<St
     }
 }
 
-inline fun <T> Fragment.observeResource(liveData: LiveData<Resource<T>>,
-                                        crossinline error: (APIException) -> Unit = {},
-                                        crossinline success: (T) -> Unit = {}) {
+inline fun <T> Fragment.observeResource(
+    liveData: LiveData<Resource<T>>,
+    crossinline error: (APIException) -> Unit = {},
+    crossinline success: (T) -> Unit = {}
+) {
     liveData.observe(viewLifecycleOwner, Observer {
         when (it) {
             is Resource.Error -> error(it.ex)
@@ -50,7 +52,10 @@ inline fun <T> Fragment.observeResource(liveData: LiveData<Resource<T>>,
     })
 }
 
-inline fun <T> Fragment.observeLiveData(liveData: LiveData<T>, crossinline block: (T) -> Unit = {}) {
+inline fun <T> Fragment.observeLiveData(
+    liveData: LiveData<T>,
+    crossinline block: (T) -> Unit = {}
+) {
     liveData.observe(viewLifecycleOwner, Observer { block(it) })
 }
 
@@ -63,12 +68,13 @@ fun Fragment.withInternetConnection(doBlock: () -> Unit) {
         doBlock()
     } else {
         Snackbar.make(view!!, "No Internet connection", Snackbar.LENGTH_LONG)
-                .setAction("Dismiss") { }
-                .show()
+            .setAction("Dismiss") { }
+            .show()
     }
 }
 
-fun Fragment.getQuantityString(@PluralsRes id: Int, count: Int): String = requireContext().getQuantityString(id, count)
+fun Fragment.getQuantityString(@PluralsRes id: Int, count: Int): String =
+    requireContext().getQuantityString(id, count)
 
 fun Fragment.hideKeyboard() {
     view?.let {

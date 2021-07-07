@@ -16,6 +16,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ToolbarStyle"
         app:navigationIcon="@drawable/ic_arrow_back_black_24dp" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -23,8 +24,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:gravity="center_horizontal"
         android:layout_marginTop="30dp"
+        android:gravity="center_horizontal"
         android:textColor="@android:color/white"
         android:textSize="26sp"
         android:textStyle="bold"
