@@ -86,7 +86,7 @@ class AppTokenFragment : SharedTransitionFragment(R.layout.fragment_app_token) {
             }
 
             explicitLogin.startAnimation {
-                viewModel.makeExplicitLoginRequest(email, password, getUUID(requireContext()))
+                viewModel.makeExplicitLoginRequest(email, password, getUUID())
             }
         }
     }
@@ -97,7 +97,7 @@ class AppTokenFragment : SharedTransitionFragment(R.layout.fragment_app_token) {
             clearInputLayouts()
 
             appToken.startAnimation {
-                viewModel.makeAppTokenStartRequest(getUUID(requireContext()))
+                viewModel.makeAppTokenStartRequest(getUUID())
             }
         }
     }

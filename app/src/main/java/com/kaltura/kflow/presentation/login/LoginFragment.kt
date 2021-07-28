@@ -67,7 +67,7 @@ class LoginFragment : SharedTransitionFragment(R.layout.fragment_login) {
                 })
 
             login.startAnimation {
-                viewModel.makeLoginRequest(email, password, getUUID(requireContext()), extraParams)
+                viewModel.makeLoginRequest(email, password, getUUID(), extraParams)
             }
         }
     }

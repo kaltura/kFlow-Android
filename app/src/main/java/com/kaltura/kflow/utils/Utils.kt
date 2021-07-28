@@ -1,6 +1,7 @@
 package com.kaltura.kflow.utils
 
 import android.content.Context
+import android.media.MediaDrm
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -17,11 +18,11 @@ import java.util.*
 fun hasInternetConnection(context: Context): Boolean {
     var result = false
     val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         val networkCapabilities = connectivityManager.activeNetwork ?: return false
         val actNw =
-                connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+            connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
         result = when {
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
@@ -45,20 +46,13 @@ fun hasInternetConnection(context: Context): Boolean {
     return result
 }
 
-fun getUUID(context: Context): String {
-    val androidId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-    val uuid: UUID = try {
-        if ("9774d56d682e549c" != androidId) {
-            UUID.nameUUIDFromBytes(androidId.toByteArray(charset("utf8")))
-        } else {
-            val deviceId = (context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager)
-                    .deviceId
-            UUID.nameUUIDFromBytes(deviceId.toByteArray(charset("utf8")))
-        }
-    } catch (e: UnsupportedEncodingException) {
-        throw RuntimeException(e)
-    }
-    return uuid.toString()
+fun getUUID(): String {
+    val WIDEVINE_UUID = UUID(-0x121074568629b532L, -0x5c37d8232ae2de13L)
+
+    val drumIdByteArray =
+        MediaDrm(WIDEVINE_UUID).getPropertyByteArray(MediaDrm.PROPERTY_DEVICE_UNIQUE_ID)
+    val drmID = android.util.Base64.encodeToString(drumIdByteArray, android.util.Base64.DEFAULT)
+    return drmID.toString()
 }
 
 /**
@@ -89,9 +83,9 @@ fun saveToFile(context: Context, text: String): File {
     var logFile: File
     try {
         logFile = File.createTempFile(
-                logFileName,  /* prefix */
-                ".txt",  /* suffix */
-                context.cacheDir /* directory */
+            logFileName,  /* prefix */
+            ".txt",  /* suffix */
+            context.cacheDir /* directory */
         )
         val fileOutputStream = FileOutputStream(logFile, true)
         fileOutputStream.write(text.toByteArray())

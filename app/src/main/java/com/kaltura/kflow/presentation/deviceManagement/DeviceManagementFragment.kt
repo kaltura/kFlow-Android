@@ -57,7 +57,7 @@ class DeviceManagementFragment : SharedTransitionFragment(R.layout.fragment_devi
             clearDebugView()
 
             removeDeviceRequest.startAnimation {
-                viewModel.removeDeviceFromHousehold(getUUID(requireContext()))
+                viewModel.removeDeviceFromHousehold(getUUID())
             }
         }
     }
@@ -67,7 +67,7 @@ class DeviceManagementFragment : SharedTransitionFragment(R.layout.fragment_devi
             clearDebugView()
 
             addDeviceRequest.startAnimation {
-                viewModel.addDeviceToHousehold("${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}", getUUID(requireContext()))
+                viewModel.addDeviceToHousehold("${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}", getUUID())
             }
         }
     }
