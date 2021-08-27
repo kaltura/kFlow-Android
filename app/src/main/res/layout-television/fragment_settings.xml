@@ -211,6 +211,14 @@
                         android:minHeight="0dp"
                         android:paddingStart="5dp"
                         android:text="MpegDash" />
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/streamerTypeMulticast"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="0dp"
+                        android:paddingStart="5dp"
+                        android:text="Multicast" />
                 </RadioGroup>
 
                 <com.google.android.material.textview.MaterialTextView
@@ -284,6 +292,119 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/streamerType" />
 
+                <RadioGroup
+                    android:id="@+id/codec"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_rounded"
+                    android:padding="10dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/mediaProtocol">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/codecHevc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="5dp"
+                        android:text="HEVC" />
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/codecAvc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="0dp"
+                        android:paddingStart="5dp"
+                        android:text="AVC" />
+                </RadioGroup>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/codecTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@android:color/white"
+                    android:drawableEnd="@drawable/ic_baseline_help_24"
+                    android:drawablePadding="7dp"
+                    android:gravity="center"
+                    android:paddingStart="7dp"
+                    android:paddingEnd="7dp"
+                    android:text="Codec"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/mediaProtocol" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/drm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:paddingStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="DRM"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/codec" />
+
+                <RadioGroup
+                    android:id="@+id/quality"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_rounded"
+                    android:padding="10dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/drm">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/qualityUhd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="5dp"
+                        android:text="UHD" />
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/qualityHd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="0dp"
+                        android:paddingStart="5dp"
+                        android:text="HD" />
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/qualitySd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="0dp"
+                        android:paddingStart="5dp"
+                        android:text="SD" />
+                </RadioGroup>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/qualityTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@android:color/white"
+                    android:drawableEnd="@drawable/ic_baseline_help_24"
+                    android:drawablePadding="7dp"
+                    android:gravity="center"
+                    android:paddingStart="7dp"
+                    android:paddingEnd="7dp"
+                    android:text="Quality"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/drm" />
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/save"
                     android:layout_width="match_parent"
@@ -297,7 +418,7 @@
                     android:textColor="@android:color/white"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/mediaProtocol" />
+                    app:layout_constraintTop_toBottomOf="@id/quality" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </ScrollView>

@@ -29,6 +29,24 @@ class SettingsViewModel(private val apiManager: PhoenixApiManager,
             preferenceManager.mediaFileFormat = value
         }
 
+    var codec: String
+        get() = preferenceManager.codec
+        set(value) {
+            preferenceManager.codec = value
+        }
+
+    var drm: Boolean
+        get() = preferenceManager.drm
+        set(value) {
+            preferenceManager.drm = value
+        }
+
+    var quality: String
+        get() = preferenceManager.quality
+        set(value) {
+            preferenceManager.quality = value
+        }
+
     var urlType: String
         get() = preferenceManager.urlType
         set(value) {

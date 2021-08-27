@@ -1,9 +1,6 @@
 package com.kaltura.kflow.manager
 
 import android.content.Context
-import android.content.SharedPreferences
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import com.kaltura.kflow.R
 
 /**
@@ -17,6 +14,9 @@ class PreferenceManager(private val context: Context) {
     private val KEY_URL_TYPE = "prefs_url_type"
     private val KEY_STREAMER_TYPE = "prefs_streamer_type"
     private val KEY_MEDIA_PROTOCOL = "prefs_media_protocol"
+    private val KEY_CODEC = "prefs_codec"
+    private val KEY_DRM = "prefs_drm"
+    private val KEY_QUALITY = "prefs_quality"
     private val KEY_KS = "prefs_ks"
     private val KEY_APP_TOKEN = "prefs_app_token"
     private val KEY_APP_TOKEN_ID = "prefs_app_token_id"
@@ -77,6 +77,18 @@ class PreferenceManager(private val context: Context) {
     var mediaProtocol: String
         get() = prefs.getString(KEY_MEDIA_PROTOCOL, "") ?: ""
         set(value) = prefs.edit().putString(KEY_MEDIA_PROTOCOL, value).apply()
+
+    var codec: String
+        get() = prefs.getString(KEY_CODEC, "HEVC") ?: "HEVC"
+        set(value) = prefs.edit().putString(KEY_CODEC, value).apply()
+
+    var drm: Boolean
+        get() = prefs.getBoolean(KEY_DRM, false)
+        set(value) = prefs.edit().putBoolean(KEY_DRM, value).apply()
+
+    var quality: String
+        get() = prefs.getString(KEY_QUALITY, "HD") ?: "HD"
+        set(value) = prefs.edit().putString(KEY_QUALITY, value).apply()
 
     var iotThing: String
         get() = prefs.getString(KEY_IOT_THING, null) ?: ""

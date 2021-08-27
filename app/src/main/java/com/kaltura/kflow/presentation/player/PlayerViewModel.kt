@@ -157,4 +157,22 @@ class PlayerViewModel(private val apiManager: PhoenixApiManager,
         set(value) {
             preferenceManager.mediaProtocol = value
         }
+
+    var codec: String
+        get() = preferenceManager.codec
+        set(value) {
+            preferenceManager.codec = value
+        }
+
+    var drm: Boolean
+        get() = preferenceManager.drm
+        set(value) {
+            preferenceManager.drm = value
+        }
+
+    var quality: String
+        get() = preferenceManager.quality
+        set(value) {
+            preferenceManager.quality = value
+        }
 }

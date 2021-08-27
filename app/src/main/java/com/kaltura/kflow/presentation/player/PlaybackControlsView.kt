@@ -10,8 +10,8 @@ import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.extension.getColor
 import com.kaltura.kflow.presentation.extension.inflate
 import com.kaltura.playkit.PKLog
-import com.kaltura.playkit.Player
 import com.kaltura.playkit.PlayerState
+import com.kaltura.tvplayer.KalturaPlayer
 import kotlinx.android.synthetic.main.view_player_control.view.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,7 +24,7 @@ class PlaybackControlsView @JvmOverloads constructor(
     private val log = PKLog.get("PlaybackControlsView")
     private val PROGRESS_BAR_MAX = 100
 
-    var player: Player? = null
+    var player: KalturaPlayer? = null
     var asset: Asset? = null
     private var playerState: PlayerState = PlayerState.IDLE
     private val formatBuilder = StringBuilder()

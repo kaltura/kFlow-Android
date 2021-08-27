@@ -9,10 +9,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.kaltura.kflow.R
+import com.kaltura.kflow.presentation.settings.SettingsViewModel
+import com.kaltura.playkit.player.MediaSupport
+import com.kaltura.tvplayer.KalturaOttPlayer
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private val STORAGE_PERMISSIONS_REQUEST_CODE = 123
+    private val viewModel: MainViewModel by viewModel()
 
     // Turn this true to start logcat logging
     val enableLogsCapturing = true
@@ -23,6 +28,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         if (enableLogsCapturing) {
             getPermissionToStorage()
         }
+
+        KalturaOttPlayer.initialize(this, viewModel.partnerId, viewModel.baseUrl + "/api_v3/")
     }
 
     private fun getPermissionToStorage() {
