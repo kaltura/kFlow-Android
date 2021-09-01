@@ -48,11 +48,12 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     private var player: KalturaPlayer? = null
     private var asset: Asset? = null
     private var likeId = ""
+    private var startPosition = 0L
     private lateinit var mediaEntry: PKMediaEntry
     private var parentalRuleId = 0
     private var isKeepAlive = false
     private var playerKeepAliveService = PlayerKeepAliveService()
-    private val initialPlaybackContextType by lazy { playbackContextTypeFromString(args.playbackContextType) }
+    private var initialPlaybackContextType: APIDefines.PlaybackContextType? = null
 
     override fun debugView(): DebugView = debugView
 
@@ -61,6 +62,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
 
         initUI()
+        initialPlaybackContextType = playbackContextTypeFromString(args.playbackContextType)
+        startPosition = args.startPosition.toLong()
         asset = args.asset
         isKeepAlive = args.isKeepAlive
         if (asset == null && args.recording != null) loadAsset(args.recording!!.assetId) else onAssetLoaded()
@@ -72,6 +75,11 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         }
         favorite.setOnCheckedChangeListener { _, _ ->
             if (favorite.isPressed) actionFavorite()
+        }
+        playerControls.onPlayerLiveSeek = {
+            startPosition = it
+            initialPlaybackContextType = APIDefines.PlaybackContextType.StartOver
+            initPlayer(initialPlaybackContextType!!)
         }
         playerControls.setOnStartOverClickListener {
             if (mediaEntry.mediaType == PKMediaEntry.MediaEntryType.Vod) player?.replay()
@@ -221,7 +229,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             }
             .setKs(viewModel.getKs())
         val ottMediaOptions = OTTMediaOptions(ottMediaAsset)
-        ottMediaOptions.startPosition = args.startPosition.toLong()
+        ottMediaOptions.startPosition = 0
 
         return ottMediaOptions
     }
@@ -274,13 +282,14 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                 FrameLayout.LayoutParams.MATCH_PARENT
             )
             playerLayout.addView(player?.playerView)
-
-            val ottMediaOptions = buildOttMediaOptions(playbackContextType)
-            player!!.loadMedia(ottMediaOptions, completion)
-
-            playerControls.player = player
             playerControls.asset = asset
+            playerControls.player = player
+        } else {
+            player?.stop()
         }
+
+        val ottMediaOptions = buildOttMediaOptions(playbackContextType)
+        player!!.loadMedia(ottMediaOptions, completion)
     }
 
     private fun onMediaLoadedKeepAlive() {
@@ -305,13 +314,17 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     private fun setMediaEntry() {
-        if (mediaEntry.mediaType == PKMediaEntry.MediaEntryType.Live) {
-            mediaEntry.mediaType = PKMediaEntry.MediaEntryType.DvrLive
-            playerControls.asset = asset
+        if ((mediaEntry.mediaType == PKMediaEntry.MediaEntryType.Live ||
+                    mediaEntry.mediaType == PKMediaEntry.MediaEntryType.DvrLive) &&
+            initialPlaybackContextType == APIDefines.PlaybackContextType.Playback
+        ) {
+            playerControls.isLive = true
             //playerControls.disableControllersForLive();
         }
 
         player?.play()
+
+        if (startPosition > 0) player?.seekTo(startPosition * 1000)
     }
 
     private fun getKeepAliveHeaderUrl(

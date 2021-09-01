@@ -15,17 +15,25 @@ import com.kaltura.tvplayer.KalturaPlayer
 import kotlinx.android.synthetic.main.view_player_control.view.*
 import java.text.SimpleDateFormat
 import java.util.*
+import android.provider.Settings.System.DATE_FORMAT
+import android.util.Log
+import java.text.DateFormat
+
 
 class PlaybackControlsView @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0) : LinearLayout(context, attrs, defStyleAttr) {
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : LinearLayout(context, attrs, defStyleAttr) {
 
     private val log = PKLog.get("PlaybackControlsView")
     private val PROGRESS_BAR_MAX = 100
 
     var player: KalturaPlayer? = null
     var asset: Asset? = null
+    var isLive = false
+    var onPlayerLiveSeek: (positionMs: Long) -> Unit = {}
+    private var pausedPosition = 0L
     private var playerState: PlayerState = PlayerState.IDLE
     private val formatBuilder = StringBuilder()
     private val formatter = Formatter(formatBuilder, Locale.getDefault())
@@ -34,8 +42,22 @@ class PlaybackControlsView @JvmOverloads constructor(
 
     init {
         inflate(R.layout.view_player_control, true)
-        play.setOnClickListener { player?.play() }
-        pause.setOnClickListener { player?.pause() }
+        play.setOnClickListener {
+            if (isLive) {
+                onPlayerLiveSeek(pausedPosition)
+            } else {
+                player?.play()
+            }
+        }
+        pause.setOnClickListener {
+            if (isLive) {
+                pausedPosition =
+                    Calendar.getInstance(TimeZone.getTimeZone("UTC")).timeInMillis / 1000 - (asset?.startDate
+                        ?: 0L)
+                Log.e("pause", "pausedPosition = $pausedPosition")
+            }
+            player?.pause()
+        }
         mediacontrollerProgress.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
@@ -56,20 +78,27 @@ class PlaybackControlsView @JvmOverloads constructor(
     }
 
     private fun updateProgress() {
-        if (asset == null) updateVodProgress() else updateLiveProgress()
+        if (isLive) updateLiveProgress() else updateVodProgress()
     }
 
     private fun updateLiveProgress() {
         val startDate = asset?.startDate ?: 0L
         val endDate = asset?.endDate ?: 0L
         val durationMs = endDate - startDate
-        val currentProgress = Date().time / 1000 - startDate
-        val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val startTime = dateFormat.format(Date(startDate))
-        val endTime = dateFormat.format(Date(endDate))
+
+        val startDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+        startDayCalendar.timeInMillis = startDate * 1000
+        val endDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+        endDayCalendar.timeInMillis = endDate * 1000
+
+        val currentProgress =
+            Calendar.getInstance(TimeZone.getTimeZone("UTC")).timeInMillis / 1000 - startDate
+        val dateFormat = SimpleDateFormat("HH:mm", Locale.US)
+        val startTime = dateFormat.format(startDayCalendar.time)
+        val endTime = dateFormat.format(endDayCalendar.time)
         timeCurrent.text = startTime
         time.text = endTime
-        mediacontrollerProgress.progress = (PROGRESS_BAR_MAX.toFloat() * currentProgress / durationMs).toInt()
+        mediacontrollerProgress.progress = (PROGRESS_BAR_MAX * currentProgress / durationMs).toInt()
     }
 
     private fun updateVodProgress() {
@@ -121,7 +150,8 @@ class PlaybackControlsView @JvmOverloads constructor(
         val minutes = totalSeconds / 60 % 60
         val hours = totalSeconds / 3600
         formatBuilder.setLength(0)
-        return if (hours > 0) formatter.format("%d:%02d:%02d", hours, minutes, seconds).toString() else formatter.format("%02d:%02d", minutes, seconds).toString()
+        return if (hours > 0) formatter.format("%d:%02d:%02d", hours, minutes, seconds)
+            .toString() else formatter.format("%02d:%02d", minutes, seconds).toString()
     }
 
     fun setPlayerState(playerState: PlayerState) {
