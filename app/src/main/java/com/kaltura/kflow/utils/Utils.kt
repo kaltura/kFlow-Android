@@ -52,7 +52,7 @@ fun getUUID(): String {
     val drumIdByteArray =
         MediaDrm(WIDEVINE_UUID).getPropertyByteArray(MediaDrm.PROPERTY_DEVICE_UNIQUE_ID)
     val drmID = android.util.Base64.encodeToString(drumIdByteArray, android.util.Base64.DEFAULT)
-    return drmID.toString()
+    return drmID.toString().replace("/","").replace("+","").replace("\n","").replace("\u003d","")
 }
 
 /**
@@ -75,6 +75,22 @@ fun durationInSecondsToString(sec: Int): String {
         seconds = 0
     }
     return String.format("%d:%02d:%02d", hours, minutes, seconds)
+}
+
+fun getUUID2(context: Context): String {
+    val androidId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+    val uuid: UUID = try {
+        if ("9774d56d682e549c" != androidId) {
+            UUID.nameUUIDFromBytes(androidId.toByteArray(charset("utf8")))
+        } else {
+            val deviceId = (context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager)
+                .deviceId
+            UUID.nameUUIDFromBytes(deviceId.toByteArray(charset("utf8")))
+        }
+    } catch (e: UnsupportedEncodingException) {
+        throw RuntimeException(e)
+    }
+    return uuid.toString()
 }
 
 fun saveToFile(context: Context, text: String): File {
