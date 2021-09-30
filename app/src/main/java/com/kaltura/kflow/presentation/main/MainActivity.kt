@@ -17,7 +17,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private val STORAGE_PERMISSIONS_REQUEST_CODE = 123
-    private val viewModel: MainViewModel by viewModel()
 
     // Turn this true to start logcat logging
     val enableLogsCapturing = true
@@ -28,8 +27,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         if (enableLogsCapturing) {
             getPermissionToStorage()
         }
-
-        KalturaOttPlayer.initialize(this, viewModel.partnerId, viewModel.baseUrl + "/api_v3/")
     }
 
     private fun getPermissionToStorage() {

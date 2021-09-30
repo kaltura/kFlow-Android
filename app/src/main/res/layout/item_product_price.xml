@@ -21,4 +21,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/productPriceType"
         android:textSize="15sp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/discountPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/price"
+        android:textSize="15sp" />
 </RelativeLayout>

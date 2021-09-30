@@ -11,7 +11,6 @@ import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
 import com.kaltura.playkit.providers.api.phoenix.APIDefines
 import com.kaltura.playkit.providers.ott.PhoenixMediaProvider
-import com.kaltura.tvplayer.KalturaOttPlayer
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -139,11 +138,6 @@ class SettingsFragment : SharedTransitionFragment(R.layout.fragment_settings) {
         viewModel.setConfiguration(config)
 
         toast("Saved")
-        KalturaOttPlayer.initialize(
-            requireContext(),
-            viewModel.partnerId,
-            viewModel.baseUrl + "/api_v3/"
-        )
     }
 
     private fun clearInputLayouts() {

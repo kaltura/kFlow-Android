@@ -29,7 +29,8 @@ class ProductPriceListAdapter(private val productPrices: ArrayList<ProductPrice>
 
         fun bind(productPrice: ProductPrice) {
             productPriceType.text = "Product Type: ${productPrice.productType.value}"
-            price.text = "Price: ${productPrice.price.currencySign}${productPrice.price.amount}"
+            price.text = "Actual price: ${productPrice.fullPrice.currencySign}${productPrice.fullPrice.amount}"
+            discountPrice.text = "Discount price: ${productPrice.price.currencySign}${productPrice.price.amount}"
             if (productPrice is SubscriptionPrice) {
                 itemView.setOnClickListener { onSubscriptionPriceClickListener(productPrice) }
             } else if (productPrice is PpvPrice) {

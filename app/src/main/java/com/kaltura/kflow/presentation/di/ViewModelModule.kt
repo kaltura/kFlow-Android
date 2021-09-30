@@ -13,7 +13,6 @@ import com.kaltura.kflow.presentation.favorites.FavoritesViewModel
 import com.kaltura.kflow.presentation.ks.KsViewModel
 import com.kaltura.kflow.presentation.liveTv.LiveTvViewModel
 import com.kaltura.kflow.presentation.login.LoginViewModel
-import com.kaltura.kflow.presentation.main.MainViewModel
 import com.kaltura.kflow.presentation.mediaPage.MediaPageViewModel
 import com.kaltura.kflow.presentation.player.PlayerViewModel
 import com.kaltura.kflow.presentation.productPrice.ProductPriceViewModel
@@ -31,8 +30,6 @@ import org.koin.dsl.module
  * Created by alex_lytvynenko on 12.02.2020.
  */
 val viewModelModule = module {
-    viewModel { MainViewModel(get(), get()) }
-
     viewModel { AnonymousLoginViewModel(get(), get()) }
     viewModel { CheckReceiptViewModel(get()) }
     viewModel { EpgViewModel(get()) }

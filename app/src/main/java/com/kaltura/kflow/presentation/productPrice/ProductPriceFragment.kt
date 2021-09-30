@@ -37,30 +37,35 @@ class ProductPriceFragment : SharedTransitionFragment(R.layout.fragment_product_
         }
         get.setOnClickListener {
             hideKeyboard()
-            makeGetAssetRequest(assetId.string)
+            makeGetAssetRequest(assetId.string, coupon.string)
         }
-        assetId.string = "428755"
     }
 
     private fun initList() {
         productPriceList.isNestedScrollingEnabled = false
         productPriceList.layoutManager = LinearLayoutManager(requireContext())
-        productPriceList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+        productPriceList.addItemDecoration(
+            DividerItemDecoration(
+                requireContext(),
+                LinearLayoutManager.VERTICAL
+            )
+        )
         productPriceList.adapter = ProductPriceListAdapter(arrayListOf())
     }
 
     override fun subscribeUI() {
         observeResource(viewModel.productPriceList,
-                error = { get.error(lifecycleScope) },
-                success = {
-                    get.success(lifecycleScope)
-                    productPrices = it
-                    showProductPrices.text = getQuantityString(R.plurals.show_product_prices, productPrices.size)
-                    showProductPrices.visible()
-                })
+            error = { get.error(lifecycleScope) },
+            success = {
+                get.success(lifecycleScope)
+                productPrices = it
+                showProductPrices.text =
+                    getQuantityString(R.plurals.show_product_prices, productPrices.size)
+                showProductPrices.visible()
+            })
     }
 
-    private fun makeGetAssetRequest(assetId: String) {
+    private fun makeGetAssetRequest(assetId: String, couponCode: String) {
         withInternetConnection {
             clearDebugView()
             clearInputLayouts()
@@ -74,7 +79,7 @@ class ProductPriceFragment : SharedTransitionFragment(R.layout.fragment_product_
             productPriceList.gone()
 
             get.startAnimation {
-                viewModel.getProductPrices(assetId)
+                viewModel.getProductPrices(assetId, couponCode)
             }
         }
     }

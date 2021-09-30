@@ -18,17 +18,17 @@ class ProductPriceViewModel(private val apiManager: PhoenixApiManager) : BaseVie
 
     val productPriceList = MutableLiveData<Resource<ArrayList<ProductPrice>>>()
 
-    fun getProductPrices(assetId: String) {
-        makeGetAssetRequest(assetId)
+    fun getProductPrices(assetId: String, coupon: String) {
+        makeGetAssetRequest(assetId, coupon)
     }
 
-    private fun makeGetAssetRequest(assetId: String) {
+    private fun makeGetAssetRequest(assetId: String, coupon: String) {
         apiManager.execute(AssetService.get(assetId, AssetReferenceType.MEDIA).setCompletion {
-            if (it.isSuccess) makeGetProductPricesRequest(it.results)
+            if (it.isSuccess) makeGetProductPricesRequest(it.results, coupon)
         })
     }
 
-    private fun makeGetProductPricesRequest(asset: Asset) {
+    private fun makeGetProductPricesRequest(asset: Asset, coupon: String) {
         val fileIdInString = StringBuilder()
         asset.mediaFiles?.let {
             asset.mediaFiles.forEach {
@@ -38,10 +38,14 @@ class ProductPriceViewModel(private val apiManager: PhoenixApiManager) : BaseVie
                 fileIdInString.append(it.id.toString())
             }
         }
-        val productPriceFilter = ProductPriceFilter().apply { fileIdIn = fileIdInString.toString() }
+        val productPriceFilter = ProductPriceFilter().apply {
+            fileIdIn = fileIdInString.toString()
+            couponCodeEqual = coupon
+        }
         apiManager.execute(ProductPriceService.list(productPriceFilter).setCompletion {
             if (it.isSuccess && it.results != null) {
-                if (it.results.objects != null) productPriceList.value = Resource.Success(it.results.objects as ArrayList<ProductPrice>)
+                if (it.results.objects != null) productPriceList.value =
+                    Resource.Success(it.results.objects as ArrayList<ProductPrice>)
             } else productPriceList.value = Resource.Error(it.error)
         })
     }

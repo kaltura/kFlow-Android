@@ -58,8 +58,9 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
+        KalturaOttPlayer.initialize(requireContext(), viewModel.getPartnerId(), viewModel.getBaseUrl() + "/api_v3/")
 
+        toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
         initUI()
         asset = args.asset
         isKeepAlive = args.isKeepAlive
