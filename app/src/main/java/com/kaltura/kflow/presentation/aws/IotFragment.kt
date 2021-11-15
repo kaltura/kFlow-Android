@@ -58,7 +58,6 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
     }
 
     override fun subscribeUI() {
-        //test
         observeResource(viewModel.registrationEvent,
                 error = { register.error(lifecycleScope) },
                 success = {
