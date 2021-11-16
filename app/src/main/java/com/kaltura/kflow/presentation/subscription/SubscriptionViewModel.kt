@@ -27,7 +27,7 @@ class SubscriptionViewModel(private val apiManager: PhoenixApiManager) : BaseVie
     fun getPackageList(packageType: String) {
         val filter = SearchAssetFilter().apply {
             orderBy = AssetOrderBy.START_DATE_DESC.value
-            kSql = "(and BaseID > \'0\' asset_type=\'$packageType\')"
+            kSql = "(and asset_type=\'$packageType\')"
         }
 
         val filterPager = FilterPager().apply {
@@ -48,7 +48,7 @@ class SubscriptionViewModel(private val apiManager: PhoenixApiManager) : BaseVie
         val filter = EntitlementFilter().apply {
             entityReferenceEqual = EntityReferenceBy.HOUSEHOLD
             productTypeEqual = TransactionType.SUBSCRIPTION
-            isExpiredEqual = true
+            isExpiredEqual = false
         }
 
         val filterPager = FilterPager().apply {
