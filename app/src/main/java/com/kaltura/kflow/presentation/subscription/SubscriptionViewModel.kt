@@ -48,7 +48,7 @@ class SubscriptionViewModel(private val apiManager: PhoenixApiManager) : BaseVie
         val filter = EntitlementFilter().apply {
             entityReferenceEqual = EntityReferenceBy.HOUSEHOLD
             productTypeEqual = TransactionType.SUBSCRIPTION
-            isExpiredEqual = true
+            isExpiredEqual = false
         }
 
         val filterPager = FilterPager().apply {

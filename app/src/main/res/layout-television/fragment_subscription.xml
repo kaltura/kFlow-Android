@@ -106,6 +106,13 @@
                     app:spinning_bar_padding="6dp"
                     app:spinning_bar_width="2dp" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/entitlementList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:overScrollMode="never"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>

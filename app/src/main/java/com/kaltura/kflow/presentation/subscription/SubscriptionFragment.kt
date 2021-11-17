@@ -25,6 +25,7 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
 
     private val viewModel: SubscriptionViewModel by viewModel()
     private var assets = arrayListOf<Asset>()
+    private val entitlementAdapter = EntitlementListAdapter()
     private var subscriptionListAdapter = SubscriptionListAdapter(arrayListOf()).apply {
         packageGetSubscriptionListener = ::onPackageGetSubscriptionClicked
         subscriptionListener = ::onSubscriptionClicked
@@ -38,7 +39,8 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initList()
+        initPackageList()
+        initEntitlementList()
         showAssets.setOnClickListener {
             hideKeyboard()
             showPackages()
@@ -55,18 +57,22 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
 
     override fun subscribeUI() {
         observeResource(viewModel.assetList,
-                error = { getPackages.error(lifecycleScope) },
-                success = {
-                    assets = it
-                    showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
-                    showAssets.visible()
-                    getPackages.success(lifecycleScope)
-                })
+            error = { getPackages.error(lifecycleScope) },
+            success = {
+                assets = it
+                showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
+                showAssets.visible()
+                getPackages.success(lifecycleScope)
+            })
         observeResource(viewModel.entitlementList,
-                error = { getEntitlements.error(lifecycleScope) },
-                success = { getEntitlements.success(lifecycleScope) })
+            error = { getEntitlements.error(lifecycleScope) },
+            success = {
+                getEntitlements.success(lifecycleScope)
+                showEntitlements(it)
+            })
         observeResource(viewModel.subscriptionList) {
             subscriptionListAdapter.addSubscriptionToPackage(selectedPackageBaseId, it)
+            packageList.adapter = subscriptionListAdapter
         }
         observeResource(viewModel.assetsInSubscription) {
             hideLoadingDialog()
@@ -75,11 +81,28 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
         }
     }
 
-    private fun initList() {
+    private fun initPackageList() {
         packageList.isNestedScrollingEnabled = false
         packageList.layoutManager = LinearLayoutManager(requireContext())
-        packageList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+        packageList.addItemDecoration(
+            DividerItemDecoration(
+                requireContext(),
+                LinearLayoutManager.VERTICAL
+            )
+        )
         packageList.adapter = subscriptionListAdapter
+    }
+
+    private fun initEntitlementList() {
+        entitlementList.isNestedScrollingEnabled = false
+        entitlementList.layoutManager = LinearLayoutManager(requireContext())
+        entitlementList.addItemDecoration(
+            DividerItemDecoration(
+                requireContext(),
+                LinearLayoutManager.VERTICAL
+            )
+        )
+        entitlementList.adapter = entitlementAdapter
     }
 
     private fun makeGetPackageListRequest(packageType: String) {
@@ -94,6 +117,7 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
 
             showAssets.gone()
             packageList.gone()
+            entitlementList.gone()
 
             getPackages.startAnimation {
                 viewModel.getPackageList(packageType)
@@ -108,6 +132,11 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
     private fun makeGetEntitlementListRequest() {
         withInternetConnection {
             clearDebugView()
+
+            showAssets.gone()
+            packageList.gone()
+            entitlementList.gone()
+
             getEntitlements.startAnimation {
                 viewModel.getEntitlementList()
             }
@@ -130,6 +159,7 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
 
     private fun showPackages() {
         packageList.visible()
+        entitlementList.gone()
         showAssets.gone()
         val packages = ArrayList<ParentRecyclerViewItem<Asset, Subscription>>()
         assets.forEach { packages.add(ParentRecyclerViewItem(it, arrayListOf())) }
@@ -138,6 +168,11 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
             subscriptionListener = ::onSubscriptionClicked
         }
         packageList.adapter = subscriptionListAdapter
+    }
+
+    private fun showEntitlements(entitlements: ArrayList<Entitlement>) {
+        entitlementList.visible()
+        entitlementAdapter.entitlements = entitlements
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
