@@ -367,6 +367,9 @@
         <action
             android:id="@+id/navigate_to_asset_list"
             app:destination="@id/asset_list" />
+        <action
+            android:id="@+id/navigate_to_asset_list_cs"
+            app:destination="@id/cs_asset_list" />
     </fragment>
 
     <fragment
@@ -392,6 +395,34 @@
             android:name="assets"
             android:defaultValue="@null"
             app:argType="com.kaltura.client.types.Asset[]"
+            app:nullable="true" />
+        <argument
+            android:name="watchedAssets"
+            android:defaultValue="@null"
+            app:argType="com.kaltura.kflow.entity.WatchedAsset[]"
+            app:nullable="true" />
+        <action
+            android:id="@+id/navigate_to_player"
+            app:destination="@id/player" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/cs_asset_list"
+        android:name="com.kaltura.kflow.presentation.assetList.CloudServiceAssetListFragment"
+        android:label="Cloud Service Asset list"
+        tools:layout="@layout/fragment_vod_list">
+        <argument
+            android:name="isShowActions"
+            android:defaultValue="true"
+            app:argType="boolean" />
+        <argument
+            android:name="isScrollToLive"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <argument
+            android:name="epgassets"
+            android:defaultValue="@null"
+            app:argType="com.kaltura.kflow.entity.EPGProgram[]"
             app:nullable="true" />
         <argument
             android:name="watchedAssets"

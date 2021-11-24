@@ -1,17 +1,23 @@
 package com.kaltura.kflow.presentation.aws
-
 import androidx.lifecycle.MutableLiveData
 import com.amazonaws.mobile.client.results.SignInState
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttClientStatusCallback
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
+import com.google.gson.JsonSyntaxException
 import com.kaltura.client.services.EpgService
 import com.kaltura.client.services.IotService
 import com.kaltura.client.types.*
+import com.kaltura.kflow.entity.EPGProgram
 import com.kaltura.kflow.manager.AwsManager
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
 import com.kaltura.kflow.utils.*
 import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -37,7 +43,7 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
     fun register() {
         getClientConfigIot()
     }
-
+    fun getKs() = apiManager.ks
     fun initMqtt() {
         awsManager.initMqtt(iotEndpoint)
     }
@@ -63,27 +69,6 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
         awsManager.subscribeToTopicShadowAccepted(iotThing) {
             shadowMessageEvent.postValue(it)
         }
-    }
-
-    fun getEpgUpdates(liveAssetId: Long) {
-        val todayMidnightCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
-            this[Calendar.MILLISECOND] = 0
-            this[Calendar.SECOND] = 0
-            this[Calendar.MINUTE] = 0
-            this[Calendar.HOUR_OF_DAY] = 0
-        }
-
-        val filter = EpgFilter().apply {
-            dateEqual = todayMidnightCalendar.timeInMillis / 1000 //Need to be date since beginning of the day 00:00:00
-            liveAssetIdEqual = liveAssetId
-        }
-
-        apiManager.execute(EpgService.list(filter).setCompletion {
-            if (it.isSuccess && it.results.objects != null) {
-                if (it.results.objects.size > 0) epgUpdates.value = Resource.Success(it.results.objects as ArrayList<Epg>)
-                else epgUpdates.value = Resource.Success(arrayListOf())
-            } else epgUpdates.value = Resource.Error(it.error)
-        })
     }
 
     private fun getClientConfigIot() {
@@ -136,5 +121,111 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
         if (thingARN.isNotEmpty())
             return thingARN.substring(thingARN.indexOf("thing") + 6)
         return ""
+    }
+    // EPG display due to IOT update notification
+
+    fun getEpgUpdates(liveAssetId: Long) {
+        val todayMidnightCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+            this[Calendar.MILLISECOND] = 0
+            this[Calendar.SECOND] = 0
+            this[Calendar.MINUTE] = 0
+            this[Calendar.HOUR_OF_DAY] = 0
+        }
+
+        val filter = EpgFilter().apply {
+            dateEqual = todayMidnightCalendar.timeInMillis / 1000 //Need to be date since beginning of the day 00:00:00
+            liveAssetIdEqual = liveAssetId
+        }
+
+        apiManager.execute(EpgService.list(filter).setCompletion {
+            if (it.isSuccess && it.results.objects != null) {
+                if (it.results.objects.size > 0) epgUpdates.value = Resource.Success(it.results.objects as ArrayList<Epg>)
+                else epgUpdates.value = Resource.Success(arrayListOf())
+            } else epgUpdates.value = Resource.Error(it.error)
+        })
+    }
+
+    fun callCloudfront(
+        url: URL,
+        ks: String,
+        channel:String,
+        listener: (status: Boolean, message: String, data: List<EPGProgram>) -> Unit
+    ) {
+        Thread {
+            try {
+                url
+                val conn = url.openConnection() as HttpURLConnection
+                conn.instanceFollowRedirects = false
+                conn.requestMethod = "GET"
+                conn.setRequestProperty("Authorization","Bearer "+ks)
+
+                val isSuccess = conn.responseCode == 200
+                if (isSuccess) {
+                    val data = conn.inputStream.bufferedReader().readText()
+                    var epgList = parseJson(data,channel)
+                    listener(true, "success",epgList)
+                } else {
+                    listener(false, "Communication Error", emptyList())
+                }
+            } catch (e: Exception) {
+                listener(false, "Json Struct Error", emptyList())
+            }
+        }.start()
+    }
+
+    private fun parseJson(jsonString: String, channelID:String) : List<EPGProgram>{
+        var result = ArrayList<EPGProgram>()
+        try {
+            val jsonObject = JsonParser().parse(jsonString) as JsonObject
+            val jsonArray = jsonObject.getAsJsonObject("epgChunk").getAsJsonArray(channelID)
+
+            for (i in 0 until jsonArray.size()) {
+                val item = jsonArray[i].asJsonObject
+                val startDate = item.get("startDate").asLong
+                val endDate = item.get("endDate").asLong
+                val name = item.get("name").asString
+                val id = item.get("id").asLong.toString()
+
+                val program = EPGProgram(name,startDate,endDate,id)
+                result.add(program)
+
+            }
+
+            return result;
+
+        } catch (ex: JsonSyntaxException) {
+            return result
+        }
+    }
+
+    fun getDatesFormat(startDate: Long, endDate: Long): String {
+
+        val time = StringBuilder()
+        val startFormat = SimpleDateFormat("d MMM, HH:mm", Locale.US)
+        val endFormat = SimpleDateFormat("HH:mm", Locale.US)
+        val startDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+        startDayCalendar.timeInMillis = startDate * 1000
+        val endDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+        endDayCalendar.timeInMillis = endDate * 1000
+        time.append(startFormat.format(startDayCalendar.time))
+            .append(" - ")
+            .append(endFormat.format(endDayCalendar.time))
+
+        return time.toString()
+
+    }
+    fun getMidnightDate(targetDate:Long):String{
+
+        val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+        calendar.timeInMillis = targetDate
+
+        calendar.apply {
+            this[Calendar.MILLISECOND] = 0
+            this[Calendar.SECOND] = 0
+            this[Calendar.MINUTE] = 0
+            this[Calendar.HOUR_OF_DAY] = 0
+        }
+
+        return (calendar.timeInMillis / 1000).toString()
     }
 }
