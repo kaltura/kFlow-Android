@@ -86,18 +86,17 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                         viewModel.subscribeToThingShadow()
                     }
                 })
-        observeResource(viewModel.shadowMessageEvent) {
+        observeResource(viewModel.IOTshadowMessageEvent) {
             try {
                 val jsonObject = JsonParser().parse(it) as JsonObject
                 val setPoint = jsonObject.getAsJsonObject(KEY_STATE).getAsJsonObject(KEY_DESIRED)[KEY_NEW_MESSAGE].asString
-                handleEPGEvent(jsonObject)
                 longToast(setPoint)
             } catch (e: JsonSyntaxException) {
                 e.printStackTrace()
                 longToast("Error Parsing Message : $e")
             }
         }
-        observeResource(viewModel.epgMessageEvent) {
+        observeResource(viewModel.IOTepgMessageEvent) {
             try {
                 val jsonObject = JsonParser().parse(it) as JsonObject
                 handleEPGEvent(jsonObject)
@@ -107,7 +106,7 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                 longToast("Error Parsing Message : $e")
             }
         }
-        observeResource(viewModel.announcementMessageEvent,
+        observeResource(viewModel.IOTannouncementMessageEvent,
                 error = {
                     it.printStackTrace()
                     longToast("Subscribe to topic error: $it")

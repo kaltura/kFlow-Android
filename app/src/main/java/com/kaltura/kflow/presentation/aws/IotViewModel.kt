@@ -32,9 +32,9 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
 
     val registrationEvent = SingleLiveEvent<Resource<SignInState>>()
     val connectEvent = SingleLiveEvent<Resource<AWSIotMqttClientStatusCallback.AWSIotMqttClientStatus>>()
-    val shadowMessageEvent = SingleLiveEvent<Resource<String>>()
-    val announcementMessageEvent = SingleLiveEvent<Resource<String>>()
-    val epgMessageEvent = SingleLiveEvent<Resource<String>>()
+    val IOTshadowMessageEvent = SingleLiveEvent<Resource<String>>()
+    val IOTannouncementMessageEvent = SingleLiveEvent<Resource<String>>()
+    val IOTepgMessageEvent = SingleLiveEvent<Resource<String>>()
     val epgUpdates = MutableLiveData<Resource<ArrayList<Epg>>>()
 
     fun register() {
@@ -48,7 +48,7 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
     fun connect() {
         awsManager.getThingShadow(iotThing) {
             if (it.isSuccess())
-                shadowMessageEvent.postValue(it)
+                IOTshadowMessageEvent.postValue(it)
 
             awsManager.connect {
                 connectEvent.postValue(it)
@@ -58,19 +58,19 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
 
     fun subscribeToTopicAnnouncement() {
         awsManager.subscribeToTopic(announcementTopic) {
-            announcementMessageEvent.postValue(it)
+            IOTannouncementMessageEvent.postValue(it)
         }
     }
 
     fun subscribeToEPGUpdates() {
         awsManager.subscribeToEPGUpdates(epgUpdateTopic) {
-            epgMessageEvent.postValue(it)
+            IOTepgMessageEvent.postValue(it)
         }
     }
 
     fun subscribeToThingShadow() {
         awsManager.subscribeToTopicShadowAccepted(iotThing) {
-            shadowMessageEvent.postValue(it)
+            IOTshadowMessageEvent.postValue(it)
         }
     }
 
