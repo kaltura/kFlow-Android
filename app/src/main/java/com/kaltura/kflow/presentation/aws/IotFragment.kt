@@ -82,6 +82,7 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                     if (it == AWSIotMqttClientStatusCallback.AWSIotMqttClientStatus.Connected) {
                         longToast("Mqtt Is Connected")
                         viewModel.subscribeToTopicAnnouncement()
+                        viewModel.subscribeToEPGUpdates()
                         viewModel.subscribeToThingShadow()
                     }
                 })
@@ -89,8 +90,18 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
             try {
                 val jsonObject = JsonParser().parse(it) as JsonObject
                 val setPoint = jsonObject.getAsJsonObject(KEY_STATE).getAsJsonObject(KEY_DESIRED)[KEY_NEW_MESSAGE].asString
-                handleEventType(setPoint)
+                handleEPGEvent(jsonObject)
                 longToast(setPoint)
+            } catch (e: JsonSyntaxException) {
+                e.printStackTrace()
+                longToast("Error Parsing Message : $e")
+            }
+        }
+        observeResource(viewModel.epgMessageEvent) {
+            try {
+                val jsonObject = JsonParser().parse(it) as JsonObject
+                handleEPGEvent(jsonObject)
+                longToast(jsonObject.toString())
             } catch (e: JsonSyntaxException) {
                 e.printStackTrace()
                 longToast("Error Parsing Message : $e")
@@ -134,6 +145,23 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                     val eventType = header.getAsJsonPrimitive(KEY_EVENT_TYPE).asInt
                     if (eventType == 1) {
                         val liveAssetId = jsonObject.getAsJsonPrimitive(KEY_LIVE_ASSET_ID).asLong
+                        viewModel.getEpgUpdates(liveAssetId)
+                    }
+                }
+            }
+        } catch (ex: JsonSyntaxException) {
+        }
+    }
+
+    private fun handleEPGEvent(jsonObj: JsonObject) {
+        try {
+
+            if (jsonObj.has(KEY_HEADER)) {
+                val header = jsonObj.getAsJsonObject(KEY_HEADER)
+                if (header.has(KEY_EVENT_TYPE)) {
+                    val eventType = header.getAsJsonPrimitive(KEY_EVENT_TYPE).asInt
+                    if (eventType == 1) {
+                        val liveAssetId = jsonObj.getAsJsonPrimitive(KEY_LIVE_ASSET_ID).asLong
                         viewModel.getEpgUpdates(liveAssetId)
                     }
                 }

@@ -1,5 +1,6 @@
 package com.kaltura.kflow.presentation.aws
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.amazonaws.mobile.client.results.SignInState
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttClientStatusCallback
@@ -23,6 +24,7 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
                    private val awsManager: AwsManager) : BaseViewModel(apiManager) {
 
     private var announcementTopic = ""
+    private var epgUpdateTopic = ""
     private var iotThing = preferenceManager.iotThing
     private var iotEndpoint = preferenceManager.iotEndpoint
     private var iotUsername = preferenceManager.iotUsername
@@ -32,6 +34,7 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
     val connectEvent = SingleLiveEvent<Resource<AWSIotMqttClientStatusCallback.AWSIotMqttClientStatus>>()
     val shadowMessageEvent = SingleLiveEvent<Resource<String>>()
     val announcementMessageEvent = SingleLiveEvent<Resource<String>>()
+    val epgMessageEvent = SingleLiveEvent<Resource<String>>()
     val epgUpdates = MutableLiveData<Resource<ArrayList<Epg>>>()
 
     fun register() {
@@ -56,6 +59,12 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
     fun subscribeToTopicAnnouncement() {
         awsManager.subscribeToTopic(announcementTopic) {
             announcementMessageEvent.postValue(it)
+        }
+    }
+
+    fun subscribeToEPGUpdates() {
+        awsManager.subscribeToEPGUpdates(epgUpdateTopic) {
+            epgMessageEvent.postValue(it)
         }
     }
 
@@ -95,6 +104,7 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
 
     private fun registerIot(clientConfiguration: IotClientConfiguration) {
         announcementTopic = clientConfiguration.announcementTopic
+        epgUpdateTopic = getEPGUpdatesTopic(clientConfiguration)
         startAwsInitProcess(JSONObject(clientConfiguration.json))
 
         if (iotThing.isNotEmpty() && iotEndpoint.isNotEmpty() && iotUsername.isNotEmpty() && iotPassword.isNotEmpty()) {
@@ -108,6 +118,18 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
                 } else registrationEvent.postValue(Resource.Error(it.error))
             })
         }
+    }
+
+    private fun getEPGUpdatesTopic(clientConfiguration: IotClientConfiguration) : String{
+
+        try {
+            Log.d("TEST","Register to topic : "+clientConfiguration.topics.split(",").get(0))
+            return clientConfiguration.topics.split(",").get(0);
+        } catch (e: Exception) {
+            Log.d("TEST","Register to topic : epg_update_5")
+            return "epg_update_FAILED"
+        }
+
     }
 
     private fun saveIotInfo(iot: Iot) {
