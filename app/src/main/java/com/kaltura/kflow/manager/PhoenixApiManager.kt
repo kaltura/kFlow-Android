@@ -25,6 +25,18 @@ class PhoenixApiManager(private val prefs: PreferenceManager) {
             client.ks = value
         }
 
+    var parthnerID: Int?
+        get() = client.partnerId
+        set(value) {
+            client.partnerId = value
+        }
+
+    var cloudfrontUrl: String?
+        get() = prefs.cloudeFrontUrl
+        set(value) {
+            prefs.cloudeFrontUrl = value.toString()
+        }
+
     fun setConnectionConfiguration(config: Configuration) {
         client.connectionConfiguration = config
     }

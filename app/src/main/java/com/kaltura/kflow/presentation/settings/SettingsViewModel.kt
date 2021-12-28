@@ -22,6 +22,11 @@ class SettingsViewModel(private val apiManager: PhoenixApiManager,
         set(value) {
             preferenceManager.baseUrl = value
         }
+    var cloudFrontUrl: String
+        get() = preferenceManager.cloudeFrontUrl
+        set(value) {
+            preferenceManager.cloudeFrontUrl = value
+        }
 
     var mediaFileFormat: String
         get() = preferenceManager.mediaFileFormat

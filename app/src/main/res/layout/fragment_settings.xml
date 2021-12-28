@@ -47,6 +47,29 @@
                     android:layout_height="wrap_content"
                     android:hint="END Point URL"
                     android:imeOptions="actionNext"
+                    android:nextFocusDown="@id/cloudfronturl"
+                    android:singleLine="true" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/cloudfrontUrlInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="16dp"
+                app:endIconMode="clear_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/baseUrlInputLayout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/cloudfronturl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Cloudfront End Point URL"
+                    android:imeOptions="actionNext"
                     android:nextFocusDown="@id/partnerId"
                     android:singleLine="true" />
 
@@ -62,7 +85,7 @@
                 android:layout_marginEnd="16dp"
                 app:endIconMode="clear_text"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/baseUrlInputLayout">
+                app:layout_constraintTop_toBottomOf="@id/cloudfrontUrlInputLayout">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/partnerId"

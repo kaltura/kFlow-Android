@@ -38,6 +38,7 @@ class SettingsFragment : SharedTransitionFragment(R.layout.fragment_settings) {
 
     private fun initUI() {
         url.string = viewModel.baseUrl
+        cloudfronturl.string = viewModel.cloudFrontUrl
         partnerId.string = viewModel.partnerId.toString()
         mediaFileFormat.string = viewModel.mediaFileFormat
 
@@ -142,6 +143,7 @@ class SettingsFragment : SharedTransitionFragment(R.layout.fragment_settings) {
 
     private fun clearInputLayouts() {
         baseUrlInputLayout.hideError()
+        cloudfrontUrlInputLayout.hideError()
         partnerIdInputLayout.hideError()
         mediaFileFormatInputLayout.hideError()
     }

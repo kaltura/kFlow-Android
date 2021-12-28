@@ -33,9 +33,10 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
     private val KEY_DESIRED = "desired"
     private val KEY_NEW_MESSAGE = "NewMessage"
     private val KEY_HEADER = "header"
-    private val KEY_EVENT_TYPE = "messageType"
+    private val KEY_EVENT_TYPE = "event_type"
     private val KEY_EPG_UPDATE_TYPE = "EPGUpdateIoTNotification"
     private val KEY_LIVE_ASSET_ID = "live_asset_id"
+    private val KEY_LIVE_START_DATE = "start_date"
 
     //Topic Announcments Keys
     private val KEY_ANNONCMENT_TOPIC = "message"
@@ -58,28 +59,7 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
             showAssets.gone()
             viewModel.connect()
         }
-        temp_epg.setOnClickListener {
-            val url = URL("https://cache.prd1.ott.kaltura.com/api_v3/service/epg/action/get/date/"+viewModel.getMidnightDate(Calendar.getInstance().timeInMillis)+"/slots/all?channels=2072065")
-            val ks = viewModel.getKs()
 
-            viewModel.callCloudfront(url,ks!!,"2072065") { status,message,data ->
-                when (status) {
-                    true -> {
-                        if (!data.isEmpty()){
-                                requireActivity().runOnUiThread {
-                                    epgassets = data as ArrayList<EPGProgram>
-                                    showAssets.text = getQuantityString(R.plurals.show_assets, epgassets.size)
-                                    showAssets.visible()
-                                }
-                        }
-                    }
-                    else -> {
-                        requireActivity().runOnUiThread { longToast(message) }
-                    }
-                }
-
-            }
-        }
         showAssets.navigateOnClick {
             if (epgassets.isNotEmpty())
                 IotFragmentDirections.navigateToAssetListCs(epgassets = epgassets.toTypedArray())
@@ -113,21 +93,31 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                 if (it == AWSIotMqttClientStatusCallback.AWSIotMqttClientStatus.Connected) {
                     longToast("Mqtt Is Connected")
                     viewModel.subscribeToTopicAnnouncement()
+                    viewModel.subscribeToEPGUpdates()
                     viewModel.subscribeToThingShadow()
                 }
             })
-        observeResource(viewModel.shadowMessageEvent) {
+        observeResource(viewModel.IOTshadowMessageEvent) {
             try {
                 val jsonObject = JsonParser().parse(it) as JsonObject
                 val setPoint = jsonObject.getAsJsonObject(KEY_STATE).getAsJsonObject(KEY_DESIRED)[KEY_NEW_MESSAGE].asString
-                handleEventType(setPoint)
                 longToast(setPoint)
             } catch (e: JsonSyntaxException) {
                 e.printStackTrace()
                 longToast("Error Parsing Message : $e")
             }
         }
-        observeResource(viewModel.announcementMessageEvent,
+        observeResource(viewModel.IOTepgMessageEvent) {
+            try {
+                val jsonObject = JsonParser().parse(it) as JsonObject
+                handleEPGEvent(jsonObject)
+                longToast(jsonObject.toString())
+            } catch (e: JsonSyntaxException) {
+                e.printStackTrace()
+                longToast("Error Parsing Message : $e")
+            }
+        }
+        observeResource(viewModel.IOTannouncementMessageEvent,
             error = {
                 it.printStackTrace()
                 longToast("Subscribe to topic error: $it")
@@ -156,22 +146,39 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
         }
     }
 
-    private fun handleEventType(jsonString: String) {
+    private fun handleEPGEvent(jsonObj: JsonObject) {
         try {
-            val jsonObject = JsonParser().parse(jsonString) as JsonObject
-            if (jsonObject.has(KEY_HEADER)) {
-                val header = jsonObject.getAsJsonObject(KEY_HEADER)
+            if (jsonObj.has(KEY_HEADER)) {
+                val header = jsonObj.getAsJsonObject(KEY_HEADER)
                 if (header.has(KEY_EVENT_TYPE)) {
-                    val messageType = header.getAsJsonPrimitive(KEY_EVENT_TYPE).asString
-                    if (messageType.equals(KEY_EPG_UPDATE_TYPE,true)) {
-                        val liveAssetId = jsonObject.getAsJsonPrimitive(KEY_LIVE_ASSET_ID).asLong
-                        viewModel.getEpgUpdates(liveAssetId)
+                    val eventType = header.getAsJsonPrimitive(KEY_EVENT_TYPE).asInt
+                    if (eventType == 1) {
+                        val liveAssetId = jsonObj.getAsJsonPrimitive(KEY_LIVE_ASSET_ID).asLong
+                        val date = jsonObj.getAsJsonPrimitive(KEY_LIVE_START_DATE).asLong
+                        val ks = viewModel.getKs() as String
+                        val parthnerID = viewModel.getParthnerID()
+                        val url = URL(viewModel.getCloudfrontUrl()+"epg/action/get/partnerid/"+parthnerID+"/date/"+date+"/slots/all?channels="+liveAssetId)
+
+                        viewModel.callCloudfront(url,ks,liveAssetId.toString()){ status,message,data ->
+                            when (status) {
+                                true -> {
+                                    if (!data.isEmpty()){
+                                        requireActivity().runOnUiThread {
+                                            epgassets = data as ArrayList<EPGProgram>
+                                            showAssets.text = getQuantityString(R.plurals.show_assets, epgassets.size)
+                                            showAssets.visible()
+                                        }
+                                    }
+                                }
+                                else -> {
+                                    requireActivity().runOnUiThread { longToast(message) }
+                                }
+                            }
+                        }
                     }
                 }
             }
         } catch (ex: JsonSyntaxException) {
         }
     }
-
-
 }

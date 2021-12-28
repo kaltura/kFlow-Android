@@ -1,4 +1,5 @@
 package com.kaltura.kflow.presentation.aws
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.amazonaws.mobile.client.results.SignInState
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttClientStatusCallback
@@ -17,7 +18,6 @@ import com.kaltura.kflow.utils.*
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -29,6 +29,7 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
                    private val awsManager: AwsManager) : BaseViewModel(apiManager) {
 
     private var announcementTopic = ""
+    private var epgUpdateTopic = ""
     private var iotThing = preferenceManager.iotThing
     private var iotEndpoint = preferenceManager.iotEndpoint
     private var iotUsername = preferenceManager.iotUsername
@@ -36,14 +37,20 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
 
     val registrationEvent = SingleLiveEvent<Resource<SignInState>>()
     val connectEvent = SingleLiveEvent<Resource<AWSIotMqttClientStatusCallback.AWSIotMqttClientStatus>>()
-    val shadowMessageEvent = SingleLiveEvent<Resource<String>>()
-    val announcementMessageEvent = SingleLiveEvent<Resource<String>>()
+    val IOTshadowMessageEvent = SingleLiveEvent<Resource<String>>()
+    val IOTannouncementMessageEvent = SingleLiveEvent<Resource<String>>()
+    val IOTepgMessageEvent = SingleLiveEvent<Resource<String>>()
     val epgUpdates = MutableLiveData<Resource<ArrayList<Epg>>>()
 
     fun register() {
         getClientConfigIot()
     }
     fun getKs() = apiManager.ks
+
+    fun getCloudfrontUrl() = apiManager.cloudfrontUrl
+
+    fun getParthnerID() = apiManager.parthnerID
+
     fun initMqtt() {
         awsManager.initMqtt(iotEndpoint)
     }
@@ -51,7 +58,7 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
     fun connect() {
         awsManager.getThingShadow(iotThing) {
             if (it.isSuccess())
-                shadowMessageEvent.postValue(it)
+                IOTshadowMessageEvent.postValue(it)
 
             awsManager.connect {
                 connectEvent.postValue(it)
@@ -61,13 +68,19 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
 
     fun subscribeToTopicAnnouncement() {
         awsManager.subscribeToTopic(announcementTopic) {
-            announcementMessageEvent.postValue(it)
+            IOTannouncementMessageEvent.postValue(it)
+        }
+    }
+
+    fun subscribeToEPGUpdates() {
+        awsManager.subscribeToEPGUpdates(epgUpdateTopic) {
+            IOTepgMessageEvent.postValue(it)
         }
     }
 
     fun subscribeToThingShadow() {
         awsManager.subscribeToTopicShadowAccepted(iotThing) {
-            shadowMessageEvent.postValue(it)
+            IOTshadowMessageEvent.postValue(it)
         }
     }
 
@@ -80,6 +93,7 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
 
     private fun registerIot(clientConfiguration: IotClientConfiguration) {
         announcementTopic = clientConfiguration.announcementTopic
+        epgUpdateTopic = getEPGUpdatesTopic(clientConfiguration)
         startAwsInitProcess(JSONObject(clientConfiguration.json))
 
         if (iotThing.isNotEmpty() && iotEndpoint.isNotEmpty() && iotUsername.isNotEmpty() && iotPassword.isNotEmpty()) {
@@ -93,6 +107,18 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
                 } else registrationEvent.postValue(Resource.Error(it.error))
             })
         }
+    }
+
+    private fun getEPGUpdatesTopic(clientConfiguration: IotClientConfiguration) : String{
+
+        try {
+            Log.d("TEST","Register to topic : "+clientConfiguration.topics.split(",").get(0))
+            return clientConfiguration.topics.split(",").get(0);
+        } catch (e: Exception) {
+            Log.d("TEST","topics field is invalid")
+            return "epg_update_FAILED"
+        }
+
     }
 
     private fun saveIotInfo(iot: Iot) {
@@ -122,7 +148,7 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
             return thingARN.substring(thingARN.indexOf("thing") + 6)
         return ""
     }
-    // EPG display due to IOT update notification
+    // EPG display due to IOT update notification [Legacy Service]
 
     fun getEpgUpdates(liveAssetId: Long) {
         val todayMidnightCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
@@ -196,36 +222,5 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
         } catch (ex: JsonSyntaxException) {
             return result
         }
-    }
-
-    fun getDatesFormat(startDate: Long, endDate: Long): String {
-
-        val time = StringBuilder()
-        val startFormat = SimpleDateFormat("d MMM, HH:mm", Locale.US)
-        val endFormat = SimpleDateFormat("HH:mm", Locale.US)
-        val startDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-        startDayCalendar.timeInMillis = startDate * 1000
-        val endDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-        endDayCalendar.timeInMillis = endDate * 1000
-        time.append(startFormat.format(startDayCalendar.time))
-            .append(" - ")
-            .append(endFormat.format(endDayCalendar.time))
-
-        return time.toString()
-
-    }
-    fun getMidnightDate(targetDate:Long):String{
-
-        val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-        calendar.timeInMillis = targetDate
-
-        calendar.apply {
-            this[Calendar.MILLISECOND] = 0
-            this[Calendar.SECOND] = 0
-            this[Calendar.MINUTE] = 0
-            this[Calendar.HOUR_OF_DAY] = 0
-        }
-
-        return (calendar.timeInMillis / 1000).toString()
     }
 }

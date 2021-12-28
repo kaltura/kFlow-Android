@@ -124,6 +124,23 @@ class AwsManager(private val context: Context) {
         }
     }
 
+    fun subscribeToEPGUpdates(EPGTopicName: String, listener: (state: Resource<String>) -> Unit = {}) {
+        thread {
+            try {
+                mqttManager.subscribeToTopic(EPGTopicName, AWSIotMqttQos.QOS0 /* Quality of Service */) { topic, data ->
+                    try {
+                        val message = String(data)
+                        listener(Resource.Success(message))
+                    } catch (e: UnsupportedEncodingException) {
+                        listener(Resource.Error(APIException(e)))
+                    }
+                }
+            } catch (e: java.lang.Exception) {
+                listener(Resource.Error(APIException(e)))
+            }
+        }
+    }
+
     fun subscribeToTopicShadowAccepted(thingName: String, listener: (state: Resource<String>) -> Unit = {}) {
         try {
             val shadowTopic = "\$aws/things/$thingName/shadow/update/accepted"

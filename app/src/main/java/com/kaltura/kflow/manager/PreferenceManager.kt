@@ -8,6 +8,7 @@ import com.kaltura.kflow.R
  */
 class PreferenceManager(private val context: Context) {
     private val KEY_BASE_URL = "prefs_base_url"
+    private val KEY_CLOUDFRONT_URL = "prefs_cloudfront_url"
     private val KEY_VOD_ASSET_TYPE = "prefs_vod_asset_type"
     private val KEY_PARTNER_ID = "prefs_partner_id"
     private val KEY_MAIN_MEDIA_FILE_FORMAT = "prefs_main_media_file_format"
@@ -40,6 +41,11 @@ class PreferenceManager(private val context: Context) {
     var baseUrl: String
         get() = prefs.getString(KEY_BASE_URL, null) ?: context.getString(R.string.default_base_url)
         set(value) = prefs.edit().putString(KEY_BASE_URL, value).apply()
+
+    var cloudeFrontUrl: String
+        get() = prefs.getString(KEY_CLOUDFRONT_URL, null) ?: context.getString(R.string.default_cloudfront_url)
+        set(value) = prefs.edit().putString(KEY_CLOUDFRONT_URL, value).apply()
+
 
     var vodAssetType: String
         get() = prefs.getString(KEY_VOD_ASSET_TYPE, null) ?: ""
