@@ -154,7 +154,7 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                     val eventType = header.getAsJsonPrimitive(KEY_EVENT_TYPE).asInt
                     if (eventType == 1) {
                         val liveAssetId = jsonObj.getAsJsonPrimitive(KEY_LIVE_ASSET_ID).asLong
-                        val date = jsonObj.getAsJsonPrimitive(KEY_LIVE_START_DATE).asLong
+                        val date = viewModel.getMidnight(jsonObj.getAsJsonPrimitive(KEY_LIVE_START_DATE).asLong)
                         val ks = viewModel.getKs() as String
                         val parthnerID = viewModel.getParthnerID()
                         val url = URL(viewModel.getCloudfrontUrl()+"epg/action/get/partnerid/"+parthnerID+"/date/"+date+"/slots/all?channels="+liveAssetId)

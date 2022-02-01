@@ -171,6 +171,21 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
         })
     }
 
+    fun getMidnight(date : Long) : String {
+        val todayMidnightCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+
+        todayMidnightCalendar.timeInMillis = date * 1000
+
+        todayMidnightCalendar.apply {
+            this[Calendar.MILLISECOND] = 0
+            this[Calendar.SECOND] = 0
+            this[Calendar.MINUTE] = 0
+            this[Calendar.HOUR_OF_DAY] = 0
+        }
+
+        return (todayMidnightCalendar.timeInMillis/1000).toString()
+    }
+
     fun callCloudfront(
         url: URL,
         ks: String,

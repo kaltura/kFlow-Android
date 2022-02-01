@@ -25,10 +25,10 @@ class PhoenixApiManager(private val prefs: PreferenceManager) {
             client.ks = value
         }
 
-    var parthnerID: Int?
-        get() = client.partnerId
+    var parthnerID: Int
+        get() = prefs.partnerId
         set(value) {
-            client.partnerId = value
+            prefs.partnerId = value
         }
 
     var cloudfrontUrl: String?
