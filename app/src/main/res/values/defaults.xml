@@ -1,5 +1,5 @@
 <resources>
-    <string name="default_base_url">https://rest-us.ott.kaltura.com</string>
-    <integer name="default_partner_id">3079</integer>
+    <string name="default_base_url">https://api.frs1.ott.kaltura.com</string>
+    <integer name="default_partner_id">3197</integer>
     <string name="default_media_file_format">BP_Live_Dash</string>
 </resources>

@@ -135,6 +135,11 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
     private fun saveIotInfo(iot: Iot) {
         iotThing = getThingName(iot.thingArn)
         iotEndpoint = iot.endPoint
+        //TO DO
+        /*
+        Change iotEndpoint Format to suppurt Data-ATS
+        "aycb5f0u1fyvg-ats.iot.eu-central-1.amazonaws.com"
+         */
         preferenceManager.iotThing = iotThing
         preferenceManager.iotEndpoint = iotEndpoint
         preferenceManager.iotUsername = iot.username
