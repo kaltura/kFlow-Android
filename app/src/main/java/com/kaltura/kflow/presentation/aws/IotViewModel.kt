@@ -134,17 +134,26 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
 
     private fun saveIotInfo(iot: Iot) {
         iotThing = getThingName(iot.thingArn)
-        iotEndpoint = iot.endPoint
-        //TO DO
-        /*
-        Change iotEndpoint Format to suppurt Data-ATS
-        "aycb5f0u1fyvg-ats.iot.eu-central-1.amazonaws.com"
-         */
+        iotEndpoint = getATSIotEndpoint(iot.extendedEndPoint)//iot.endPoint
         preferenceManager.iotThing = iotThing
         preferenceManager.iotEndpoint = iotEndpoint
         preferenceManager.iotUsername = iot.username
         preferenceManager.iotPassword = iot.userPassword
     }
+
+    private fun getATSIotEndpoint(legacyEndPoint:String):String{
+
+        return legacyEndPoint.replace("wss://","").replace("/mqtt","")
+
+        //TO DO
+        /* BE FIX Required to provide valid ATS End Point
+         Chae iotEndpoint Format to suppurt Data-ATS
+         "aycb5f0u1fyvg-ats.iot.eu-central-1.amazonaws.com"
+        */
+
+
+    }
+
 
     private fun startAwsInitProcess(json: JSONObject) {
         awsManager.startAwsInitProcess(json)
