@@ -123,119 +123,132 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
 
     private fun saveIotInfo(iot: Iot) {
         iotThing = getThingName(iot.thingArn)
-        iotEndpoint = iot.endPoint
+        iotEndpoint = getATSIotEndpoint(iot.extendedEndPoint)//iot.endPoint
         preferenceManager.iotThing = iotThing
         preferenceManager.iotEndpoint = iotEndpoint
         preferenceManager.iotUsername = iot.username
         preferenceManager.iotPassword = iot.userPassword
     }
 
-    private fun startAwsInitProcess(json: JSONObject) {
-        awsManager.startAwsInitProcess(json)
+    private fun getATSIotEndpoint(legacyEndPoint:String):String{
+
+        return legacyEndPoint.replace("wss://","").replace("/mqtt","")
+
+        //TO DO
+        /* BE FIX Required to provide valid ATS End Point
+         Chae iotEndpoint Format to suppurt Data-ATS
+         "aycb5f0u1fyvg-ats.iot.eu-central-1.amazonaws.com"
+        */
+
+
     }
 
-    private fun signInAws() {
-        awsManager.setAwsClientEndpoint(iotEndpoint)
-        awsManager.signInAws(preferenceManager.iotUsername, preferenceManager.iotPassword) {
-            if (it.isSuccess()) {
-                registrationEvent.postValue(Resource.Success(it.getSuccessData()))
-            } else registrationEvent.postValue(Resource.Error(it.getErrorData()))
-        }
-    }
+private fun startAwsInitProcess(json: JSONObject) {
+ awsManager.startAwsInitProcess(json)
+}
 
-    private fun getThingName(thingARN: String): String {
-        if (thingARN.isNotEmpty())
-            return thingARN.substring(thingARN.indexOf("thing") + 6)
-        return ""
-    }
-    // EPG display due to IOT update notification [Legacy Service]
+private fun signInAws() {
+ awsManager.setAwsClientEndpoint(iotEndpoint)
+ awsManager.signInAws(preferenceManager.iotUsername, preferenceManager.iotPassword) {
+     if (it.isSuccess()) {
+         registrationEvent.postValue(Resource.Success(it.getSuccessData()))
+     } else registrationEvent.postValue(Resource.Error(it.getErrorData()))
+ }
+}
 
-    fun getEpgUpdates(liveAssetId: Long) {
-        val todayMidnightCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
-            this[Calendar.MILLISECOND] = 0
-            this[Calendar.SECOND] = 0
-            this[Calendar.MINUTE] = 0
-            this[Calendar.HOUR_OF_DAY] = 0
-        }
+private fun getThingName(thingARN: String): String {
+ if (thingARN.isNotEmpty())
+     return thingARN.substring(thingARN.indexOf("thing") + 6)
+ return ""
+}
+// EPG display due to IOT update notification [Legacy Service]
 
-        val filter = EpgFilter().apply {
-            dateEqual = todayMidnightCalendar.timeInMillis / 1000 //Need to be date since beginning of the day 00:00:00
-            liveAssetIdEqual = liveAssetId
-        }
+fun getEpgUpdates(liveAssetId: Long) {
+ val todayMidnightCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+     this[Calendar.MILLISECOND] = 0
+     this[Calendar.SECOND] = 0
+     this[Calendar.MINUTE] = 0
+     this[Calendar.HOUR_OF_DAY] = 0
+ }
 
-        apiManager.execute(EpgService.list(filter).setCompletion {
-            if (it.isSuccess && it.results.objects != null) {
-                if (it.results.objects.size > 0) epgUpdates.value = Resource.Success(it.results.objects as ArrayList<Epg>)
-                else epgUpdates.value = Resource.Success(arrayListOf())
-            } else epgUpdates.value = Resource.Error(it.error)
-        })
-    }
+ val filter = EpgFilter().apply {
+     dateEqual = todayMidnightCalendar.timeInMillis / 1000 //Need to be date since beginning of the day 00:00:00
+     liveAssetIdEqual = liveAssetId
+ }
 
-    fun getMidnight(date : Long) : String {
-        val todayMidnightCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+ apiManager.execute(EpgService.list(filter).setCompletion {
+     if (it.isSuccess && it.results.objects != null) {
+         if (it.results.objects.size > 0) epgUpdates.value = Resource.Success(it.results.objects as ArrayList<Epg>)
+         else epgUpdates.value = Resource.Success(arrayListOf())
+     } else epgUpdates.value = Resource.Error(it.error)
+ })
+}
 
-        todayMidnightCalendar.timeInMillis = date * 1000
+fun getMidnight(date : Long) : String {
+ val todayMidnightCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
 
-        todayMidnightCalendar.apply {
-            this[Calendar.MILLISECOND] = 0
-            this[Calendar.SECOND] = 0
-            this[Calendar.MINUTE] = 0
-            this[Calendar.HOUR_OF_DAY] = 0
-        }
+ todayMidnightCalendar.timeInMillis = date * 1000
 
-        return (todayMidnightCalendar.timeInMillis/1000).toString()
-    }
+ todayMidnightCalendar.apply {
+     this[Calendar.MILLISECOND] = 0
+     this[Calendar.SECOND] = 0
+     this[Calendar.MINUTE] = 0
+     this[Calendar.HOUR_OF_DAY] = 0
+ }
 
-    fun callCloudfront(
-        url: URL,
-        ks: String,
-        channel:String,
-        listener: (status: Boolean, message: String, data: List<EPGProgram>) -> Unit
-    ) {
-        Thread {
-            try {
-                url
-                val conn = url.openConnection() as HttpURLConnection
-                conn.instanceFollowRedirects = false
-                conn.requestMethod = "GET"
-                conn.setRequestProperty("Authorization","Bearer "+ks)
+ return (todayMidnightCalendar.timeInMillis/1000).toString()
+}
 
-                val isSuccess = conn.responseCode == 200
-                if (isSuccess) {
-                    val data = conn.inputStream.bufferedReader().readText()
-                    var epgList = parseJson(data,channel)
-                    listener(true, "success",epgList)
-                } else {
-                    listener(false, "Communication Error", emptyList())
-                }
-            } catch (e: Exception) {
-                listener(false, "Json Struct Error", emptyList())
-            }
-        }.start()
-    }
+fun callCloudfront(
+ url: URL,
+ ks: String,
+ channel:String,
+ listener: (status: Boolean, message: String, data: List<EPGProgram>) -> Unit
+) {
+ Thread {
+     try {
+         url
+         val conn = url.openConnection() as HttpURLConnection
+         conn.instanceFollowRedirects = false
+         conn.requestMethod = "GET"
+         conn.setRequestProperty("Authorization","Bearer "+ks)
 
-    private fun parseJson(jsonString: String, channelID:String) : List<EPGProgram>{
-        var result = ArrayList<EPGProgram>()
-        try {
-            val jsonObject = JsonParser().parse(jsonString) as JsonObject
-            val jsonArray = jsonObject.getAsJsonObject("epgChunk").getAsJsonArray(channelID)
+         val isSuccess = conn.responseCode == 200
+         if (isSuccess) {
+             val data = conn.inputStream.bufferedReader().readText()
+             var epgList = parseJson(data,channel)
+             listener(true, "success",epgList)
+         } else {
+             listener(false, "Communication Error", emptyList())
+         }
+     } catch (e: Exception) {
+         listener(false, "Json Struct Error", emptyList())
+     }
+ }.start()
+}
 
-            for (i in 0 until jsonArray.size()) {
-                val item = jsonArray[i].asJsonObject
-                val startDate = item.get("startDate").asLong
-                val endDate = item.get("endDate").asLong
-                val name = item.get("name").asString
-                val id = item.get("id").asLong.toString()
+private fun parseJson(jsonString: String, channelID:String) : List<EPGProgram>{
+ var result = ArrayList<EPGProgram>()
+ try {
+     val jsonObject = JsonParser().parse(jsonString) as JsonObject
+     val jsonArray = jsonObject.getAsJsonObject("epgChunk").getAsJsonArray(channelID)
 
-                val program = EPGProgram(name,startDate,endDate,id)
-                result.add(program)
+     for (i in 0 until jsonArray.size()) {
+         val item = jsonArray[i].asJsonObject
+         val startDate = item.get("startDate").asLong
+         val endDate = item.get("endDate").asLong
+         val name = item.get("name").asString
+         val id = item.get("id").asLong.toString()
 
-            }
+         val program = EPGProgram(name,startDate,endDate,id)
+         result.add(program)
 
-            return result;
+     }
 
-        } catch (ex: JsonSyntaxException) {
-            return result
-        }
-    }
+     return result;
+
+ } catch (ex: JsonSyntaxException) {
+     return result
+ }
+}
 }
