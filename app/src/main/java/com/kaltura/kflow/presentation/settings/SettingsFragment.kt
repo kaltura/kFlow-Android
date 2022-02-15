@@ -29,7 +29,7 @@ class SettingsFragment : SharedTransitionFragment(R.layout.fragment_settings) {
         super.onViewCreated(view, savedInstanceState)
 
         save.setOnClickListener {
-            save(url.string, partnerId.string, mediaFileFormat.string)
+            save(url.string,cloudfronturl.string, partnerId.string, mediaFileFormat.string)
         }
         initUI()
     }
@@ -76,7 +76,7 @@ class SettingsFragment : SharedTransitionFragment(R.layout.fragment_settings) {
         qualityTitle.setOnClickListener { longToast("Which quality is being used for playback") }
     }
 
-    private fun save(baseUrl: String, partnerId: String, mediaFileFormat: String) {
+    private fun save(baseUrl: String,cloudfrontUrl: String, partnerId: String, mediaFileFormat: String) {
         clearInputLayouts()
 
         if (baseUrl.isEmpty()) {
@@ -98,6 +98,8 @@ class SettingsFragment : SharedTransitionFragment(R.layout.fragment_settings) {
 
         viewModel.clearKs()
         viewModel.baseUrl = baseUrl
+        if (cloudfrontUrl.isNotEmpty())
+            viewModel.cloudFrontUrl = cloudfrontUrl
         viewModel.partnerId = partnerId.toInt()
         viewModel.mediaFileFormat = mediaFileFormat
 
