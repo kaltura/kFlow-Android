@@ -370,6 +370,9 @@
         <action
             android:id="@+id/navigate_to_asset_list_cs"
             app:destination="@id/cs_asset_list" />
+        <action
+            android:id="@+id/navigate_to_channel_list_cs"
+            app:destination="@id/cs_channel_list" />
     </fragment>
 
     <fragment
@@ -432,6 +435,24 @@
         <action
             android:id="@+id/navigate_to_player"
             app:destination="@id/player" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/cs_channel_list"
+        android:name="com.kaltura.kflow.presentation.assetList.CloudServiceChannelListFragment"
+        android:label="Cloud Service Channel list"
+        tools:layout="@layout/fragment_vod_list">
+        <argument
+            android:name="isShowActions"
+            android:defaultValue="true"
+            app:argType="boolean" />
+
+        <argument
+            android:name="channelassets"
+            android:defaultValue="@null"
+            app:argType="com.kaltura.kflow.entity.ChannelCS[]"
+            app:nullable="true" />
+
     </fragment>
 
     <fragment

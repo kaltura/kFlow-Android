@@ -9,12 +9,14 @@ import com.google.gson.JsonSyntaxException
 import com.kaltura.client.services.EpgService
 import com.kaltura.client.services.IotService
 import com.kaltura.client.types.*
+import com.kaltura.kflow.entity.ChannelCS
 import com.kaltura.kflow.entity.EPGProgram
 import com.kaltura.kflow.manager.AwsManager
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
 import com.kaltura.kflow.utils.*
+import com.kaltura.playkit.providers.api.phoenix.APIDefines
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -28,8 +30,11 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
                    private val preferenceManager: PreferenceManager,
                    private val awsManager: AwsManager) : BaseViewModel(apiManager) {
 
+    private var IOT_EPG_TOPIC_TYPE = "epg"
+    private var IOT_LINEUP_TOPIC_TYPE = "lineup"
     private var announcementTopic = ""
     private var epgUpdateTopic = ""
+    private var lineupUpdateTopic = ""
     private var iotThing = preferenceManager.iotThing
     private var iotEndpoint = preferenceManager.iotEndpoint
     private var iotUsername = preferenceManager.iotUsername
@@ -40,6 +45,7 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
     val IOTshadowMessageEvent = SingleLiveEvent<Resource<String>>()
     val IOTannouncementMessageEvent = SingleLiveEvent<Resource<String>>()
     val IOTepgMessageEvent = SingleLiveEvent<Resource<String>>()
+    val IOTLineupMessageEvent = SingleLiveEvent<Resource<String>>()
     val epgUpdates = MutableLiveData<Resource<ArrayList<Epg>>>()
 
     fun register() {
@@ -68,13 +74,22 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
 
     fun subscribeToTopicAnnouncement() {
         awsManager.subscribeToTopic(announcementTopic) {
+            Log.d("TEST","Announcement Received")
             IOTannouncementMessageEvent.postValue(it)
         }
     }
 
     fun subscribeToEPGUpdates() {
         awsManager.subscribeToEPGUpdates(epgUpdateTopic) {
+            Log.d("TEST","IOT EPG Update Received")
             IOTepgMessageEvent.postValue(it)
+        }
+    }
+
+    fun subscribeToLineupUpdates() {
+        awsManager.subscribeToLineupUpdates(lineupUpdateTopic) {
+            Log.d("TEST","IOT Lineup Update Received")
+            IOTLineupMessageEvent.postValue(it)
         }
     }
 
@@ -93,7 +108,8 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
 
     private fun registerIot(clientConfiguration: IotClientConfiguration) {
         announcementTopic = clientConfiguration.announcementTopic
-        epgUpdateTopic = getEPGUpdatesTopic(clientConfiguration)
+        epgUpdateTopic = getUpdatesTopics(clientConfiguration,IOT_EPG_TOPIC_TYPE)
+        lineupUpdateTopic = getUpdatesTopics(clientConfiguration,IOT_LINEUP_TOPIC_TYPE)
         startAwsInitProcess(JSONObject(clientConfiguration.json))
 
         if (iotThing.isNotEmpty() && iotEndpoint.isNotEmpty() && iotUsername.isNotEmpty() && iotPassword.isNotEmpty()) {
@@ -109,14 +125,28 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
         }
     }
 
-    private fun getEPGUpdatesTopic(clientConfiguration: IotClientConfiguration) : String{
+    private fun getUpdatesTopics(clientConfiguration: IotClientConfiguration, iotUpdateType:String) : String{
 
         try {
-            Log.d("TEST","Register to topic : "+clientConfiguration.topics.split(",").get(0))
-            return clientConfiguration.topics.split(",").get(0);
+            when (iotUpdateType) {
+                IOT_EPG_TOPIC_TYPE -> {
+                    Log.d("TEST","Register to topic : "+clientConfiguration.topics.split(",").get(0))
+                    return clientConfiguration.topics.split(",").get(0)
+                }
+                IOT_LINEUP_TOPIC_TYPE -> {
+                    Log.d("TEST","Register to topic : "+clientConfiguration.topics.split(",").get(1))
+                    //Log.d("TEST","Register to topic : 3199/lineup_updated/823/1")
+                    return clientConfiguration.topics.split(",").get(1)
+                    //return "3199/lineup_updated/823/1"
+                }
+                else -> {
+                    Log.d("TEST","topics field is invalid")
+                    return "epg_update_FAILED"
+                }
+            }
         } catch (e: Exception) {
             Log.d("TEST","topics field is invalid")
-            return "epg_update_FAILED"
+            return "IOT_Update_Topic_FAILED"
         }
 
     }
@@ -199,7 +229,7 @@ fun getMidnight(date : Long) : String {
  return (todayMidnightCalendar.timeInMillis/1000).toString()
 }
 
-fun callCloudfront(
+fun callCloudfrontEpgSevice(
  url: URL,
  ks: String,
  channel:String,
@@ -216,7 +246,7 @@ fun callCloudfront(
          val isSuccess = conn.responseCode == 200
          if (isSuccess) {
              val data = conn.inputStream.bufferedReader().readText()
-             var epgList = parseJson(data,channel)
+             var epgList = parseEPGJson(data,channel)
              listener(true, "success",epgList)
          } else {
              listener(false, "Communication Error", emptyList())
@@ -227,28 +257,82 @@ fun callCloudfront(
  }.start()
 }
 
-private fun parseJson(jsonString: String, channelID:String) : List<EPGProgram>{
- var result = ArrayList<EPGProgram>()
- try {
-     val jsonObject = JsonParser().parse(jsonString) as JsonObject
-     val jsonArray = jsonObject.getAsJsonObject("epgChunk").getAsJsonArray(channelID)
+fun callCloudfrontLineupSevice(
+        url: URL,
+        ks: String,
+        listener: (status: Boolean, message: String, data: List<ChannelCS>) -> Unit
+    ) {
+        Thread {
+            try {
+                url
+                val conn = url.openConnection() as HttpURLConnection
+                conn.instanceFollowRedirects = false
+                conn.requestMethod = "GET"
+                conn.setRequestProperty("Authorization","Bearer "+ks)
 
-     for (i in 0 until jsonArray.size()) {
-         val item = jsonArray[i].asJsonObject
-         val startDate = item.get("startDate").asLong
-         val endDate = item.get("endDate").asLong
-         val name = item.get("name").asString
-         val id = item.get("id").asLong.toString()
+                val isSuccess = conn.responseCode == 200
+                if (isSuccess) {
+                    val data = conn.inputStream.bufferedReader().readText()
+                    var channelList = parseLineupJson(data)
+                    listener(true, "success",channelList)
+                } else {
+                    listener(false, "Communication Error", emptyList())
+                }
+            } catch (e: Exception) {
+                listener(false, "Json Struct Error", emptyList())
+            }
+        }.start()
+    }
 
-         val program = EPGProgram(name,startDate,endDate,id)
-         result.add(program)
+    private fun parseEPGJson(jsonString: String, channelID:String) : List<EPGProgram>{
+     var result = ArrayList<EPGProgram>()
+     try {
+         val jsonObject = JsonParser().parse(jsonString) as JsonObject
+         val jsonArray = jsonObject.getAsJsonObject("epgChunk").getAsJsonArray(channelID)
 
+         for (i in 0 until jsonArray.size()) {
+             //val item = jsonArray[i].asJsonObject
+             val item = jsonArray[i].asJsonObject.getAsJsonObject("ProgramAsset")
+             val startDate = item.get("startDate").asLong
+             val endDate = item.get("endDate").asLong
+             val name = item.get("name").asString
+             val id = item.get("id").asLong.toString()
+
+             val program = EPGProgram(name,startDate,endDate,id)
+             result.add(program)
+
+         }
+         if(result.isNotEmpty()) Log.d("TEST",result.size.toString()+" Programs Were Received For Linear Channel "+channelID)
+
+         return result;
+
+     } catch (ex: JsonSyntaxException) {
+         return result
      }
+    }
+    private fun parseLineupJson(jsonString: String) : List<ChannelCS>{
+        var result = ArrayList<ChannelCS>()
+        try {
+            val jsonObject = JsonParser().parse(jsonString) as JsonObject
+            val jsonArray = jsonObject.getAsJsonObject("result").getAsJsonArray("objects")
 
-     return result;
+            for (i in 0 until jsonArray.size()) {
+                val item = jsonArray[i].asJsonObject
+                val lcn = if (item.get("lcn").isJsonNull) 0 else item.get("lcn").asInt
+                val name = item.get("name").asString
 
- } catch (ex: JsonSyntaxException) {
-     return result
- }
-}
+                val id = item.get("id").asLong.toString()
+                val descripion = item.get("description")?.asString
+
+                val channel = ChannelCS(name,id,descripion,lcn)
+                result.add(channel)
+
+            }
+            if(result.isNotEmpty()) Log.d("TEST",result.size.toString()+" Channels Were Received")
+            return result
+
+        } catch (ex: JsonSyntaxException) {
+            return result
+        }
+    }
 }

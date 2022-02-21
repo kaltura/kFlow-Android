@@ -11,6 +11,7 @@ import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException
 import com.kaltura.client.types.Epg
 import com.kaltura.kflow.R
+import com.kaltura.kflow.entity.ChannelCS
 import com.kaltura.kflow.entity.EPGProgram
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
@@ -34,7 +35,6 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
     private val KEY_NEW_MESSAGE = "NewMessage"
     private val KEY_HEADER = "header"
     private val KEY_EVENT_TYPE = "event_type"
-    private val KEY_EPG_UPDATE_TYPE = "EPGUpdateIoTNotification"
     private val KEY_LIVE_ASSET_ID = "live_asset_id"
     private val KEY_LIVE_START_DATE = "start_date"
 
@@ -44,6 +44,7 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
     private val viewModel: IotViewModel by viewModel()
     private var epgUpdates = arrayListOf<Epg>()
     private var epgassets = arrayListOf<EPGProgram>()
+    private var channelassets = arrayListOf<ChannelCS>()
 
     override fun debugView(): DebugView = debugView
     override val feature = Feature.IOT
@@ -52,19 +53,25 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
         super.onViewCreated(view, savedInstanceState)
         connect.visibleOrGone(epgUpdates.isNotEmpty())
         register.setOnClickListener {
-            showAssets.gone()
+            showEPGAssets.gone()
+            showLineupAssets.gone()
             makeRegisterRequest()
         }
         connect.setOnClickListener {
-            showAssets.gone()
+            showEPGAssets.gone()
+            showLineupAssets.gone()
             viewModel.connect()
         }
 
-        showAssets.navigateOnClick {
+        showEPGAssets.navigateOnClick {
             if (epgassets.isNotEmpty())
                 IotFragmentDirections.navigateToAssetListCs(epgassets = epgassets.toTypedArray())
             else
                 IotFragmentDirections.navigateToAssetList(assets = epgUpdates.toTypedArray())
+        }
+
+        showLineupAssets.navigateOnClick {
+            IotFragmentDirections.navigateToChannelListCs(channelassets = channelassets.toTypedArray())
         }
     }
 
@@ -94,6 +101,7 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                     longToast("Mqtt Is Connected")
                     viewModel.subscribeToTopicAnnouncement()
                     viewModel.subscribeToEPGUpdates()
+                    viewModel.subscribeToLineupUpdates()
                     viewModel.subscribeToThingShadow()
                 }
             })
@@ -110,7 +118,17 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
         observeResource(viewModel.IOTepgMessageEvent) {
             try {
                 val jsonObject = JsonParser().parse(it) as JsonObject
-                handleEPGEvent(jsonObject)
+                handleIOTUpdateEvent(jsonObject)
+                longToast(jsonObject.toString())
+            } catch (e: JsonSyntaxException) {
+                e.printStackTrace()
+                longToast("Error Parsing Message : $e")
+            }
+        }
+        observeResource(viewModel.IOTLineupMessageEvent) {
+            try {
+                val jsonObject = JsonParser().parse(it) as JsonObject
+                handleIOTUpdateEvent(jsonObject)
                 longToast(jsonObject.toString())
             } catch (e: JsonSyntaxException) {
                 e.printStackTrace()
@@ -131,8 +149,8 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
             },
             success = {
                 epgUpdates = it
-                showAssets.text = getQuantityString(R.plurals.show_updates, epgUpdates.size)
-                showAssets.visible()
+                showEPGAssets.text = getQuantityString(R.plurals.show_updates, epgUpdates.size)
+                showEPGAssets.visible()
             })
     }
 
@@ -146,7 +164,7 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
         }
     }
 
-    private fun handleEPGEvent(jsonObj: JsonObject) {
+    private fun handleIOTUpdateEvent(jsonObj: JsonObject) {
         try {
             if (jsonObj.has(KEY_HEADER)) {
                 val header = jsonObj.getAsJsonObject(KEY_HEADER)
@@ -159,14 +177,35 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                         val parthnerID = viewModel.getParthnerID()
                         val url = URL(viewModel.getCloudfrontUrl()+"epg/action/get/partnerid/"+parthnerID+"/date/"+date+"/slots/all?channels="+liveAssetId)
 
-                        viewModel.callCloudfront(url,ks,liveAssetId.toString()){ status,message,data ->
+                        viewModel.callCloudfrontEpgSevice(url,ks,liveAssetId.toString()){ status,message,data ->
                             when (status) {
                                 true -> {
                                     if (!data.isEmpty()){
                                         requireActivity().runOnUiThread {
                                             epgassets = data as ArrayList<EPGProgram>
-                                            showAssets.text = getQuantityString(R.plurals.show_assets, epgassets.size)
-                                            showAssets.visible()
+                                            showEPGAssets.text = getQuantityString(R.plurals.show_assets, epgassets.size)
+                                            showEPGAssets.visible()
+                                        }
+                                    }
+                                }
+                                else -> {
+                                    requireActivity().runOnUiThread { longToast(message) }
+                                }
+                            }
+                        }
+                    }else if(eventType == 2){
+
+                        val url = URL(viewModel.getCloudfrontUrl()+"lineup/action/get?pageSize=1600")
+                        val ks = viewModel.getKs() as String
+
+                        viewModel.callCloudfrontLineupSevice(url,ks){ status,message,data ->
+                            when (status) {
+                                true -> {
+                                    if (!data.isEmpty()){
+                                        requireActivity().runOnUiThread {
+                                            channelassets = data as ArrayList<ChannelCS>
+                                            showLineupAssets.text = getQuantityString(R.plurals.show_assets, channelassets.size)
+                                            showLineupAssets.visible()
                                         }
                                     }
                                 }

@@ -140,6 +140,22 @@ class AwsManager(private val context: Context) {
             }
         }
     }
+    fun subscribeToLineupUpdates(LineupTopicName: String, listener: (state: Resource<String>) -> Unit = {}) {
+        thread {
+            try {
+                mqttManager.subscribeToTopic(LineupTopicName, AWSIotMqttQos.QOS0 /* Quality of Service */) { topic, data ->
+                    try {
+                        val message = String(data)
+                        listener(Resource.Success(message))
+                    } catch (e: UnsupportedEncodingException) {
+                        listener(Resource.Error(APIException(e)))
+                    }
+                }
+            } catch (e: java.lang.Exception) {
+                listener(Resource.Error(APIException(e)))
+            }
+        }
+    }
 
     fun subscribeToTopicShadowAccepted(thingName: String, listener: (state: Resource<String>) -> Unit = {}) {
         try {
