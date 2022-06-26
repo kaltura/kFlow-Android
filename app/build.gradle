@@ -6,7 +6,7 @@ apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     defaultConfig {
         applicationId "com.kaltura.kflow"
         minSdkVersion 21
@@ -75,11 +75,11 @@ dependencies {
     implementation 'com.kaltura:KalturaOttAndroidJavaClient:6.2.0.28956'
 
     // Playkit
-    implementation 'com.kaltura.player:tvplayer:4.15.0'
-    implementation 'com.kaltura.playkit:playkitproviders:4.10.0'
-    implementation 'com.kaltura.playkit:youboraplugin:4.10.0'
-    implementation 'com.kaltura.playkit:kavaplugin:4.10.0'
-    implementation 'com.kaltura.playkit:vrplugin:4.10.0'
+    implementation 'com.kaltura.player:tvplayer:4.23.0'
+    implementation 'com.kaltura.playkit:playkitproviders:4.23.0'
+    implementation 'com.kaltura.playkit:youboraplugin:4.23.0'
+    implementation 'com.kaltura.playkit:kavaplugin:4.23.0'
+    implementation 'com.kaltura.playkit:vrplugin:4.23.0'
 
     // Firebase
     implementation 'com.google.firebase:firebase-analytics:18.0.2'

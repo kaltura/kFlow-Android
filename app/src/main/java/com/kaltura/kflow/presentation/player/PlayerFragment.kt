@@ -167,7 +167,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                         if (isKeepAlive) onMediaLoadedKeepAlive()
                         else setMediaEntry()
                     } else {
-                        toast("failed to fetch media data: ${loadError.message}")
+                        toast("failed to fetch media data: ${loadError?.message}")
                     }
                 }
             }

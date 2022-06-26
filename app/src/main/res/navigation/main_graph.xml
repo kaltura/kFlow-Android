@@ -12,95 +12,43 @@
         tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/navigate_to_login"
-            app:destination="@id/login"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/login" />
         <action
             android:id="@+id/navigate_to_app_token"
-            app:destination="@id/loginAppToken"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/loginAppToken" />
         <action
             android:id="@+id/navigate_to_ks"
-            app:destination="@id/ks"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/ks" />
         <action
             android:id="@+id/navigate_to_anonymous_login"
-            app:destination="@id/anonymous_login"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/anonymous_login" />
         <action
             android:id="@+id/navigate_to_registration"
-            app:destination="@id/registration"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/registration" />
         <action
             android:id="@+id/navigate_to_collections"
-            app:destination="@id/collections"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/collections" />
         <action
             android:id="@+id/navigate_to_vod"
-            app:destination="@id/vod"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/vod" />
         <action
             android:id="@+id/navigate_to_continue_watching"
-            app:destination="@id/continue_watching"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/continue_watching" />
         <action
             android:id="@+id/navigate_to_epg"
-            app:destination="@id/epg"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/epg" />
         <action
             android:id="@+id/navigate_to_live_tv"
-            app:destination="@id/live_tv"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/live_tv" />
         <action
             android:id="@+id/navigate_to_favorites"
-            app:destination="@id/favorites"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/favorites" />
         <action
             android:id="@+id/navigate_to_search"
-            app:destination="@id/search"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/search" />
         <action
             android:id="@+id/navigate_to_keep_alive"
-            app:destination="@id/media_page"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit">
+            app:destination="@id/media_page">
             <argument
                 android:name="isKeepAlive"
                 android:defaultValue="true"
@@ -108,11 +56,7 @@
         </action>
         <action
             android:id="@+id/navigate_to_media_page"
-            app:destination="@id/media_page"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit">
+            app:destination="@id/media_page">
             <argument
                 android:name="isKeepAlive"
                 android:defaultValue="false"
@@ -120,67 +64,31 @@
         </action>
         <action
             android:id="@+id/navigate_to_subscription"
-            app:destination="@id/subscription"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/subscription" />
         <action
             android:id="@+id/navigate_to_product_price"
-            app:destination="@id/product_price"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/product_price" />
         <action
             android:id="@+id/navigate_to_check_receipt"
-            app:destination="@id/check_receipt"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/check_receipt" />
         <action
             android:id="@+id/navigate_to_transaction_history"
-            app:destination="@id/transaction_history"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/transaction_history" />
         <action
             android:id="@+id/navigate_to_recordings"
-            app:destination="@id/recordings"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/recordings" />
         <action
             android:id="@+id/navigate_to_bookmark"
-            app:destination="@id/bookmark"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/bookmark" />
         <action
             android:id="@+id/navigate_to_iot"
-            app:destination="@id/iot"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/iot" />
         <action
             android:id="@+id/navigate_to_device_management"
-            app:destination="@id/device_management"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/device_management" />
         <action
             android:id="@+id/navigate_to_settings"
-            app:destination="@id/settings"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/settings" />
     </fragment>
 
     <fragment
