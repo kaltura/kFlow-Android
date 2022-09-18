@@ -161,7 +161,7 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
 
     private fun saveIotInfo(iot: IotClientConfiguration) {
         iotThing = getThingName(iot.thingArn)
-        iotEndpoint = iot.endPoint//getATSIotEndpoint(iot.extendedEndPoint)//iot.endPoint
+        iotEndpoint = getATSIotEndpoint(iot.endPoint);
         preferenceManager.iotThing = iotThing
         preferenceManager.iotEndpoint = iotEndpoint
         preferenceManager.iotUsername = iot.username

@@ -19,6 +19,7 @@ import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
 import kotlinx.android.synthetic.main.fragment_iot.*
 import kotlinx.android.synthetic.main.view_bottom_debug.*
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.net.URL
 import java.util.*
@@ -36,7 +37,9 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
     private val KEY_DESIRED = "desired"
     private val KEY_NEW_MESSAGE = "NewMessage"
     private val KEY_HEADER = "header"
+    private val KEY_PROPERTIES = "properties"
     private val KEY_EVENT_TYPE = "event_type"
+    private val KEY_EVENT_ENUM = "enum"
     private val KEY_LIVE_ASSET_ID = "live_asset_id"
     private val KEY_LIVE_START_DATE = "start_date"
 
@@ -169,9 +172,9 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
     private fun handleIOTEvent(jsonObj: JsonObject) {
         try {
             if (jsonObj.has(KEY_HEADER)) {
-                val header = jsonObj.getAsJsonObject(KEY_HEADER)
-                if (header.has(KEY_EVENT_TYPE)) {
-                    val eventType = header.getAsJsonPrimitive(KEY_EVENT_TYPE).asString
+                val properties = jsonObj.getAsJsonObject(KEY_HEADER).getAsJsonObject(KEY_PROPERTIES)
+                if (properties.has(KEY_EVENT_TYPE)) {
+                    val eventType = properties.getAsJsonObject(KEY_EVENT_TYPE).getAsJsonArray(KEY_EVENT_ENUM).get(0).asString
                     if (eventType == KEY_IOT_EPG_TYPE) {
                         val liveAssetId = jsonObj.getAsJsonPrimitive(KEY_LIVE_ASSET_ID).asLong
                         val date = viewModel.getMidnight(jsonObj.getAsJsonPrimitive(KEY_LIVE_START_DATE).asLong)
