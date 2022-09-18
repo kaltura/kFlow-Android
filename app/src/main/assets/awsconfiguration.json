@@ -1,0 +1,18 @@
+{
+  "CredentialsProvider": {
+    "CognitoIdentity": {
+      "Default": {
+        "PoolId": "",
+        "Region": "",
+        "AppClientId": ""
+      }
+    }
+  },
+  "CognitoUserPool": {
+    "Default": {
+      "PoolId": "",
+      "Region": "",
+      "AppClientId": ""
+    }
+  }
+}
