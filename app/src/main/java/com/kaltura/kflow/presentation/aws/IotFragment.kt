@@ -30,6 +30,8 @@ import kotlin.collections.ArrayList
 class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
 
     //Shadow Messages Keys
+    private val KEY_IOT_EPG_TYPE = "epg_update"
+    private val KEY_IOT_LINEUP_TYPE = "lineup_update"
     private val KEY_STATE = "state"
     private val KEY_DESIRED = "desired"
     private val KEY_NEW_MESSAGE = "NewMessage"
@@ -39,7 +41,6 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
     private val KEY_LIVE_START_DATE = "start_date"
 
     //Topic Announcments Keys
-    private val KEY_ANNONCMENT_TOPIC = "message"
 
     private val viewModel: IotViewModel by viewModel()
     private var epgUpdates = arrayListOf<Epg>()
@@ -99,10 +100,10 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
             success = {
                 if (it == AWSIotMqttClientStatusCallback.AWSIotMqttClientStatus.Connected) {
                     longToast("Mqtt Is Connected")
-                    viewModel.subscribeToTopicAnnouncement()
+//                    viewModel.subscribeToTopicAnnouncement()
                     viewModel.subscribeToEPGUpdates()
-                    viewModel.subscribeToLineupUpdates()
-                    viewModel.subscribeToThingShadow()
+//                    viewModel.subscribeToLineupUpdates()
+//                    viewModel.subscribeToThingShadow()
                 }
             })
         observeResource(viewModel.IOTshadowMessageEvent) {
@@ -118,40 +119,41 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
         observeResource(viewModel.IOTepgMessageEvent) {
             try {
                 val jsonObject = JsonParser().parse(it) as JsonObject
-                handleIOTUpdateEvent(jsonObject)
+//                handleIOTUpdateEvent(jsonObject)
+                handleIOTEvent(jsonObject)
                 longToast(jsonObject.toString())
             } catch (e: JsonSyntaxException) {
                 e.printStackTrace()
                 longToast("Error Parsing Message : $e")
             }
         }
-        observeResource(viewModel.IOTLineupMessageEvent) {
-            try {
-                val jsonObject = JsonParser().parse(it) as JsonObject
-                handleIOTUpdateEvent(jsonObject)
-                longToast(jsonObject.toString())
-            } catch (e: JsonSyntaxException) {
-                e.printStackTrace()
-                longToast("Error Parsing Message : $e")
-            }
-        }
-        observeResource(viewModel.IOTannouncementMessageEvent,
-            error = {
-                it.printStackTrace()
-                longToast("Subscribe to topic error: $it")
-            },
-            success = {
-                longToast(it)
-            })
-        observeResource(viewModel.epgUpdates,
-            error = {
-                toast("Failed to fetch EPG updates: ${it.message ?: ""}")
-            },
-            success = {
-                epgUpdates = it
-                showEPGAssets.text = getQuantityString(R.plurals.show_updates, epgUpdates.size)
-                showEPGAssets.visible()
-            })
+//        observeResource(viewModel.IOTLineupMessageEvent) {
+//            try {
+//                val jsonObject = JsonParser().parse(it) as JsonObject
+//                handleIOTUpdateEvent(jsonObject)
+//                longToast(jsonObject.toString())
+//            } catch (e: JsonSyntaxException) {
+//                e.printStackTrace()
+//                longToast("Error Parsing Message : $e")
+//            }
+//        }
+//        observeResource(viewModel.IOTannouncementMessageEvent,
+//            error = {
+//                it.printStackTrace()
+//                longToast("Subscribe to topic error: $it")
+//            },
+//            success = {
+//                longToast(it)
+//            })
+//        observeResource(viewModel.epgUpdates,
+//            error = {
+//                toast("Failed to fetch EPG updates: ${it.message ?: ""}")
+//            },
+//            success = {
+//                epgUpdates = it
+//                showEPGAssets.text = getQuantityString(R.plurals.show_updates, epgUpdates.size)
+//                showEPGAssets.visible()
+//            })
     }
 
     private fun makeRegisterRequest() {
@@ -164,13 +166,13 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
         }
     }
 
-    private fun handleIOTUpdateEvent(jsonObj: JsonObject) {
+    private fun handleIOTEvent(jsonObj: JsonObject) {
         try {
             if (jsonObj.has(KEY_HEADER)) {
                 val header = jsonObj.getAsJsonObject(KEY_HEADER)
                 if (header.has(KEY_EVENT_TYPE)) {
-                    val eventType = header.getAsJsonPrimitive(KEY_EVENT_TYPE).asInt
-                    if (eventType == 1) {
+                    val eventType = header.getAsJsonPrimitive(KEY_EVENT_TYPE).asString
+                    if (eventType == KEY_IOT_EPG_TYPE) {
                         val liveAssetId = jsonObj.getAsJsonPrimitive(KEY_LIVE_ASSET_ID).asLong
                         val date = viewModel.getMidnight(jsonObj.getAsJsonPrimitive(KEY_LIVE_START_DATE).asLong)
                         val ks = viewModel.getKs() as String
@@ -193,11 +195,10 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                                 }
                             }
                         }
-                    }else if(eventType == 2){
+                    }else if(eventType == KEY_IOT_LINEUP_TYPE){
 
                         val url = URL(viewModel.getCloudfrontUrl()+"lineup/action/get?pageSize=1600")
                         val ks = viewModel.getKs() as String
-
                         viewModel.callCloudfrontLineupSevice(url,ks){ status,message,data ->
                             when (status) {
                                 true -> {

@@ -17,9 +17,16 @@ import com.amazonaws.regions.Region
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.iotdata.AWSIotDataClient
 import com.amazonaws.services.iotdata.model.GetThingShadowRequest
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import com.kaltura.client.types.APIException
+import com.kaltura.client.types.IotClientConfiguration
 import com.kaltura.kflow.utils.Resource
 import org.json.JSONObject
+import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
 import java.io.UnsupportedEncodingException
 import java.util.*
 import kotlin.concurrent.thread
@@ -28,6 +35,8 @@ import kotlin.concurrent.thread
  * Created by alex_lytvynenko on 26.08.2020.
  */
 class AwsManager(private val context: Context) {
+    var INTERVAL_COUNT = 3
+    var INTERVAL_TIMEOUT = 10000L
 
     private val client by lazy {
         AWSIotDataClient(AWSMobileClient.getInstance().credentials).apply {
@@ -43,21 +52,40 @@ class AwsManager(private val context: Context) {
         }
     }
 
+    fun getIntervalCount():Int{
+        return INTERVAL_COUNT
+    }
+    fun getIntervalTimeout():Long{
+        return INTERVAL_TIMEOUT
+    }
+
     //Init And Get AWS Configuration
-    fun startAwsInitProcess(config: JSONObject) {
+    fun startAwsInitProcess(config: JSONObject, awsListener: (state: Resource<UserState>) -> Unit = {}) {
         val configuration = AWSConfiguration(config)
         AWSMobileClient.getInstance().initialize(context, configuration, object : Callback<UserStateDetails> {
             override fun onResult(userStateDetails: UserStateDetails) {
                 when (userStateDetails.userState) {
-                    UserState.SIGNED_IN -> AWSMobileClient.getInstance().signOut()
-                    UserState.SIGNED_OUT -> Unit
-                    UserState.GUEST -> Unit
-                    else -> AWSMobileClient.getInstance().signOut()
+                    UserState.SIGNED_IN -> {
+                        AWSMobileClient.getInstance().signOut()
+                        awsListener(Resource.Success(UserState.SIGNED_IN))
+                    }
+                    UserState.SIGNED_OUT -> {
+                        awsListener(Resource.Success(UserState.SIGNED_OUT))
+                    }
+                    UserState.GUEST -> {
+                        awsListener(Resource.Success(UserState.GUEST))
+                    }
+                    else -> {
+                        AWSMobileClient.getInstance().signOut()
+                        awsListener(Resource.Success(UserState.SIGNED_OUT))
+                    }
+
                 }
             }
 
             override fun onError(e: Exception) {
                 Log.e("INIT", e.toString())
+                awsListener(Resource.Error(APIException(e)))
             }
         })
     }
@@ -171,5 +199,40 @@ class AwsManager(private val context: Context) {
         } catch (e: java.lang.Exception) {
             listener(Resource.Error(APIException(e)))
         }
+    }
+
+    fun updatedAWSConfig(iot: IotClientConfiguration):JSONObject {
+
+        val inputStream: InputStream = context.assets.open("awsconfiguration.json")
+
+        var json: JsonObject
+        json = try {
+            val element: JsonElement = JsonParser().parse(
+                InputStreamReader(inputStream)
+            )
+            element.asJsonObject
+        } catch (e: IOException) {
+            throw RuntimeException(e.getLocalizedMessage())
+        }
+
+        val cognitoIdentityJSON: JsonObject? = json.getAsJsonObject("CredentialsProvider").
+        getAsJsonObject("CognitoIdentity").getAsJsonObject("Default")
+
+        cognitoIdentityJSON?.addProperty("PoolId",iot.identityPoolId)
+        cognitoIdentityJSON?.addProperty("Region",iot.awsRegion)
+        cognitoIdentityJSON?.addProperty("AppClientId",iot.appClientId)
+
+        val cognitoUserPoolJSON: JsonObject? = json.getAsJsonObject("CognitoUserPool").getAsJsonObject("Default")
+        cognitoUserPoolJSON?.addProperty("PoolId",iot.userPoolId)
+        cognitoUserPoolJSON?.addProperty("Region",iot.awsRegion)
+        cognitoUserPoolJSON?.addProperty("AppClientId",iot.appClientId)
+
+        json.getAsJsonObject("CredentialsProvider").getAsJsonObject("CognitoIdentity").remove("Default")
+        json.getAsJsonObject("CredentialsProvider").getAsJsonObject("CognitoIdentity").add("Default",cognitoIdentityJSON)
+
+        json.getAsJsonObject("CognitoUserPool").remove("Default")
+        json.getAsJsonObject("CognitoUserPool").add("Default",cognitoUserPoolJSON)
+
+        return JSONObject(json.toString())
     }
 }
