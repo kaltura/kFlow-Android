@@ -30,6 +30,8 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
     private val KEY_NEW_MESSAGE = "NewMessage"
     private val KEY_HEADER = "header"
     private val KEY_EVENT_TYPE = "event_type"
+    private val KEY_IOT_EPG_TYPE = "epg_update"
+    private val KEY_IOT_LINEUP_TYPE = "lineup_update"
     private val KEY_LIVE_ASSET_ID = "live_asset_id"
 
     //Topic Announcments Keys
@@ -81,9 +83,9 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                 success = {
                     if (it == AWSIotMqttClientStatusCallback.AWSIotMqttClientStatus.Connected) {
                         longToast("Mqtt Is Connected")
-                        viewModel.subscribeToTopicAnnouncement()
+//                        viewModel.subscribeToTopicAnnouncement()
                         viewModel.subscribeToEPGUpdates()
-                        viewModel.subscribeToThingShadow()
+//                        viewModel.subscribeToThingShadow()
                     }
                 })
         observeResource(viewModel.IOTshadowMessageEvent) {
@@ -99,30 +101,31 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
         observeResource(viewModel.IOTepgMessageEvent) {
             try {
                 val jsonObject = JsonParser().parse(it) as JsonObject
-                handleEPGEvent(jsonObject)
+//                handleEPGEvent(jsonObject)
+                handleIOTEvent(jsonObject)
                 longToast(jsonObject.toString())
             } catch (e: JsonSyntaxException) {
                 e.printStackTrace()
                 longToast("Error Parsing Message : $e")
             }
         }
-        observeResource(viewModel.IOTannouncementMessageEvent,
-                error = {
-                    it.printStackTrace()
-                    longToast("Subscribe to topic error: $it")
-                },
-                success = {
-                    longToast(it)
-                })
-        observeResource(viewModel.epgUpdates,
-                error = {
-                    toast("Failed to fetch EPG updates: ${it.message ?: ""}")
-                },
-                success = {
-                    epgUpdates = it
-                    showAssets.text = getQuantityString(R.plurals.show_updates, epgUpdates.size)
-                    showAssets.visible()
-                })
+//        observeResource(viewModel.IOTannouncementMessageEvent,
+//                error = {
+//                    it.printStackTrace()
+//                    longToast("Subscribe to topic error: $it")
+//                },
+//                success = {
+//                    longToast(it)
+//                })
+//        observeResource(viewModel.epgUpdates,
+//                error = {
+//                    toast("Failed to fetch EPG updates: ${it.message ?: ""}")
+//                },
+//                success = {
+//                    epgUpdates = it
+//                    showAssets.text = getQuantityString(R.plurals.show_updates, epgUpdates.size)
+//                    showAssets.visible()
+//                })
     }
 
     private fun makeRegisterRequest() {
@@ -152,18 +155,24 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
         }
     }
 
-    private fun handleEPGEvent(jsonObj: JsonObject) {
+    private fun handleIOTEvent(jsonObj: JsonObject) {
         try {
 
             if (jsonObj.has(KEY_HEADER)) {
                 val header = jsonObj.getAsJsonObject(KEY_HEADER)
                 if (header.has(KEY_EVENT_TYPE)) {
-                    val eventType = header.getAsJsonPrimitive(KEY_EVENT_TYPE).asInt
-                    if (eventType == 1) {
+                    val eventType = header.getAsJsonPrimitive(KEY_EVENT_TYPE).asString
+                    if (eventType == KEY_IOT_EPG_TYPE) {
                         val liveAssetId = jsonObj.getAsJsonPrimitive(KEY_LIVE_ASSET_ID).asLong
                         viewModel.getEpgUpdates(liveAssetId)
+                    }else if(eventType == KEY_IOT_LINEUP_TYPE){
+                        longToast("IOT Received: "+jsonObj)
+                    }else{
+                        longToast("IOT Received: "+jsonObj)
                     }
                 }
+            }else{
+                longToast("IOT Received: "+jsonObj)
             }
         } catch (ex: JsonSyntaxException) {
         }

@@ -15,6 +15,7 @@ import com.kaltura.kflow.utils.*
 import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.concurrent.schedule
 
 /**
  * Created by alex_lytvynenko on 2020-01-14.
@@ -23,8 +24,10 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
                    private val preferenceManager: PreferenceManager,
                    private val awsManager: AwsManager) : BaseViewModel(apiManager) {
 
+    private var IOT_INTERVAL = 1
     private var announcementTopic = ""
     private var epgUpdateTopic = ""
+    private lateinit var topicList : List<String>
     private var iotThing = preferenceManager.iotThing
     private var iotEndpoint = preferenceManager.iotEndpoint
     private var iotUsername = preferenceManager.iotUsername
@@ -38,7 +41,7 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
     val epgUpdates = MutableLiveData<Resource<ArrayList<Epg>>>()
 
     fun register() {
-        getClientConfigIot()
+        registerIot()
     }
 
     fun initMqtt() {
@@ -63,8 +66,10 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
     }
 
     fun subscribeToEPGUpdates() {
-        awsManager.subscribeToEPGUpdates(epgUpdateTopic) {
-            IOTepgMessageEvent.postValue(it)
+        topicList.forEach { topic ->
+            awsManager.subscribeToEPGUpdates(topic) {
+                IOTepgMessageEvent.postValue(it)
+            }
         }
     }
 
@@ -97,27 +102,53 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
 
     private fun getClientConfigIot() {
         apiManager.execute(IotService.GetClientConfigurationIotBuilder().setCompletion {
-            if (it.isSuccess) registerIot(it.results)
-            else registrationEvent.value = Resource.Error(it.error)
-        })
-    }
-
-    private fun registerIot(clientConfiguration: IotClientConfiguration) {
-        announcementTopic = clientConfiguration.announcementTopic
-        epgUpdateTopic = getEPGUpdatesTopic(clientConfiguration)
-        startAwsInitProcess(JSONObject(clientConfiguration.json))
-
-        if (iotThing.isNotEmpty() && iotEndpoint.isNotEmpty() && iotUsername.isNotEmpty() && iotPassword.isNotEmpty()) {
-            signInAws()
-        } else {
-            apiManager.execute(IotService.RegisterIotBuilder().setCompletion {
-                if (it.isSuccess) {
-                    val iot = it.results
+            if (it.isSuccess) {
+                if (it.results.status.equals("Success2", true)) {
+                    var iot = it.results
                     saveIotInfo(iot)
-                    signInAws()
-                } else registrationEvent.postValue(Resource.Error(it.error))
+                    val awsConfig = awsManager.updatedAWSConfig(it.results)
+                    awsManager.startAwsInitProcess(awsConfig) {
+                        if (it.isSuccess()) {
+                            topicList = obtainTopicList(iot)
+                            signInAws()
+                        } else
+                            registrationEvent.postValue(Resource.Error(it.getErrorData()))
+                    }
+
+                }else{
+                    if (IOT_INTERVAL <= awsManager.getIntervalCount()){
+                        Log.d("elad","Interval number : "+IOT_INTERVAL)
+                        Log.d("elad","New Config will be called at : "+awsManager.getIntervalTimeout())
+                        Timer("IOT Registration Intervals", false).schedule(awsManager.getIntervalTimeout()) {
+                            getClientConfigIot()
+                            IOT_INTERVAL++
+                        }
+                    }else{
+                        it.error = APIException()
+                        registrationEvent.postValue(Resource.Error(it.error))
+                        IOT_INTERVAL = 1
+                    }
+                }
+            }
+            else
+                registrationEvent.value = Resource.Error(it.error)
             })
         }
+
+
+    private fun obtainTopicList(results: IotClientConfiguration?): List<String> {
+        return results?.topics?.split(",")?.toTypedArray()!!?.toList()
+    }
+
+    private fun registerIot() {
+        apiManager.execute(IotService.RegisterIotBuilder().setCompletion {
+            if (it.isSuccess) {
+                getClientConfigIot()
+            }
+            else
+                registrationEvent.postValue(Resource.Error(it.error))
+        })
+
     }
 
     private fun getEPGUpdatesTopic(clientConfiguration: IotClientConfiguration) : String{
@@ -132,13 +163,13 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
 
     }
 
-    private fun saveIotInfo(iot: Iot) {
-        iotThing = getThingName(iot.thingArn)
-        iotEndpoint = getATSIotEndpoint(iot.extendedEndPoint)//iot.endPoint
+    private fun saveIotInfo(iot: IotClientConfiguration) {
+        iotThing = iot.thingName//getThingName(iot.thingArn)
+        iotEndpoint = getATSIotEndpoint(iot.endPoint)//iot.endPoint
         preferenceManager.iotThing = iotThing
         preferenceManager.iotEndpoint = iotEndpoint
         preferenceManager.iotUsername = iot.username
-        preferenceManager.iotPassword = iot.userPassword
+        preferenceManager.iotPassword = iot.password
     }
 
     private fun getATSIotEndpoint(legacyEndPoint:String):String{
