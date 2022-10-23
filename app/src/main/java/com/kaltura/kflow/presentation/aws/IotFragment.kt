@@ -103,8 +103,9 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
             success = {
                 if (it == AWSIotMqttClientStatusCallback.AWSIotMqttClientStatus.Connected) {
                     longToast("Mqtt Is Connected")
+                    viewModel.subscribeToAvailableTopics()
 //                    viewModel.subscribeToTopicAnnouncement()
-                    viewModel.subscribeToEPGUpdates()
+//                    viewModel.subscribeToEPGUpdates()
 //                    viewModel.subscribeToLineupUpdates()
 //                    viewModel.subscribeToThingShadow()
                 }
@@ -130,6 +131,14 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                 longToast("Error Parsing Message : $e")
             }
         }
+        observeResource(viewModel.IOTannouncementMessageEvent,
+            error = {
+                it.printStackTrace()
+                longToast("Subscribe to topic error: $it")
+            },
+            success = {
+                longToast(it)
+            })
 //        observeResource(viewModel.IOTLineupMessageEvent) {
 //            try {
 //                val jsonObject = JsonParser().parse(it) as JsonObject

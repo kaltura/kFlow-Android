@@ -3,6 +3,7 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">api.frs1.ott.kaltura.com</domain>
         <domain includeSubdomains="true">api.frp1.ott.kaltura.com</domain>
+        <domain includeSubdomains="true">api.vrs1.ott.kaltura.com</domain>
     </domain-config>
     <debug-overrides>
         <trust-anchors>

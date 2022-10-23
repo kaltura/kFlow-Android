@@ -9,13 +9,18 @@ import com.google.gson.JsonSyntaxException
 import com.kaltura.client.services.EpgService
 import com.kaltura.client.services.IotService
 import com.kaltura.client.types.*
+import com.kaltura.kflow.R
 import com.kaltura.kflow.entity.ChannelCS
 import com.kaltura.kflow.entity.EPGProgram
 import com.kaltura.kflow.manager.AwsManager
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
+import com.kaltura.kflow.presentation.extension.getQuantityString
+import com.kaltura.kflow.presentation.extension.longToast
+import com.kaltura.kflow.presentation.extension.visible
 import com.kaltura.kflow.utils.*
+import kotlinx.android.synthetic.main.fragment_iot.*
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -30,18 +35,10 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
                    private val preferenceManager: PreferenceManager,
                    private val awsManager: AwsManager) : BaseViewModel(apiManager) {
 
-    private var IOT_EPG_TOPIC_TYPE = "epg"
-    private var IOT_LINEUP_TOPIC_TYPE = "lineup"
-    private var announcementTopic = ""
-    private var epgUpdateTopic = ""
     private var IOT_INTERVAL = 1
-    private lateinit var topicList : List<String>
-
-    private var lineupUpdateTopic = ""
+    private lateinit var topicList : List<KeyValue>
     private var iotThing = preferenceManager.iotThing
     private var iotEndpoint = preferenceManager.iotEndpoint
-    private var iotUsername = preferenceManager.iotUsername
-    private var iotPassword = preferenceManager.iotPassword
 
     val registrationEvent = SingleLiveEvent<Resource<SignInState>>()
     val connectEvent = SingleLiveEvent<Resource<AWSIotMqttClientStatusCallback.AWSIotMqttClientStatus>>()
@@ -75,22 +72,38 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
         }
     }
 
-    fun subscribeToTopicAnnouncement() {
-        awsManager.subscribeToTopic(announcementTopic) {
+    fun subscribeToTopicAnnouncement(announcmentTopic:String) {
+        awsManager.subscribeToTopic(announcmentTopic) {
             Log.d("TEST","Announcement Received")
             IOTannouncementMessageEvent.postValue(it)
         }
     }
 
-    fun subscribeToEPGUpdates() {
+    fun subscribeToAvailableTopics() {
         topicList.forEach { topic ->
-            awsManager.subscribeToEPGUpdates(topic) {
-                IOTepgMessageEvent.postValue(it)
+
+            when (topic.key) {
+                "SystemAnnouncement" -> {
+                    subscribeToTopicAnnouncement(topic.value)
+                    Log.d("IOT","IOT System Announcement Topic Registered : "+topic.value)
+                }
+                "EPG" -> {
+                    subscribeToEPGUpdates(topic.value)
+                    Log.d("IOT","IOT Eog Update Topic Registered : "+topic.value)
+                }
+                "Lineup" -> subscribeToLineupUpdates(topic.value)
             }
         }
     }
 
-    fun subscribeToLineupUpdates() {
+    fun subscribeToEPGUpdates(epgUpdateTopic:String) {
+        awsManager.subscribeToEPGUpdates(epgUpdateTopic) {
+            Log.d("TEST","IOT Epg Update Received")
+            IOTepgMessageEvent.postValue(it)
+        }
+    }
+
+    fun subscribeToLineupUpdates(lineupUpdateTopic:String) {
         awsManager.subscribeToLineupUpdates(lineupUpdateTopic) {
             Log.d("TEST","IOT Lineup Update Received")
             IOTLineupMessageEvent.postValue(it)
@@ -143,8 +156,8 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
             })
         }
 
-    private fun obtainTopicList(results: IotClientConfiguration?): List<String> {
-        return results?.topics?.split(",")?.toTypedArray()!!?.toList()
+    private fun obtainTopicList(results: IotClientConfiguration?): List<KeyValue> {
+        return results?.topics as List<KeyValue>
     }
 
 
@@ -180,10 +193,6 @@ class IotViewModel(private val apiManager: PhoenixApiManager,
 
 
     }
-
-private fun startAwsInitProcess(json: JSONObject) {
- awsManager.startAwsInitProcess(json)
-}
 
 private fun signInAws() {
  awsManager.setAwsClientEndpoint(iotEndpoint)
@@ -299,8 +308,8 @@ fun callCloudfrontLineupSevice(
          val jsonArray = jsonObject.getAsJsonObject("epgChunk").getAsJsonArray(channelID)
 
          for (i in 0 until jsonArray.size()) {
-             //val item = jsonArray[i].asJsonObject
-             val item = jsonArray[i].asJsonObject.getAsJsonObject("ProgramAsset")
+             val item = jsonArray[i].asJsonObject
+//             val item = jsonArray[i].asJsonObject.getAsJsonObject("ProgramAsset")
              val startDate = item.get("startDate").asLong
              val endDate = item.get("endDate").asLong
              val name = item.get("name").asString
