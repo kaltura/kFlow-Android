@@ -3,20 +3,29 @@ package com.kaltura.kflow.presentation.assetList
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.amazonaws.mobile.client.results.SignInState
+import com.google.android.material.snackbar.Snackbar
+import com.kaltura.client.types.Asset
 import com.kaltura.client.types.ProgramAsset
 import com.kaltura.kflow.R
+import com.kaltura.kflow.presentation.aws.IotViewModel
 import com.kaltura.kflow.presentation.base.BaseFragment
-import com.kaltura.kflow.presentation.extension.isProgramInLive
-import com.kaltura.kflow.presentation.extension.navigate
+import com.kaltura.kflow.presentation.epg.EpgFragment
+import com.kaltura.kflow.presentation.extension.*
+import kotlinx.android.synthetic.main.fragment_epg.*
+import kotlinx.android.synthetic.main.fragment_iot.*
 import kotlinx.android.synthetic.main.fragment_vod_list.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Created by alex_lytvynenko on 30.11.2018.
  */
 class AssetListFragment : BaseFragment(R.layout.fragment_vod_list) {
 
+    private val viewModel: AssetListViewModel by viewModel()
     private val args: AssetListFragmentArgs by navArgs()
     private val adapter by lazy {
         AssetListAdapter(args.isShowActions).apply {
@@ -27,6 +36,10 @@ class AssetListFragment : BaseFragment(R.layout.fragment_vod_list) {
             }
             programClickListener = { asset, contextType ->
                 navigate(AssetListFragmentDirections.navigateToPlayer(asset = asset, playbackContextType = contextType.value))
+            }
+            reminderClickListener = { asset ->
+
+                setAddReminderRequest(asset)
             }
         }
     }
@@ -56,5 +69,20 @@ class AssetListFragment : BaseFragment(R.layout.fragment_vod_list) {
         }
     }
 
-    override fun subscribeUI() {}
+    private fun setAddReminderRequest(program: Asset) {
+        withInternetConnection {
+            viewModel.makeAddReminderRequest(program)
+        }
+    }
+
+    override fun subscribeUI() {
+        observeResource(viewModel.reminderAddingEvent,
+            error = {
+                it.printStackTrace()
+                longToast("Adding Reminder Error : $it")
+            },
+            success = {
+                longToast("The following Reminder was successfully added : "+it)
+            })
+    }
 }

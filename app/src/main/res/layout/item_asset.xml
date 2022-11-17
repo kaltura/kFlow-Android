@@ -73,6 +73,16 @@
             android:text="Catch up"
             android:textColor="@android:color/white"
             android:textSize="12sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reminder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimary"
+            android:gravity="center"
+            android:text="Add Reminder"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
     </LinearLayout>
 
     <View

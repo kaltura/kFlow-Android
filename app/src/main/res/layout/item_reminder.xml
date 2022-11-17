@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recordingContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:paddingTop="10dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/reminder_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:text="Program Name"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/reminder_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/reminder_name"
+        android:gravity="right"
+        android:paddingStart="16dp"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:visibility="visible" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/deleteReminder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/reminder_id"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="Delete Reminder"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
+
+</RelativeLayout>

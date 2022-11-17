@@ -2,6 +2,7 @@ package com.kaltura.kflow.presentation.di
 
 import com.kaltura.kflow.presentation.anonymousLogin.AnonymousLoginViewModel
 import com.kaltura.kflow.presentation.appToken.AppTokenViewModel
+import com.kaltura.kflow.presentation.assetList.AssetListViewModel
 import com.kaltura.kflow.presentation.aws.IotViewModel
 import com.kaltura.kflow.presentation.bookmark.BookmarkViewModel
 import com.kaltura.kflow.presentation.checkReceipt.CheckReceiptViewModel
@@ -18,6 +19,7 @@ import com.kaltura.kflow.presentation.player.PlayerViewModel
 import com.kaltura.kflow.presentation.productPrice.ProductPriceViewModel
 import com.kaltura.kflow.presentation.recordings.RecordingsViewModel
 import com.kaltura.kflow.presentation.registration.RegistrationViewModel
+import com.kaltura.kflow.presentation.reminderList.ReminderListViewModel
 import com.kaltura.kflow.presentation.search.SearchViewModel
 import com.kaltura.kflow.presentation.settings.SettingsViewModel
 import com.kaltura.kflow.presentation.subscription.SubscriptionViewModel
@@ -53,4 +55,6 @@ val viewModelModule = module {
     viewModel { BookmarkViewModel(get()) }
     viewModel { IotViewModel(get(), get(), get()) }
     viewModel { DeviceManagementViewModel(get()) }
+    viewModel { AssetListViewModel(get()) }
+    viewModel { ReminderListViewModel(get()) }
 }

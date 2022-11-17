@@ -21,6 +21,7 @@ class AssetListAdapter(private val isShowActions: Boolean) : RecyclerView.Adapte
 
     var vodClickListener: (asset: Asset) -> Unit = {}
     var programClickListener: (asset: Asset, contextType: APIDefines.PlaybackContextType) -> Unit = { _, _ -> Unit }
+    var reminderClickListener: (asset: Asset) -> Unit = {}
 
     var assets: Array<Asset> = arrayOf()
         set(value) {
@@ -76,18 +77,22 @@ class AssetListAdapter(private val isShowActions: Boolean) : RecyclerView.Adapte
                 playback.gone()
                 startover.gone()
                 catchUp.visible()
+                reminder.gone()
             } else if (asset is ProgramAsset && asset.isProgramInLive()) {
                 playback.visible()
                 startover.visible()
                 catchUp.gone()
+                reminder.gone()
             } else if (asset is ProgramAsset && asset.isProgramInFuture()) {
                 playback.gone()
                 startover.gone()
                 catchUp.gone()
+                reminder.visible()
             } else {
                 playback.visible()
                 startover.gone()
                 catchUp.gone()
+                reminder.gone()
             }
             playback.setOnClickListener {
                 if (asset is ProgramAsset) programClickListener(asset, APIDefines.PlaybackContextType.Playback)
@@ -96,10 +101,13 @@ class AssetListAdapter(private val isShowActions: Boolean) : RecyclerView.Adapte
             startover.setOnClickListener { programClickListener(asset, APIDefines.PlaybackContextType.StartOver) }
             catchUp.setOnClickListener { programClickListener(asset, APIDefines.PlaybackContextType.Catchup) }
 
+            reminder.setOnClickListener{ reminderClickListener(asset) }
+
             if (isShowActions.not()) {
                 playback.gone()
                 startover.gone()
                 catchUp.gone()
+                reminder.gone()
             }
         }
     }

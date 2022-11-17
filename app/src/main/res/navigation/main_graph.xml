@@ -89,6 +89,9 @@
         <action
             android:id="@+id/navigate_to_settings"
             app:destination="@id/settings" />
+        <action
+            android:id="@+id/navigate_to_reminders"
+            app:destination="@id/reminder_list_fragment" />
     </fragment>
 
     <fragment
@@ -405,4 +408,9 @@
             app:argType="string"
             app:nullable="false" />
     </fragment>
+    <fragment
+        android:id="@+id/reminder_list_fragment"
+        android:name="com.kaltura.kflow.presentation.reminderList.ReminderListFragment"
+        android:label="Reminders"
+        tools:layout="@layout/fragment_reminder_list" />
 </navigation>
