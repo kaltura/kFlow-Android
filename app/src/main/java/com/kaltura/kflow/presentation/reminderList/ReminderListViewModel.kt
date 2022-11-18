@@ -25,7 +25,11 @@ class ReminderListViewModel (private val apiManager: PhoenixApiManager) : BaseVi
             ReminderService.list(filter)
                 .setCompletion {
                     if (it.isSuccess) {
-                        reminderListEvent.postValue(Resource.Success(it.results.objects as ArrayList<Reminder>))
+                        if(it.results.totalCount>0) {
+                            reminderListEvent.postValue(Resource.Success(it.results.objects as ArrayList<Reminder>))
+                        }else{
+                            reminderListEvent.postValue(Resource.Success(ArrayList()))
+                        }
                     } else {
                         reminderListEvent.postValue(Resource.Error(it.error))
                     }

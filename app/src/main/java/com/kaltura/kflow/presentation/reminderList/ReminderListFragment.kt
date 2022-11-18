@@ -62,8 +62,12 @@ class ReminderListFragment : BaseFragment(R.layout.fragment_reminder_list) {
                 longToast("Error while calling Reminders List : $it")
             },
             success = {
-                reminderList = it
-                initList()
+                if (it.isNotEmpty()) {
+                    reminderList = it
+                    initList()
+                }else{
+                    longToast("Reminders List Empty")
+                }
             })
         observeResource(viewModel.deleteReminderEvent,
             error = {

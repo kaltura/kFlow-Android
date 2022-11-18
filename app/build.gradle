@@ -6,11 +6,11 @@ apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
     defaultConfig {
         applicationId "com.kaltura.kflow"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode 16
         versionName "4.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -45,6 +45,7 @@ android.applicationVariants.all { variant ->
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
@@ -83,6 +84,8 @@ dependencies {
 
     // Firebase
     implementation 'com.google.firebase:firebase-analytics:18.0.2'
+    implementation 'com.google.firebase:firebase-bom:31.0.3'
+    implementation 'com.google.firebase:firebase-messaging:+'
 
     // AWS IoT
     implementation 'com.amazonaws:aws-android-sdk-iot:2.37.1'
