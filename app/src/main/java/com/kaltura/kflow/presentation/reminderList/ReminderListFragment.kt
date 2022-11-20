@@ -9,6 +9,7 @@ import com.kaltura.kflow.R
 import com.kaltura.kflow.presentation.base.BaseFragment
 import com.kaltura.kflow.presentation.extension.longToast
 import com.kaltura.kflow.presentation.extension.observeResource
+import com.kaltura.kflow.presentation.extension.toast
 import com.kaltura.kflow.presentation.extension.withInternetConnection
 import com.kaltura.kflow.presentation.main.Feature
 import kotlinx.android.synthetic.main.fragment_reminder_list.*
@@ -37,7 +38,9 @@ class ReminderListFragment : BaseFragment(R.layout.fragment_reminder_list) {
         list.setHasFixedSize(true)
         list.layoutManager = LinearLayoutManager(requireContext())
         list.layoutAnimation =
-            if (adapter.reminders.isEmpty()) AnimationUtils.loadLayoutAnimation(context, R.anim.item_layout_animation)
+            if (adapter.reminders.isEmpty()) {
+                AnimationUtils.loadLayoutAnimation(context, R.anim.item_layout_animation)
+            }
             else null
         list.adapter = adapter
         adapter.reminders = reminderList.toTypedArray()
@@ -62,12 +65,9 @@ class ReminderListFragment : BaseFragment(R.layout.fragment_reminder_list) {
                 longToast("Error while calling Reminders List : $it")
             },
             success = {
-                if (it.isNotEmpty()) {
-                    reminderList = it
-                    initList()
-                }else{
-                    longToast("Reminders List Empty")
-                }
+                reminderList = it
+                initList()
+                if (it.isEmpty()) longToast("Reminders List Empty")
             })
         observeResource(viewModel.deleteReminderEvent,
             error = {
@@ -75,7 +75,7 @@ class ReminderListFragment : BaseFragment(R.layout.fragment_reminder_list) {
                 longToast("Error while calling Reminders List : $it")
             },
             success = {
-                longToast("The following Reminder was deleted : $it")
+                toast("The following Reminder was deleted : $it")
                 getRemindersRequest()
             })
     }

@@ -5,6 +5,12 @@
     <string name="show_empty_ongoing_recordings">No on going recordings</string>
     <string name="show_empty_scheduled_recordings">No scheduled recordings</string>
 
+    <string name="disable_push_notification">Disable Push Notification</string>
+    <string name="enable_push_notification">Enable Push Notification</string>
+
+
+
+
     <plurals name="show_assets">
         <item quantity="one">Show %s asset</item>
         <item quantity="other">Show %s assets</item>

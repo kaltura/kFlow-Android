@@ -22,7 +22,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             Feature.CONTINUE_WATCHING, Feature.EPG, Feature.LIVE, Feature.FAVORITES, Feature.SEARCH,
             Feature.KEEP_ALIVE, Feature.MEDIA_PAGE, Feature.SUBSCRIPTION, Feature.PRODUCT_PRICE,
             Feature.CHECK_RECEIPT, Feature.TRANSACTION_HISTORY, Feature.RECORDINGS, Feature.BOOKMARK,
-            Feature.IOT, Feature.DEVICE_MANAGEMENT, Feature.SETTINGS, Feature.REMINDERS)
+            Feature.IOT, Feature.DEVICE_MANAGEMENT,Feature.SNS,Feature.REMINDERS, Feature.SETTINGS)
 
     private lateinit var rotationAnimation: SpringAnimation
     private var isDragging = false
@@ -77,8 +77,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 Feature.BOOKMARK -> MainFragmentDirections.navigateToBookmark()
                 Feature.IOT -> MainFragmentDirections.navigateToIot()
                 Feature.DEVICE_MANAGEMENT -> MainFragmentDirections.navigateToDeviceManagement()
-                Feature.SETTINGS -> MainFragmentDirections.navigateToSettings()
                 Feature.REMINDERS -> MainFragmentDirections.navigateToReminders()
+                Feature.SNS -> MainFragmentDirections.navigateToSns()
+                Feature.SETTINGS -> MainFragmentDirections.navigateToSettings()
             }, image, title)
         }
         list.adapter = adapter

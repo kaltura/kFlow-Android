@@ -87,11 +87,14 @@
             android:id="@+id/navigate_to_device_management"
             app:destination="@id/device_management" />
         <action
-            android:id="@+id/navigate_to_settings"
-            app:destination="@id/settings" />
-        <action
             android:id="@+id/navigate_to_reminders"
             app:destination="@id/reminder_list_fragment" />
+        <action
+            android:id="@+id/navigate_to_sns"
+            app:destination="@id/sns_fragment" />
+        <action
+            android:id="@+id/navigate_to_settings"
+            app:destination="@id/settings" />
     </fragment>
 
     <fragment
@@ -413,4 +416,9 @@
         android:name="com.kaltura.kflow.presentation.reminderList.ReminderListFragment"
         android:label="Reminders"
         tools:layout="@layout/fragment_reminder_list" />
+    <fragment
+        android:id="@+id/sns_fragment"
+        android:name="com.kaltura.kflow.presentation.sns.SnsFragment"
+        android:label="SNS"
+        tools:layout="@layout/fragment_sns" />
 </navigation>

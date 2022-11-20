@@ -86,7 +86,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 PackageManager.PERMISSION_GRANTED
             ) {
                 // FCM SDK (and your app) can post notifications.
-                obtainFCMToken()
             } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
                 // TODO: display an educational UI explaining to the user the features that will be enabled
                 //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
@@ -113,8 +112,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 // Directly ask for the permission
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
-        }else{
-            obtainFCMToken()
         }
     }
 
@@ -122,7 +119,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            obtainFCMToken()
+            promptMessage("Push notification will be enabled once registered to SNS")
         } else {
             promptMessage("Push notification will no be received")
         }
@@ -147,22 +144,5 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private fun promptMessage(title: String) {
         Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
-    }
-    private fun obtainFCMToken() {
-        FirebaseMessaging.getInstance().token
-            .addOnCompleteListener(OnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    Log.d(
-                        "Kflow",
-                        "Fetching FCM registration token failed",
-                        task.exception
-                    )
-                    return@OnCompleteListener
-                }
-
-                // Get new FCM registration token
-                val token = task.result
-                Log.d("Kflow", "Push Token Received :" +token)
-            })
     }
 }
