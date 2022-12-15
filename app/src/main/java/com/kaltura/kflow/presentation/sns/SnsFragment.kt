@@ -63,11 +63,15 @@ class SnsFragment : SharedTransitionFragment(R.layout.fragment_sns) {
             },
             success = {
                 push_enable_status.visible()
-                isPushEnabled = !isPushEnabled
-                when (isPushEnabled) {
-                    true -> push_enable_status.text = getText(R.string.disable_push_notification)//"Disable Push Notification"
-                    false -> push_enable_status.text = getText(R.string.enable_push_notification)//"Enable  Push Notification"
+                push_enable_status.success(lifecycleScope)
+                push_enable_status.post {
+                    isPushEnabled = !isPushEnabled
+                    when (isPushEnabled) {
+                        true -> push_enable_status.text = getText(R.string.disable_push_notification)//"Disable Push Notification"
+                        false -> push_enable_status.text = getText(R.string.enable_push_notification)//"Enable  Push Notification"
+                    }
                 }
+
                 toast("Push Status is set to :"+isPushEnabled)
             })
     }
@@ -92,7 +96,9 @@ class SnsFragment : SharedTransitionFragment(R.layout.fragment_sns) {
     private fun makeSetPushStatusRequest(checked: Boolean) {
         withInternetConnection {
             clearDebugView()
-            viewModel.setNotificationStatus(checked)
+            push_enable_status.startAnimation {
+                viewModel.setNotificationStatus(checked)
+            }
         }
     }
 }
