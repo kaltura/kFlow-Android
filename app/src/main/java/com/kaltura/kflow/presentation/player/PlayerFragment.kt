@@ -24,11 +24,17 @@ import com.kaltura.playkit.plugins.ads.AdEvent
 import com.kaltura.playkit.plugins.ott.OttEvent
 import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsConfig
 import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsPlugin
+import com.kaltura.playkit.plugins.youbora.YouboraPlugin
 import com.kaltura.playkit.providers.api.phoenix.APIDefines
 import com.kaltura.playkit.providers.api.phoenix.APIDefines.KalturaAssetType
 import com.kaltura.playkit.providers.ott.OTTMediaAsset
 import com.kaltura.playkit.providers.ott.PhoenixMediaProvider
 import com.kaltura.tvplayer.*
+import com.npaw.youbora.lib6.plugin.Options.Companion.KEY_ACCOUNT_CODE
+import com.npaw.youbora.lib6.plugin.Options.Companion.KEY_APP_NAME
+import com.npaw.youbora.lib6.plugin.Options.Companion.KEY_APP_RELEASE_VERSION
+import com.npaw.youbora.lib6.plugin.Options.Companion.KEY_ENABLED
+import com.npaw.youbora.lib6.plugin.Options.Companion.KEY_USERNAME
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -55,6 +61,29 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     private val initialPlaybackContextType by lazy { playbackContextTypeFromString(args.playbackContextType) }
 
     override fun debugView(): DebugView = debugView
+
+    //Youbora analytics Constants
+    val ACCOUNT_CODE = "reshet"
+    val UNIQUE_USER_NAME = "elad"
+    val MEDIA_TITLE = "Reshet13"
+//    val ENABLE_SMART_ADS = true
+//    private val CAMPAIGN = "your_campaign_name"
+//    val EXTRA_PARAM_1 = "playKitPlayer"
+//    val EXTRA_PARAM_2 = ""
+//    val GENRE = "your_genre"
+//    val TYPE = "your_type"
+//    val TRANSACTION_TYPE = "your_trasnsaction_type"
+//    val YEAR = "your_year"
+//    val CAST = "your_cast"
+//    val DIRECTOR = "your_director"
+//    private val OWNER = "your_owner"
+//    val PARENTAL = "your_parental"
+//    val PRICE = "your_price"
+//    val RATING = "your_rating"
+//    val AUDIO_TYPE = "your_audio_type"
+//    val AUDIO_CHANNELS = "your_audoi_channels"
+//    val DEVICE = "your_device"
+//    val QUALITY = "your_quality"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -176,6 +205,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     private fun configurePlugins(pluginConfigs: PKPluginConfigs) {
         addPhoenixAnalyticsPluginConfig(pluginConfigs)
+        addYouboraPluginConfig(pluginConfigs)
     }
 
     private fun addPhoenixAnalyticsPluginConfig(config: PKPluginConfigs) {
@@ -185,6 +215,66 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         val phoenixAnalyticsConfig = PhoenixAnalyticsConfig(pId, baseUrl, ks, 30)
         config.setPluginConfig(PhoenixAnalyticsPlugin.factory.name, phoenixAnalyticsConfig)
     }
+
+    private fun addYouboraPluginConfig(config: PKPluginConfigs) {
+
+//        val phoenixYouboraConfig = YouboraPlugin()
+        config.setPluginConfig(YouboraPlugin.factory.name, getYouboraBundle())
+    }
+
+    private fun getYouboraBundle(): Bundle {
+
+        val optBundle = Bundle()
+
+        //Youbora config bundle. Main config goes here.
+        optBundle.putString(KEY_ACCOUNT_CODE, "reshet")
+        optBundle.putString(KEY_USERNAME, "reshet")
+        optBundle.putBoolean(KEY_ENABLED, true)
+        optBundle.putString(KEY_APP_NAME, "Reshet13");
+        optBundle.putString(KEY_APP_RELEASE_VERSION, "v1.0");
+
+        //Media entry bundle.
+//        optBundle.putString(KEY_CONTENT_TITLE, MEDIA_TITLE)
+//
+//        //Optional - Device bundle o/w youbora will decide by its own.
+//        optBundle.putString(KEY_DEVICE_CODE, "AndroidTV")
+//        optBundle.putString(KEY_DEVICE_BRAND, "Xiaomi")
+//        optBundle.putString(KEY_DEVICE_MODEL, "Mii3")
+//        optBundle.putString(KEY_DEVICE_TYPE, "TvBox")
+//        optBundle.putString(KEY_DEVICE_OS_NAME, "Android/Oreo")
+//        optBundle.putString(KEY_DEVICE_OS_VERSION, "8.1")
+//
+//        //Youbora ads configuration bundle.
+//        optBundle.putString(KEY_AD_CAMPAIGN, CAMPAIGN)
+//
+//        //Configure custom properties here:
+//        optBundle.putString(KEY_CONTENT_GENRE, GENRE)
+//        optBundle.putString(KEY_CONTENT_TYPE, TYPE)
+//        optBundle.putString(KEY_CONTENT_TRANSACTION_CODE, TRANSACTION_TYPE)
+//
+//        optBundle.putString(KEY_CONTENT_PRICE, PRICE)
+//        optBundle.putString(KEY_CONTENT_ENCODING_AUDIO_CODEC, AUDIO_TYPE)
+//        optBundle.putString(KEY_CONTENT_CHANNEL, AUDIO_CHANNELS)
+//
+//        val contentMetadataBundle = Bundle()
+//
+//        contentMetadataBundle.putString(KEY_CONTENT_METADATA_YEAR, YEAR)
+//        contentMetadataBundle.putString(KEY_CONTENT_METADATA_CAST, CAST)
+//        contentMetadataBundle.putString(KEY_CONTENT_METADATA_DIRECTOR, DIRECTOR)
+//        contentMetadataBundle.putString(KEY_CONTENT_METADATA_OWNER, OWNER)
+//        contentMetadataBundle.putString(KEY_CONTENT_METADATA_PARENTAL, PARENTAL)
+//        contentMetadataBundle.putString(KEY_CONTENT_METADATA_RATING, RATING)
+//        contentMetadataBundle.putString(KEY_CONTENT_METADATA_QUALITY, QUALITY)
+//
+//        optBundle.putBundle(KEY_CONTENT_METADATA, contentMetadataBundle)
+//
+//        //You can add some extra params here:
+//        optBundle.putString(KEY_CUSTOM_DIMENSION_1, EXTRA_PARAM_1)
+//        optBundle.putString(KEY_CUSTOM_DIMENSION_2, EXTRA_PARAM_2)
+
+        return optBundle
+    }
+
 
     private fun buildOttMediaOptions(playbackContextType: APIDefines.PlaybackContextType): OTTMediaOptions {
         val ottMediaAsset = OTTMediaAsset()
@@ -203,8 +293,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                 when (viewModel.urlType) {
                     APIDefines.KalturaUrlType.Direct.value -> urlType =
                         APIDefines.KalturaUrlType.Direct
-                    APIDefines.KalturaUrlType.PlayManifest.value -> urlType =
-                        APIDefines.KalturaUrlType.PlayManifest
+                    APIDefines.KalturaUrlType.Direct.value -> urlType =
+                        APIDefines.KalturaUrlType.Direct
                     else -> Unit
                 }
                 when (viewModel.streamerType) {
@@ -221,6 +311,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                 }
             }
             .setKs(viewModel.getKs())
+            .setUrlType(APIDefines.KalturaUrlType.Direct)
+            .setStreamerType(APIDefines.KalturaStreamerType.Mpegdash)
         val ottMediaOptions = OTTMediaOptions(ottMediaAsset)
         ottMediaOptions.startPosition = args.startPosition.toLong()
 
