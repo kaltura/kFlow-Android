@@ -76,11 +76,13 @@ dependencies {
     implementation 'com.kaltura:KalturaOttAndroidJavaClient:8.0.0.30025'
 
     // Playkit
-    implementation 'com.kaltura.player:tvplayer:4.29.0'
-    implementation 'com.kaltura.playkit:playkitproviders:4.29.0'
-    implementation 'com.kaltura.playkit:youboraplugin:4.29.0'
-    implementation 'com.kaltura.playkit:kavaplugin:4.29.0'
-    implementation 'com.kaltura.playkit:vrplugin:4.29.0'
+    implementation project(':tvplayer')
+//    implementation project(':playkit')
+//    implementation 'com.kaltura.player:tvplayer:4.29.0'
+//    implementation 'com.kaltura.playkit:playkitproviders:4.29.0'
+//    implementation 'com.kaltura.playkit:youboraplugin:4.29.0'
+//    implementation 'com.kaltura.playkit:kavaplugin:4.29.0'
+//    implementation 'com.kaltura.playkit:vrplugin:4.29.0'
 
     // Firebase
     implementation 'com.google.firebase:firebase-analytics:18.0.2'
