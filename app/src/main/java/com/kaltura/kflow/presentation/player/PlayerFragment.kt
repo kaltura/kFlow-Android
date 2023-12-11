@@ -370,6 +370,19 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             }
             //OLD WAY FOR GETTING THE CONCURRENCY
             it.addListener(this, OttEvent.OttEventType.Concurrency) { toast("Concurrency event") }
+
+
+            it.addListener(
+                this,
+                PlayerEvent.eventStreamChanged
+            ) { event: PlayerEvent.EventStreamChanged ->
+                for (eventStram in event.eventStreamList){
+                    val bytes = eventStram.events[0].messageData
+                    val EMSG = String(bytes)
+                    Log.d(TAG, "Event Stream Data : $EMSG")
+                }
+            }
+
         }
     }
 
