@@ -9,5 +9,9 @@ include ':kava'
 project(':kava').projectDir = new File('../playkit-android-kava/kavaplugin')
 include ':dtglib'
 project(':dtglib').projectDir = new File('../playkit-dtg-android/dtglib')
-//include ':youbora'
-//project(':youbora').projectDir = new File('../playkit-android-youbora/youboraplugin')
+include ':youbora'
+project(':youbora').projectDir = new File('../playkit-android-youbora/youboraplugin')
+//include ':mediameloneplugin'
+//project(':mediameloneplugin').projectDir = new File('../playkit-android-mediamelone/mediameloneplugin')
+include ':mediameloneplugin'
+project(':mediameloneplugin').projectDir = new File('../playkit-android-mediamelon/mediamelonplugin')

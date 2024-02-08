@@ -77,6 +77,7 @@ dependencies {
 
     // Playkit
     implementation project(':tvplayer')
+    implementation project(':mediameloneplugin')
 //    implementation project(':playkit')
 //    implementation 'com.kaltura.player:tvplayer:4.29.0'
 //    implementation 'com.kaltura.playkit:playkitproviders:4.29.0'

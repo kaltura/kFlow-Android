@@ -9,6 +9,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import com.google.gson.JsonObject
 import com.kaltura.client.enums.*
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
@@ -21,6 +22,7 @@ import com.kaltura.playkit.PlayerEvent.TracksAvailable
 import com.kaltura.playkit.player.PKTracks
 import com.kaltura.playkit.player.TextTrack
 import com.kaltura.playkit.plugins.ads.AdEvent
+import com.kaltura.playkit.plugins.mediamelon.MediamelonPlugin
 import com.kaltura.playkit.plugins.ott.OttEvent
 import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsConfig
 import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsPlugin
@@ -35,6 +37,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
+
 
 /**
  * Created by alex_lytvynenko on 04.12.2018.
@@ -175,7 +178,9 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     private fun configurePlugins(pluginConfigs: PKPluginConfigs) {
+        PlayKitManager.registerPlugins(requireContext(),MediamelonPlugin.factory)
         addPhoenixAnalyticsPluginConfig(pluginConfigs)
+        addMediamelonePlugin(pluginConfigs)
     }
 
     private fun addPhoenixAnalyticsPluginConfig(config: PKPluginConfigs) {
@@ -184,6 +189,120 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         val baseUrl = viewModel.getBaseUrl() + "/api_v3/"
         val phoenixAnalyticsConfig = PhoenixAnalyticsConfig(pId, baseUrl, ks, 30)
         config.setPluginConfig(PhoenixAnalyticsPlugin.factory.name, phoenixAnalyticsConfig)
+    }
+
+    private fun addMediamelonePlugin(config: PKPluginConfigs) {
+
+        //Initialize plugin configuration object.
+//        config.setPluginConfig(MediamelonePlugin.factory.name, createBundle())
+        config.setPluginConfig(MediamelonPlugin.factory.name, createJson())
+    }
+
+    private fun createJson() : JsonObject{
+        val optJson = JsonObject()
+
+        //Main config goes here.
+
+        optJson.addProperty("customerId", "13145423100")
+        optJson.addProperty("domainName", "EladDomain")
+        optJson.addProperty("subscriberId","SubscriberId")
+        optJson.addProperty("subscriberType", "subscriberType")
+        optJson.addProperty("subscriberTag", "subscriberTag")
+        optJson.addProperty("doHash", true)
+        optJson.addProperty("playerVersion", PlayKitManager.VERSION_STRING)
+        optJson.addProperty("playerName", "playerName")
+
+        // Set ConentMetadata for every asset played
+
+        optJson.addProperty("assetId", "1234")
+        optJson.addProperty("assetName", "My IMA Asset")
+        optJson.addProperty("videoId", "5678")
+        optJson.addProperty("seriesTitle", "Test Series")
+        optJson.addProperty("episodeNumber", "1")
+        optJson.addProperty("season", "2")
+        optJson.addProperty("contentType", "Episode")
+        optJson.addProperty("drmProtection", "WideVine")
+        optJson.addProperty("genre", "Romance,Horror")
+
+        // Set Application data
+
+        optJson.addProperty("appName", "KalturaApp")
+        optJson.addProperty("appVersion", "v1.0.0")
+
+        // Set metdata for device
+
+        optJson.addProperty("deviceMarketingName", "Oneplus6")
+        optJson.addProperty("videoQuality", "4K-HDR")
+        optJson.addProperty("deviceId", "abcd-efgh-ijkl-mnop")
+        optJson.addProperty("isDisableManifestFetch", false)
+
+        // Set CustomTags
+        optJson.addProperty("param1","12345")
+        optJson.addProperty("param2","Sandbox Watch")
+        optJson.addProperty("param3","12345")
+        optJson.addProperty("param4","54321")
+        optJson.addProperty("param5","1_nd547djd")
+
+        optJson.addProperty("householdId","12345")
+        optJson.addProperty("properties","{'key':'value'}")
+        optJson.addProperty("playerStartupTime","12345")
+        optJson.addProperty("username","123456789")
+        optJson.addProperty("seriesId","123454321")
+
+        return optJson
+
+    }
+    private fun createBundle() : Bundle{
+        val optBundle = Bundle()
+
+        //Main config goes here.
+
+        optBundle.putString("customerId", "13145423100")
+        optBundle.putString("domainName", "EladDomain")
+        optBundle.putString("subscriberId","SubscriberId")
+        optBundle.putString("subscriberType", "SubscriberType")
+        optBundle.putBoolean("doHash", true)
+        optBundle.putString("playerVersion", PlayKitManager.VERSION_STRING)
+
+        // Set ConentMetadata for every asset played
+
+        optBundle.putString("assetId", "1234")
+        optBundle.putString("assetName", "My IMA Asset")
+        optBundle.putString("videoId", "5678")
+        optBundle.putString("seriesTitle", "Test Series")
+        optBundle.putString("episodeNumber", "1")
+        optBundle.putString("season", "2")
+        optBundle.putString("contentType", "Episode")
+        optBundle.putString("drmProtection", "WideVine")
+        optBundle.putString("genre", "Romance,Horror")
+
+        // Set Application data
+
+        optBundle.putString("appName", "KalturaApp")
+        optBundle.putString("appVersion", "v1.0.0")
+
+        // Set metdata for device
+
+        optBundle.putString("deviceMarketingName", "Oneplus6")
+        optBundle.putString("videoQuality", "4K-HDR")
+        optBundle.putString("deviceId", "abcd-efgh-ijkl-mnop")
+        optBundle.putBoolean("isDisableManifestFetch", false)
+
+        // Set CustomTags
+        optBundle.putString("param1","12345")
+        optBundle.putString("param2","Sandbox Watch")
+        optBundle.putString("param3","12345")
+        optBundle.putString("param4","54321")
+        optBundle.putString("param5","1_nd547djd")
+
+        optBundle.putString("householdId","12345")
+        optBundle.putString("properties","{'key':'value'}")
+        optBundle.putString("playerStartupTime","12345")
+        optBundle.putString("username","123456789")
+        optBundle.putString("seriesId","123454321")
+
+        return optBundle
+
     }
 
     private fun buildOttMediaOptions(playbackContextType: APIDefines.PlaybackContextType): OTTMediaOptions {
