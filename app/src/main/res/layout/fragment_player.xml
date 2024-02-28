@@ -72,12 +72,23 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Subtitles:"
+                    android:text="Subtitles : "
                     android:textColor="@android:color/black"
                     android:textSize="18sp" />
 
                 <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/subtitles"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:spinnerMode="dropdown" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Audio : "
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/audios"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:spinnerMode="dropdown" />
