@@ -9,6 +9,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import com.google.gson.JsonObject
 import com.kaltura.client.enums.*
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
@@ -21,6 +22,7 @@ import com.kaltura.playkit.PlayerEvent.TracksAvailable
 import com.kaltura.playkit.player.PKTracks
 import com.kaltura.playkit.player.TextTrack
 import com.kaltura.playkit.plugins.ads.AdEvent
+import com.kaltura.playkit.plugins.mediamelon.MediamelonPlugin
 import com.kaltura.playkit.plugins.ott.OttEvent
 import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsConfig
 import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsPlugin
@@ -176,6 +178,87 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     private fun configurePlugins(pluginConfigs: PKPluginConfigs) {
         addPhoenixAnalyticsPluginConfig(pluginConfigs)
+        addMediamelonePlugin(pluginConfigs)
+    }
+
+    private fun addMediamelonePlugin(config: PKPluginConfigs) {
+        //Initialize plugin configuration object.
+        PlayKitManager.registerPlugins(requireContext(),MediamelonPlugin.factory)
+        config.setPluginConfig(MediamelonPlugin.factory.name, createJson())
+    }
+
+    private fun createJson(): JsonObject? {
+        val optJson = JsonObject()
+
+        // Main config goes here.
+        optJson.addProperty("customerId", "18410666590")
+        optJson.addProperty("domainName", "EladDomain")
+        optJson.addProperty("subscriberId", "SubscriberId")
+        optJson.addProperty("subscriberType", "SubscriberType")
+        optJson.addProperty("subscriberTag", "SubscriberTag")
+        optJson.addProperty("doHash", false)
+        optJson.addProperty("playerName", "KALTURA PLAYER")
+        optJson.addProperty("playerVersion", PlayKitManager.VERSION_STRING)
+
+        // Set ContentMetadata for every asset played.
+
+        optJson.addProperty("assetId", asset?.id)
+        optJson.addProperty("assetName", asset?.name)
+        optJson.addProperty("videoId", "VIDEO_ID")
+
+
+        var seriesTitle = asset?.metas?.get("SeriesName")
+        val episodeNumber = asset?.metas?.get("EpisodeNumber")
+        val season = asset?.metas?.get("SeasonNumber")
+
+
+        if (TextUtils.isEmpty(seriesTitle?.toString()))
+            optJson.addProperty("seriesTitle", "")
+        else
+            optJson.addProperty("seriesTitle", seriesTitle.toString())
+
+
+        if (TextUtils.isEmpty(episodeNumber?.toString()))
+            optJson.addProperty("episodeNumber", "")
+        else
+            optJson.addProperty("episodeNumber", episodeNumber.toString())
+
+        if (TextUtils.isEmpty(season?.toString()))
+            optJson.addProperty("season", "")
+        else
+            optJson.addProperty("season", season.toString())
+
+        optJson.addProperty("contentType", "Episode")
+        optJson.addProperty("drmProtection", "WideVine")
+        optJson.addProperty("genre", "Romance,Horror")
+
+        // Set Application data.
+        optJson.addProperty("appName", "KalturaApp")
+        optJson.addProperty("appVersion", "v1.0.0")
+
+        // Set metadata for device.
+        optJson.addProperty("deviceMarketingName", "Oneplus6")
+        optJson.addProperty("videoQuality", "4K-HDR")
+        optJson.addProperty("deviceId", "abcd-efgh-ijkl-mnop")
+        optJson.addProperty("isDisableManifestFetch", false)
+
+        // Set CustomTags.
+        val optCustomJson =  JsonObject()
+
+        optCustomJson.addProperty("param1", "12345")
+        optCustomJson.addProperty("param2", "Sandbox Watch")
+        optCustomJson.addProperty("param3", "12345")
+        optCustomJson.addProperty("param4", "54321")
+        optCustomJson.addProperty("param5", "1_nd547djd")
+        optCustomJson.addProperty("householdId", "12345")
+        optCustomJson.addProperty("properties", "{'key':'value'}")
+        optCustomJson.addProperty("playerStartupTime", "12345")
+        optCustomJson.addProperty("username", "123456789")
+        optCustomJson.addProperty("seriesId", "123454321")
+
+        optJson.addProperty("customTags", optCustomJson.toString() )
+
+        return optJson
     }
 
     private fun addPhoenixAnalyticsPluginConfig(config: PKPluginConfigs) {

@@ -77,6 +77,7 @@ dependencies {
 
     // Playkit
     implementation 'com.kaltura.player:tvplayer:4.29.0'
+    implementation 'com.github.MediamelonSDK:mm-KalturaPlayer:1.1.1'
     implementation 'com.kaltura.playkit:playkitproviders:4.29.0'
     implementation 'com.kaltura.playkit:youboraplugin:4.29.0'
     implementation 'com.kaltura.playkit:kavaplugin:4.29.0'
