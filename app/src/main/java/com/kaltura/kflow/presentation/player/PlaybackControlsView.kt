@@ -2,6 +2,7 @@ package com.kaltura.kflow.presentation.player
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import com.kaltura.android.exoplayer2.C
@@ -13,6 +14,10 @@ import com.kaltura.playkit.PKLog
 import com.kaltura.playkit.PlayerState
 import com.kaltura.tvplayer.KalturaPlayer
 import kotlinx.android.synthetic.main.view_player_control.view.*
+import com.kaltura.playkit.player.PKAspectRatioResizeMode
+import com.kaltura.playkit.PKMediaEntry
+
+
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -36,6 +41,21 @@ class PlaybackControlsView @JvmOverloads constructor(
         inflate(R.layout.view_player_control, true)
         play.setOnClickListener { player?.play() }
         pause.setOnClickListener { player?.pause() }
+        resize.setOnClickListener {
+            Log.d("elad","current state : "+player?.initOptions?.aspectRatioResizeMode.toString())
+            if (player?.initOptions?.aspectRatioResizeMode == PKAspectRatioResizeMode.fit) {
+                player?.initOptions?.aspectRatioResizeMode = PKAspectRatioResizeMode.fill
+                player?.updateSurfaceAspectRatioResizeMode(PKAspectRatioResizeMode.fill)
+            }
+            else {
+                player?.initOptions?.aspectRatioResizeMode = PKAspectRatioResizeMode.fit
+                player?.updateSurfaceAspectRatioResizeMode(PKAspectRatioResizeMode.fit)
+            }
+
+            Log.d("elad","New State : "+player?.initOptions?.aspectRatioResizeMode.toString())
+        }
+
+
         mediacontrollerProgress.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
@@ -56,7 +76,9 @@ class PlaybackControlsView @JvmOverloads constructor(
     }
 
     private fun updateProgress() {
-        if (asset == null) updateVodProgress() else updateLiveProgress()
+        //if (asset == null) updateVodProgress() else updateLiveProgress()
+        if (player?.mediaEntry?.mediaType == PKMediaEntry.MediaEntryType.Vod || asset == null) updateVodProgress() else updateLiveProgress()
+
     }
 
     private fun updateLiveProgress() {

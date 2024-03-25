@@ -19,6 +19,8 @@ import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.playkit.*
 import com.kaltura.playkit.PlayerEvent.StateChanged
 import com.kaltura.playkit.PlayerEvent.TracksAvailable
+import com.kaltura.playkit.player.AudioTrack
+import com.kaltura.playkit.player.PKAspectRatioResizeMode
 import com.kaltura.playkit.player.PKTracks
 import com.kaltura.playkit.player.TextTrack
 import com.kaltura.playkit.plugins.ads.AdEvent
@@ -77,7 +79,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             if (favorite.isPressed) actionFavorite()
         }
         playerControls.setOnStartOverClickListener {
-            if (mediaEntry.mediaType == PKMediaEntry.MediaEntryType.Vod) player?.replay()
+            if (mediaEntry?.mediaType == PKMediaEntry.MediaEntryType.Vod) player?.replay()
             else if (asset is ProgramAsset && (asset as ProgramAsset).isProgramInPast()) initPlayer(
                 APIDefines.PlaybackContextType.Catchup
             )
@@ -369,16 +371,16 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     private fun onMediaLoadedKeepAlive() {
         var sourceUrl = ""
-        val sources = mediaEntry.sources
-        sources.forEach {
+        val sources = mediaEntry?.sources
+        sources?.forEach {
             if (it.mediaFormat == PKMediaFormat.dash) sourceUrl = it.url
         }
         try {
             getKeepAliveHeaderUrl(URL(sourceUrl)) { status, url ->
-                if (mediaEntry.sources != null && mediaEntry.sources.isNotEmpty()) {
+                if (mediaEntry?.sources != null && mediaEntry?.sources?.isNotEmpty()!!) {
                     Log.d(TAG, "The KeepAlive Url is : $url")
                     playerKeepAliveService.keepAliveURL = url
-                    mediaEntry.sources[0].url = url
+                    mediaEntry?.sources!![0]?.url = url
                 }
                 setMediaEntry()
             }
@@ -389,8 +391,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     private fun setMediaEntry() {
-        if (mediaEntry.mediaType == PKMediaEntry.MediaEntryType.Live) {
-            mediaEntry.mediaType = PKMediaEntry.MediaEntryType.DvrLive
+        if (mediaEntry?.mediaType == PKMediaEntry.MediaEntryType.Live) {
+            mediaEntry?.mediaType = PKMediaEntry.MediaEntryType.DvrLive
             playerControls.asset = asset
             //playerControls.disableControllersForLive();
         }
