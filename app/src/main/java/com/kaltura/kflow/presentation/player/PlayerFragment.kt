@@ -347,7 +347,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         if (player == null) {
             val playerInitOptions = PlayerInitOptions(viewModel.getPartnerId())
                 .setPKRequestConfig(PKRequestConfig(true))
-                .setSecureSurface(false)
+                .setSecureSurface(false).setAspectRatioResizeMode(PKAspectRatioResizeMode.fit)
+
 
             val pluginConfig = PKPluginConfigs()
             configurePlugins(pluginConfig)
@@ -391,10 +392,13 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     private fun setMediaEntry() {
-        if (mediaEntry?.mediaType == PKMediaEntry.MediaEntryType.Live) {
+        if (mediaEntry?.mediaType == PKMediaEntry.MediaEntryType.Live || mediaEntry?.mediaType == PKMediaEntry.MediaEntryType.DvrLive) {
             mediaEntry?.mediaType = PKMediaEntry.MediaEntryType.DvrLive
             playerControls.asset = asset
-            //playerControls.disableControllersForLive();
+            playerControls.disableControllersForLive()
+        }else if (mediaEntry?.mediaType != PKMediaEntry.MediaEntryType.Vod &&
+            asset is ProgramAsset && (asset as ProgramAsset).isProgramInPast()){
+
         }
 
         player?.play()
@@ -432,6 +436,12 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                     initSubtitles(event.tracksInfo.textTracks, defaultTextTrack)
                     changeTextTrack(defaultTextTrack)
                 }
+                if (event?.tracksInfo != null && event.tracksInfo.audioTracks.isNotEmpty()) {
+                    val defaultAudioTrack = getDefaultAudioTrack(event.tracksInfo)
+                    initAudio(event.tracksInfo.audioTracks, defaultAudioTrack)
+                    changeAudioTrack(defaultAudioTrack)
+                }
+
             }
             it.addListener(
                 this,
@@ -482,8 +492,36 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         }
     }
 
+    private fun initAudio(tracks: List<AudioTrack>, selected: AudioTrack) {
+        val languages = arrayListOf<String>()
+        tracks.forEach {
+            if (it.language != null) languages.add(it.language!!)
+        }
+        val adapter =
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, languages)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        audios.adapter = adapter
+        audios.setSelection(tracks.indexOf(selected))
+        audios.onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onItemSelected(
+                adapterView: AdapterView<*>?,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
+                changeAudioTrack(tracks[position])
+            }
+
+            override fun onNothingSelected(adapterView: AdapterView<*>?) {}
+        }
+    }
+
+
     private fun changeTextTrack(textTrack: TextTrack) {
         player?.changeTrack(textTrack.uniqueId)
+    }
+    private fun changeAudioTrack(audioTrack: AudioTrack) {
+        player?.changeTrack(audioTrack.uniqueId)
     }
 
     private fun getDefaultTextTrack(tracksInfo: PKTracks): TextTrack {
@@ -493,7 +531,13 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         }
         return track
     }
-
+    private fun getDefaultAudioTrack(tracksInfo: PKTracks): AudioTrack {
+        var track = tracksInfo.audioTracks[0]
+        tracksInfo.audioTracks.forEach {
+            if (it?.language != null && it.language.equals("en", ignoreCase = true)) track = it
+        }
+        return track
+    }
     private fun likeList() {
         withInternetConnection {
             clearDebugView()

@@ -164,6 +164,7 @@ class PlaybackControlsView @JvmOverloads constructor(
         play.isEnabled = false
         pause.drawable.mutate().setTint(getColor(android.R.color.darker_gray))
         play.drawable.mutate().setTint(getColor(android.R.color.darker_gray))
-        mediacontrollerProgress.setOnTouchListener { _, _ -> true }
+//        mediacontrollerProgress.setOnTouchListener { _, _ -> true }
+        mediacontrollerProgress.isEnabled = false
     }
 }
