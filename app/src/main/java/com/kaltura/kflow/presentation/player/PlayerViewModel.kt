@@ -132,11 +132,11 @@ class PlayerViewModel(private val apiManager: PhoenixApiManager,
         apiManager.execute(multiRequestBuilder)
     }
 
-    fun getPartnerId() = preferenceManager.partnerId
+    fun getPartnerId() = 3209//preferenceManager.partnerId
 
-    fun getBaseUrl() = preferenceManager.baseUrl
+    fun getBaseUrl() = "https://api.sgp2.ott.kaltura.com"//preferenceManager.baseUrl
 
-    fun getMediaFileFormat() = preferenceManager.mediaFileFormat
+    fun getMediaFileFormat() = "Dash_widevine"//preferenceManager.mediaFileFormat
 
     fun getKs() = apiManager.ks
 

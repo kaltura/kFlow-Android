@@ -18,6 +18,7 @@ import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.playkit.*
 import com.kaltura.playkit.PlayerEvent.StateChanged
 import com.kaltura.playkit.PlayerEvent.TracksAvailable
+import com.kaltura.playkit.player.ABRSettings
 import com.kaltura.playkit.player.PKTracks
 import com.kaltura.playkit.player.TextTrack
 import com.kaltura.playkit.plugins.ads.AdEvent
@@ -263,6 +264,10 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             val playerInitOptions = PlayerInitOptions(viewModel.getPartnerId())
                 .setPKRequestConfig(PKRequestConfig(true))
                 .setSecureSurface(false)
+
+            val abr = ABRSettings()
+            playerInitOptions.setAbrSettings(abr)
+            playerInitOptions.abrSettings.maxVideoBitrate = 2000000
 
             val pluginConfig = PKPluginConfigs()
             configurePlugins(pluginConfig)

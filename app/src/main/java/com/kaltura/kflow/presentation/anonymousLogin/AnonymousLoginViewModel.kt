@@ -16,7 +16,7 @@ class AnonymousLoginViewModel(private val apiManager: PhoenixApiManager,
     val loginRequest = MutableLiveData<Resource<Unit>>()
 
     fun anonymousLogin(udid: String) {
-        apiManager.execute(OttUserService.anonymousLogin(preferenceManager.partnerId, udid)
+        apiManager.execute(OttUserService.anonymousLogin(3209, udid)
                 .setCompletion {
                     if (it.isSuccess) {
                         preferenceManager.ks = it.results.ks
