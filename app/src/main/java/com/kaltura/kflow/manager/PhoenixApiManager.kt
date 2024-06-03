@@ -14,7 +14,7 @@ class PhoenixApiManager(private val prefs: PreferenceManager) {
     private val client = Client(Configuration())
 
     init {
-        val config = Configuration().apply { endpoint = "https://api.sgp2.ott.kaltura.com" }
+        val config = Configuration().apply { endpoint = prefs.baseUrl }
         client.connectionConfiguration = config
         client.ks = prefs.ks
     }
@@ -26,7 +26,7 @@ class PhoenixApiManager(private val prefs: PreferenceManager) {
         }
 
     var parthnerID: Int
-        get() = 3209
+        get() = prefs.partnerId
         set(value) {
             prefs.partnerId = value
         }

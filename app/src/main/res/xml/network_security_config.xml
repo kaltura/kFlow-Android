@@ -5,16 +5,23 @@
         <domain includeSubdomains="true">api.frp1.ott.kaltura.com</domain>
         <domain includeSubdomains="true">api.vrs1.ott.kaltura.com</domain>
         <domain includeSubdomains="true">api.sgp2.ott.kaltura.com</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
+        <domain includeSubdomains="true">10.0.0.1</domain>
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <domain includeSubdomains="true">localhost</domain>
     </domain-config>
     <debug-overrides>
         <trust-anchors>
             <certificates src="system" />
             <certificates src="user" />
+            <certificates src="@raw/charles"/>
         </trust-anchors>
     </debug-overrides>
     <base-config cleartextTrafficPermitted="true">
         <trust-anchors>
             <certificates src="system" />
+            <certificates src="user" />
+            <certificates src="@raw/charles"/>
         </trust-anchors>
     </base-config>
 </network-security-config>

@@ -19,6 +19,7 @@ import com.kaltura.playkit.*
 import com.kaltura.playkit.PlayerEvent.StateChanged
 import com.kaltura.playkit.PlayerEvent.TracksAvailable
 import com.kaltura.playkit.player.ABRSettings
+import com.kaltura.playkit.player.PKPlayerErrorType
 import com.kaltura.playkit.player.PKTracks
 import com.kaltura.playkit.player.TextTrack
 import com.kaltura.playkit.plugins.ads.AdEvent
@@ -42,6 +43,8 @@ import java.net.URL
  */
 class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
+    private var startDateTest:Long = 0
+    private var endDateTest:Long = 0
     private val viewModel: PlayerViewModel by viewModel()
 
     private val TAG = PlayerFragment::class.java.canonicalName
@@ -218,7 +221,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                 protocol = when (viewModel.mediaProtocol) {
                     PhoenixMediaProvider.HttpProtocol.Http -> PhoenixMediaProvider.HttpProtocol.Http
                     PhoenixMediaProvider.HttpProtocol.Https -> PhoenixMediaProvider.HttpProtocol.Https
-                    else -> PhoenixMediaProvider.HttpProtocol.All
+                    else -> PhoenixMediaProvider.HttpProtocol.Https
                 }
             }
             .setKs(viewModel.getKs())
@@ -260,14 +263,11 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         playbackContextType: APIDefines.PlaybackContextType,
         completion: KalturaPlayer.OnEntryLoadListener
     ) {
+        startDateTest = System.currentTimeMillis()
         if (player == null) {
             val playerInitOptions = PlayerInitOptions(viewModel.getPartnerId())
                 .setPKRequestConfig(PKRequestConfig(true))
                 .setSecureSurface(false)
-
-            val abr = ABRSettings()
-            playerInitOptions.setAbrSettings(abr)
-            playerInitOptions.abrSettings.maxVideoBitrate = 2000000
 
             val pluginConfig = PKPluginConfigs()
             configurePlugins(pluginConfig)
@@ -316,8 +316,22 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             playerControls.asset = asset
             //playerControls.disableControllersForLive();
         }
+//        Log.d("elad","Action Play Initiated")
 
         player?.play()
+    }
+
+    private fun setMediaEntry(entry:PKMediaEntry) {
+        var sourceUrl = "";
+
+        mediaEntry.sources.forEach {
+            if (it.mediaFormat == PKMediaFormat.dash) it.url = "https://aw-ucdn-3201-prod.tv.cetin.cz/bpk-tv/2013/output0/manifest.mpd?accountId=3201&begin=20240530T065000&end=20240530T072000&deviceType=22&subscriptionType=21213&ip=199.203.83.170&primaryToken=2cf07d215b050d25_fe30a22d4e5e8347a5044ff2344685cf"//it.url
+        }//206659326
+        mediaEntry.id = "206659326"
+//        Log.d("elad","Media Entry Modified with : "+mediaEntry.sources[0].url)
+        player?.setMedia(mediaEntry)
+        startDateTest = System.currentTimeMillis()
+
     }
 
     private fun getKeepAliveHeaderUrl(
@@ -361,16 +375,29 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             it.addListener(
                 this,
                 PlayerEvent.play
-            ) { if (isKeepAlive) playerKeepAliveService.startFireKeepAliveService() }
+            ){  if (isKeepAlive) playerKeepAliveService.startFireKeepAliveService()}
+
             it.addListener(
                 this,
                 PlayerEvent.stateChanged
-            ) { event: StateChanged -> playerControls.setPlayerState(event.newState) }
+            ) { event: StateChanged ->
+                Log.d("Elad State","player event : "+event.newState)
+                playerControls.setPlayerState(event.newState)
+                if (event.newState == PlayerState.READY)
+                {
+                    endDateTest = System.currentTimeMillis()
+                    Log.d("Elad State","player event : "+endDateTest.minus(startDateTest))
+                    startDateTest = 0;
+                }
+            }
             it.addListener(this, PlayerEvent.Type.ERROR) { event: PKEvent? ->
                 //When the track data available, this event occurs. It brings the info object with it.
                 val playerError = event as PlayerEvent.Error?
                 if (playerError?.error != null) {
                     toast("PlayerEvent.Error event  position = ${playerError.error.errorType} errorMessage = ${playerError.error.message}")
+                    if (playerError?.error?.errorType == PKPlayerErrorType.RENDERER_ERROR){
+                        Log.d("Elad","playerError.error.errorType : "+playerError.error.errorType)
+                    }
                 }
             }
             //OLD WAY FOR GETTING THE CONCURRENCY
@@ -386,6 +413,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                     val EMSG = String(bytes)
                     Log.d(TAG, "Event Stream Data : $EMSG")
                 }
+
             }
 
         }
@@ -456,6 +484,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             favorite.isEnabled = false
             if (favorite.isChecked) viewModel.favorite(asset!!.id)
             else viewModel.unfavorite(asset!!.id)
+
+            //setMediaEntry(PKMediaEntry())
         }
     }
 

@@ -44,7 +44,7 @@ class AnonymousLoginFragment : SharedTransitionFragment(R.layout.fragment_anonym
         withInternetConnection {
             clearDebugView()
             login.startAnimation {
-                viewModel.anonymousLogin(getUUID2(requireContext()))
+                viewModel.anonymousLogin(getUUID())
             }
         }
     }

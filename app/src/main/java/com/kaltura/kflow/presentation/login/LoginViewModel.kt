@@ -18,7 +18,7 @@ class LoginViewModel(private val apiManager: PhoenixApiManager,
 
     fun makeLoginRequest(email: String, password: String, udid: String, extraParams: HashMap<String, StringValue>? = null) {
         apiManager.ks = null
-        apiManager.execute(OttUserService.login(3209, email, password, extraParams, udid)
+        apiManager.execute(OttUserService.login(preferenceManager.partnerId, email, password, extraParams, udid)
                 .setCompletion {
                     if (it.isSuccess) {
                         preferenceManager.clearIotInfo()
