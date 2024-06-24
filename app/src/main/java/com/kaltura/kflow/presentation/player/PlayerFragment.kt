@@ -269,10 +269,16 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                 .setPKRequestConfig(PKRequestConfig(true))
                 .setSecureSurface(false)
 
+
             val pluginConfig = PKPluginConfigs()
             configurePlugins(pluginConfig)
             playerInitOptions.setPluginConfigs(pluginConfig)
+            playerInitOptions.codecFailureRetryCount=10
+            playerInitOptions.codecFailureRetryTimeout=100
+
+
             player = KalturaOttPlayer.create(requireContext(), playerInitOptions)
+
 
             addPlayerListeners()
             player!!.setPlayerView(
