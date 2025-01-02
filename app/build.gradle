@@ -66,23 +66,22 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.4'
 
     // Koin
-    implementation 'org.koin:koin-androidx-viewmodel:2.2.2'
-    implementation 'org.koin:koin-androidx-scope:2.2.2'
+    implementation 'io.insert-koin:koin-androidx-viewmodel:2.2.2'
+    implementation 'io.insert-koin:koin-androidx-scope:2.2.2'
 
     // Loading button
-    implementation 'br.com.simplepass:loading-button-android:2.2.0'
+//    implementation 'br.com.simplepass:loading-button-android:2.2.0'
+    implementation("com.github.leandroborgesferreira:loading-button-android:2.3.0")
 
     // Client library
     implementation 'com.kaltura:KalturaOttAndroidJavaClient:8.0.0.30025'
 
     // Playkit
-    implementation project(':tvplayer')
-//    implementation project(':playkit')
-//    implementation 'com.kaltura.player:tvplayer:4.29.0'
-//    implementation 'com.kaltura.playkit:playkitproviders:4.29.0'
-//    implementation 'com.kaltura.playkit:youboraplugin:4.29.0'
-//    implementation 'com.kaltura.playkit:kavaplugin:4.29.0'
-//    implementation 'com.kaltura.playkit:vrplugin:4.29.0'
+    implementation 'com.kaltura.player:tvplayer:4.30.10'
+//    implementation 'com.kaltura.playkit:playkitproviders:4.30.10'
+//    implementation 'com.kaltura.playkit:youboraplugin:4.30.10'
+//    implementation 'com.kaltura.playkit:kavaplugin:4.30.10'
+//    implementation 'com.kaltura.playkit:vrplugin:4.30.10'
 
     // Firebase
     implementation 'com.google.firebase:firebase-analytics:18.0.2'

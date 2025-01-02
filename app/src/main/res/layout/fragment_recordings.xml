@@ -11,7 +11,7 @@
 
         <include layout="@layout/view_shared_transition_header" />
 
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/getRecorded"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
             app:spinning_bar_padding="6dp"
             app:spinning_bar_width="2dp" />
 
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/getOnGoing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
             app:spinning_bar_padding="6dp"
             app:spinning_bar_width="2dp" />
 
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/getScheduled"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
             app:spinning_bar_padding="6dp"
             app:spinning_bar_width="2dp" />
 
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/showRecordings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

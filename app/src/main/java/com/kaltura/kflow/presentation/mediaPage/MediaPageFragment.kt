@@ -6,7 +6,7 @@ import android.view.View
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import br.com.simplepass.loadingbutton.presentation.State
+import com.github.leandroborgesferreira.loadingbutton.presentation.State
 import com.kaltura.client.enums.RuleType
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R

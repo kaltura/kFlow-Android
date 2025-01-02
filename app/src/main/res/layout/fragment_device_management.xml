@@ -23,7 +23,7 @@
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/removeDeviceRequest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
             app:spinning_bar_padding="6dp"
             app:spinning_bar_width="2dp" />
 
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/addDeviceRequest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

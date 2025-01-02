@@ -2,8 +2,8 @@ package com.kaltura.kflow.presentation.extension
 
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.LifecycleCoroutineScope
-import br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-import br.com.simplepass.loadingbutton.presentation.State
+import com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+import com.github.leandroborgesferreira.loadingbutton.presentation.State
 import com.kaltura.kflow.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

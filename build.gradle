@@ -5,7 +5,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        jcenter()
         maven { url  "https://npaw.jfrog.io/artifactory/youbora/" }
     }
     dependencies {
@@ -23,7 +22,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        jcenter()
         maven { url  "https://npaw.jfrog.io/artifactory/youbora/" }
         maven { url "https://jitpack.io" }
     }

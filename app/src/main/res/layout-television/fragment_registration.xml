@@ -125,7 +125,7 @@
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
                     android:id="@+id/register"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
