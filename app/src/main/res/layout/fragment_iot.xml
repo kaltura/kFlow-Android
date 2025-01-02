@@ -11,7 +11,7 @@
 
         <include layout="@layout/view_shared_transition_header" />
 
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

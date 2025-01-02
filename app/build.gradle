@@ -66,11 +66,12 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.4'
 
     // Koin
-    implementation 'org.koin:koin-androidx-viewmodel:2.2.2'
-    implementation 'org.koin:koin-androidx-scope:2.2.2'
+    implementation 'io.insert-koin:koin-androidx-viewmodel:2.2.2'
+    implementation 'io.insert-koin:koin-androidx-scope:2.2.2'
 
     // Loading button
-    implementation 'br.com.simplepass:loading-button-android:2.2.0'
+//    implementation 'br.com.simplepass:loading-button-android:2.2.0'
+    implementation("com.github.leandroborgesferreira:loading-button-android:2.3.0")
 
     // Client library
     implementation 'com.kaltura:KalturaOttAndroidJavaClient:8.0.0.30025'

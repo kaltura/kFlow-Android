@@ -60,7 +60,7 @@
             android:text="Comma separated list of asset types to search within."
             android:textSize="12sp" />
 
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/get"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

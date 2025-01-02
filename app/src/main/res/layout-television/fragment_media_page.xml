@@ -45,7 +45,7 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
                     android:id="@+id/get"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
                     android:textColor="@android:color/white"
                     android:textSize="16sp" />
 
-                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
                     android:id="@+id/getProductPrice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
                     app:spinning_bar_padding="6dp"
                     app:spinning_bar_width="2dp" />
 
-                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
                     android:id="@+id/getBookmark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -119,7 +119,7 @@
                     app:spinning_bar_padding="6dp"
                     app:spinning_bar_width="2dp" />
 
-                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
                     android:id="@+id/getAssetRules"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -139,7 +139,7 @@
                     app:spinning_bar_padding="6dp"
                     app:spinning_bar_width="2dp" />
 
-                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
                     android:id="@+id/checkAll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

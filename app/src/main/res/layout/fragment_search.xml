@@ -62,7 +62,7 @@
             android:text="Comma separated list of asset types to search within."
             android:textSize="12sp" />
 
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
             android:textSize="16sp"
             android:visibility="gone" />
 
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/getSearchHistory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
