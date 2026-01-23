@@ -1,17 +1,20 @@
 package com.kaltura.kflow.presentation.recordings
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.kaltura.client.enums.RecordingStatus
 import com.kaltura.client.types.Recording
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentRecordingListBinding
+import com.kaltura.kflow.databinding.FragmentRecordingsBinding
+import com.kaltura.kflow.databinding.FragmentTransactionHistoryBinding
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
-import kotlinx.android.synthetic.main.fragment_recordings.*
-import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -30,29 +33,39 @@ class RecordingsFragment : SharedTransitionFragment(R.layout.fragment_recordings
         SCHEDULED_FILTER
     }
 
-    override fun debugView(): DebugView = debugView
     override val feature = Feature.RECORDINGS
-
+    private var _binding: FragmentRecordingsBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentRecordingsBinding.inflate(inflater,container,false)
+        val view = binding.root
+        return view
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        showRecordings.setOnClickListener {
+        binding.showRecordings.setOnClickListener {
             hideKeyboard()
             if (filteredRecordings.isNotEmpty()) {
                 navigate(RecordingsFragmentDirections.navigateToRecordingList(recordings = filteredRecordings.toTypedArray()))
             }
         }
-        getRecorded.setOnClickListener {
+        binding.getRecorded.setOnClickListener {
             hideKeyboard()
             recordingFilter = RecordingsFilter.RECORDED_FILTER
             recordingsRequest()
         }
-        getOnGoing.setOnClickListener {
+        binding.getOnGoing.setOnClickListener {
             hideKeyboard()
             recordingFilter = RecordingsFilter.ON_GOING_FILTER
             recordingsRequest()
         }
-        getScheduled.setOnClickListener {
+        binding.getScheduled.setOnClickListener {
             hideKeyboard()
             recordingFilter = RecordingsFilter.SCHEDULED_FILTER
             recordingsRequest()
@@ -63,16 +76,16 @@ class RecordingsFragment : SharedTransitionFragment(R.layout.fragment_recordings
         observeResource(viewModel.recordingList,
                 error = {
                     when (recordingFilter) {
-                        RecordingsFilter.RECORDED_FILTER -> getRecorded.error(lifecycleScope)
-                        RecordingsFilter.ON_GOING_FILTER -> getOnGoing.error(lifecycleScope)
-                        RecordingsFilter.SCHEDULED_FILTER -> getScheduled.error(lifecycleScope)
+                        RecordingsFilter.RECORDED_FILTER -> binding.getRecorded.error(lifecycleScope)
+                        RecordingsFilter.ON_GOING_FILTER -> binding.getOnGoing.error(lifecycleScope)
+                        RecordingsFilter.SCHEDULED_FILTER -> binding.getScheduled.error(lifecycleScope)
                     }
                 },
                 success = {
                     when (recordingFilter) {
-                        RecordingsFilter.RECORDED_FILTER -> getRecorded.success(lifecycleScope)
-                        RecordingsFilter.ON_GOING_FILTER -> getOnGoing.success(lifecycleScope)
-                        RecordingsFilter.SCHEDULED_FILTER -> getScheduled.success(lifecycleScope)
+                        RecordingsFilter.RECORDED_FILTER -> binding.getRecorded.success(lifecycleScope)
+                        RecordingsFilter.ON_GOING_FILTER -> binding.getOnGoing.success(lifecycleScope)
+                        RecordingsFilter.SCHEDULED_FILTER -> binding.getScheduled.success(lifecycleScope)
                     }
                     allRecordings = it
                     filterRecordings()
@@ -84,12 +97,12 @@ class RecordingsFragment : SharedTransitionFragment(R.layout.fragment_recordings
             withInternetConnection {
                 allRecordings.clear()
                 filteredRecordings.clear()
-                showRecordings.gone()
+                binding.showRecordings.gone()
                 clearDebugView()
                 when (recordingFilter) {
-                    RecordingsFilter.RECORDED_FILTER -> getRecorded.startAnimation { viewModel.getRecordings() }
-                    RecordingsFilter.ON_GOING_FILTER -> getOnGoing.startAnimation { viewModel.getRecordings() }
-                    RecordingsFilter.SCHEDULED_FILTER -> getScheduled.startAnimation { viewModel.getRecordings() }
+                    RecordingsFilter.RECORDED_FILTER -> binding.getRecorded.startAnimation { viewModel.getRecordings() }
+                    RecordingsFilter.ON_GOING_FILTER -> binding.getOnGoing.startAnimation { viewModel.getRecordings() }
+                    RecordingsFilter.SCHEDULED_FILTER -> binding.getScheduled.startAnimation { viewModel.getRecordings() }
                 }
             }
         } else {
@@ -105,25 +118,25 @@ class RecordingsFragment : SharedTransitionFragment(R.layout.fragment_recordings
                     allRecordings.forEach {
                         if (it.status == RecordingStatus.RECORDED) filteredRecordings.add(it)
                     }
-                    if (filteredRecordings.isEmpty()) showRecordings.setText(R.string.show_empty_recorded)
-                    else showRecordings.text = getQuantityString(R.plurals.show_recorded, filteredRecordings.size)
+                    if (filteredRecordings.isEmpty()) binding.showRecordings.setText(R.string.show_empty_recorded)
+                    else binding.showRecordings.text = getQuantityString(R.plurals.show_recorded, filteredRecordings.size)
                 }
                 RecordingsFilter.ON_GOING_FILTER -> {
                     allRecordings.forEach {
                         if (it.status == RecordingStatus.RECORDING) filteredRecordings.add(it)
                     }
-                    if (filteredRecordings.isEmpty()) showRecordings.setText(R.string.show_empty_ongoing_recordings)
-                    else showRecordings.text = getQuantityString(R.plurals.show_on_going_recording, filteredRecordings.size)
+                    if (filteredRecordings.isEmpty()) binding.showRecordings.setText(R.string.show_empty_ongoing_recordings)
+                    else binding.showRecordings.text = getQuantityString(R.plurals.show_on_going_recording, filteredRecordings.size)
                 }
                 RecordingsFilter.SCHEDULED_FILTER -> {
                     allRecordings.forEach {
                         if (it.status == RecordingStatus.SCHEDULED) filteredRecordings.add(it)
                     }
-                    if (filteredRecordings.isEmpty()) showRecordings.setText(R.string.show_empty_scheduled_recordings)
-                    else showRecordings.text = getQuantityString(R.plurals.show_scheduled_recording, filteredRecordings.size)
+                    if (filteredRecordings.isEmpty()) binding.showRecordings.setText(R.string.show_empty_scheduled_recordings)
+                    else binding.showRecordings.text = getQuantityString(R.plurals.show_scheduled_recording, filteredRecordings.size)
                 }
             }
-            showRecordings.visible()
+            binding.showRecordings.visible()
         }
     }
 }

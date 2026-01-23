@@ -1,23 +1,19 @@
 package com.kaltura.kflow.presentation.assetList
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amazonaws.mobile.client.results.SignInState
-import com.google.android.material.snackbar.Snackbar
 import com.kaltura.client.types.Asset
 import com.kaltura.client.types.ProgramAsset
 import com.kaltura.kflow.R
-import com.kaltura.kflow.presentation.aws.IotViewModel
+import com.kaltura.kflow.databinding.FragmentAnonymousLoginBinding
+import com.kaltura.kflow.databinding.FragmentVodListBinding
 import com.kaltura.kflow.presentation.base.BaseFragment
-import com.kaltura.kflow.presentation.epg.EpgFragment
 import com.kaltura.kflow.presentation.extension.*
-import kotlinx.android.synthetic.main.fragment_epg.*
-import kotlinx.android.synthetic.main.fragment_iot.*
-import kotlinx.android.synthetic.main.fragment_vod_list.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -43,21 +39,31 @@ class AssetListFragment : BaseFragment(R.layout.fragment_vod_list) {
             }
         }
     }
-
+    private var _binding: FragmentVodListBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentVodListBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
+        binding.toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
         initList()
     }
 
     private fun initList() {
-        list.setHasFixedSize(true)
-        list.layoutManager = LinearLayoutManager(requireContext())
-        list.layoutAnimation =
+        binding.list.setHasFixedSize(true)
+        binding.list.layoutManager = LinearLayoutManager(requireContext())
+        binding.list.layoutAnimation =
                 if (adapter.assets.isEmpty()) AnimationUtils.loadLayoutAnimation(context, R.anim.item_layout_animation)
                 else null
 
-        list.adapter = adapter
+        binding.list.adapter = adapter
         if (args.watchedAssets == null) adapter.assets = args.assets!!
         else adapter.watchedAssets = args.watchedAssets!!
 
@@ -65,7 +71,7 @@ class AssetListFragment : BaseFragment(R.layout.fragment_vod_list) {
             var liveAssetPosition = args.assets!!.indexOfFirst { it is ProgramAsset && it.isProgramInLive() }
             if (liveAssetPosition < 0) liveAssetPosition = 0
             if (liveAssetPosition > 2) liveAssetPosition -= 3 // minus 3 items from the top, to move live asset to the middle of the screen
-            list.scrollToPosition(liveAssetPosition)
+            binding.list.scrollToPosition(liveAssetPosition)
         }
     }
 

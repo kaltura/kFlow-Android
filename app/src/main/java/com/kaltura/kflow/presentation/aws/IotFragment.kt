@@ -1,7 +1,9 @@
 package com.kaltura.kflow.presentation.aws
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.amazonaws.mobile.client.results.SignInState
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttClientStatusCallback
@@ -11,14 +13,15 @@ import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException
 import com.kaltura.client.types.Epg
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentBookmarkBinding
+import com.kaltura.kflow.databinding.FragmentIotBinding
+import com.kaltura.kflow.databinding.FragmentVodListBinding
 import com.kaltura.kflow.entity.ChannelCS
 import com.kaltura.kflow.entity.EPGProgram
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
-import kotlinx.android.synthetic.main.fragment_iot.*
-import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.net.URL
@@ -50,43 +53,53 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
     private var epgassets = arrayListOf<EPGProgram>()
     private var channelassets = arrayListOf<ChannelCS>()
 
-    override fun debugView(): DebugView = debugView
     override val feature = Feature.IOT
-
+    private var _binding: FragmentIotBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentIotBinding.inflate(inflater,container,false)
+        val view = binding.root
+        return view
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        connect.visibleOrGone(epgUpdates.isNotEmpty())
-        register.setOnClickListener {
-            showEPGAssets.gone()
-            showLineupAssets.gone()
+        binding.connect.visibleOrGone(epgUpdates.isNotEmpty())
+        binding.register.setOnClickListener {
+            binding.showEPGAssets.gone()
+            binding.showLineupAssets.gone()
             makeRegisterRequest()
         }
-        connect.setOnClickListener {
-            showEPGAssets.gone()
-            showLineupAssets.gone()
+        binding.connect.setOnClickListener {
+            binding.showEPGAssets.gone()
+            binding.showLineupAssets.gone()
             viewModel.connect()
         }
 
-        showEPGAssets.navigateOnClick {
+        binding.showEPGAssets.navigateOnClick {
             if (epgassets.isNotEmpty())
                 IotFragmentDirections.navigateToAssetListCs(epgassets = epgassets.toTypedArray())
             else
                 IotFragmentDirections.navigateToAssetList(assets = epgUpdates.toTypedArray())
         }
 
-        showLineupAssets.navigateOnClick {
+        binding.showLineupAssets.navigateOnClick {
             IotFragmentDirections.navigateToChannelListCs(channelassets = channelassets.toTypedArray())
         }
     }
 
     override fun subscribeUI() {
         observeResource(viewModel.registrationEvent,
-            error = { register.error(lifecycleScope) },
+            error = { binding.register.error(lifecycleScope) },
             success = {
-                register.success(lifecycleScope)
+                binding.register.success(lifecycleScope)
                 Snackbar.make(requireView(), when (it) {
                     SignInState.DONE -> {
-                        connect.visible()
+                        binding.connect.visible()
                         viewModel.initMqtt()
                         "AWS Sign-in done."
                     }
@@ -139,40 +152,13 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
             success = {
                 longToast(it)
             })
-//        observeResource(viewModel.IOTLineupMessageEvent) {
-//            try {
-//                val jsonObject = JsonParser().parse(it) as JsonObject
-//                handleIOTUpdateEvent(jsonObject)
-//                longToast(jsonObject.toString())
-//            } catch (e: JsonSyntaxException) {
-//                e.printStackTrace()
-//                longToast("Error Parsing Message : $e")
-//            }
-//        }
-//        observeResource(viewModel.IOTannouncementMessageEvent,
-//            error = {
-//                it.printStackTrace()
-//                longToast("Subscribe to topic error: $it")
-//            },
-//            success = {
-//                longToast(it)
-//            })
-//        observeResource(viewModel.epgUpdates,
-//            error = {
-//                toast("Failed to fetch EPG updates: ${it.message ?: ""}")
-//            },
-//            success = {
-//                epgUpdates = it
-//                showEPGAssets.text = getQuantityString(R.plurals.show_updates, epgUpdates.size)
-//                showEPGAssets.visible()
-//            })
     }
 
     private fun makeRegisterRequest() {
         withInternetConnection {
             clearDebugView()
 
-            register.startAnimation {
+            binding.register.startAnimation {
                 viewModel.register()
             }
         }
@@ -197,8 +183,8 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                                     if (!data.isEmpty()){
                                         requireActivity().runOnUiThread {
                                             epgassets = data as ArrayList<EPGProgram>
-                                            showEPGAssets.text = getQuantityString(R.plurals.show_assets, epgassets.size)
-                                            showEPGAssets.visible()
+                                            binding.showEPGAssets.text = getQuantityString(R.plurals.show_assets, epgassets.size)
+                                            binding.showEPGAssets.visible()
                                         }
                                     }
                                 }
@@ -217,8 +203,8 @@ class IotFragment : SharedTransitionFragment(R.layout.fragment_iot) {
                                     if (!data.isEmpty()){
                                         requireActivity().runOnUiThread {
                                             channelassets = data as ArrayList<ChannelCS>
-                                            showLineupAssets.text = getQuantityString(R.plurals.show_assets, channelassets.size)
-                                            showLineupAssets.visible()
+                                            binding.showLineupAssets.text = getQuantityString(R.plurals.show_assets, channelassets.size)
+                                            binding.showLineupAssets.visible()
                                         }
                                     }
                                 }

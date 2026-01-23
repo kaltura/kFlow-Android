@@ -1,6 +1,7 @@
 package com.kaltura.kflow.presentation.debug
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.RelativeLayout
 import androidx.activity.addCallback
@@ -8,12 +9,12 @@ import androidx.annotation.LayoutRes
 import androidx.core.view.doOnLayout
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.kaltura.kflow.databinding.ViewBottomDebugBinding
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.base.BaseFragment
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.utils.saveToFile
 import com.kaltura.kflow.utils.screenWidth
-import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.json.JSONObject
 import org.koin.android.ext.android.inject
 
@@ -26,50 +27,55 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
     private val apiManager: PhoenixApiManager by inject()
     private var maxTitleWidth = 0
     private var minTitleWidth = 0
+    public var requestBodyString = ""
+    public var responseBodyString = ""
 
-    protected abstract fun debugView(): DebugView
-
+    private var _binding: ViewBottomDebugBinding? = null
+    private val bottomDebugBinding get() = _binding!!
     private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
             if (slideOffset > 0) {
                 val width = (minTitleWidth + (maxTitleWidth - minTitleWidth) * slideOffset).toInt()
-                debugTitle.width = width
+                bottomDebugBinding.debugTitle.width = width
             }
         }
 
         override fun onStateChanged(bottomSheet: View, @BottomSheetBehavior.State newState: Int) {
             when (newState) {
                 BottomSheetBehavior.STATE_COLLAPSED -> {
-                    debugTitle.width = minTitleWidth
-                    share.invisible()
+                    bottomDebugBinding.debugTitle.width = minTitleWidth
+                    bottomDebugBinding.share.invisible()
                 }
                 BottomSheetBehavior.STATE_EXPANDED -> {
-                    debugTitle.width = maxTitleWidth
-                    share.visible()
+                    bottomDebugBinding.debugTitle.width = maxTitleWidth
+                    bottomDebugBinding.share.visible()
                 }
-                else -> share.invisible()
+                else -> bottomDebugBinding.share.invisible()
             }
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        _binding = ViewBottomDebugBinding.bind(view)
 
         runOnMobile {
             initMobile()
         }
-        share.setOnClickListener { share() }
+        bottomDebugBinding.share.setOnClickListener {
+            share()
+        }
         apiManager.setDebugListener(this)
     }
 
     private fun initMobile() {
         maxTitleWidth = screenWidth()
-        debugTitle.doOnLayout { minTitleWidth = debugTitle.width }
+        bottomDebugBinding.debugTitle.doOnLayout { minTitleWidth = bottomDebugBinding.debugTitle.width }
 
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomDebugBinding.bottomSheetLayout)
         bottomSheetBehavior.isHideable = true
         bottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback)
-        debugTitle.setOnClickListener {
+        bottomDebugBinding.debugTitle.setOnClickListener {
             bottomSheetBehavior.state =
                     if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
                         BottomSheetBehavior.STATE_COLLAPSED
@@ -94,33 +100,36 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
     }
 
     override fun setRequestInfo(url: String, method: String, code: Int) {
-        debugView().requestUrl = url
-        debugView().requestMethod = method
-        debugView().responseCode = code
+        bottomDebugBinding.debugView.requestUrl = url
+        bottomDebugBinding.debugView.requestMethod = method
+        bottomDebugBinding.debugView.responseCode = code
     }
 
-    override fun setRequestBody(jsonObject: JSONObject) {
-        debugView().setRequestBody(jsonObject)
+    override fun setRequestBody(requestBody: JSONObject) {
+        bottomDebugBinding.debugView.setRequestBody(requestBody)
+        Log.d("Elad","DebugFragment setRequestBody requestBody : "+requestBody)
         runOnMobile {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
     }
 
-    override fun setResponseBody(jsonObject: JSONObject) {
-        debugView().setResponseBody(jsonObject)
+    override fun setResponseBody(responseBody: JSONObject) {
+        responseBodyString = responseBody.toString()
+        bottomDebugBinding.debugView.setResponseBody(responseBody)
+        Log.d("Elad","DebugFragment setResponseBody responseBody : "+responseBody)
     }
 
     override fun onError() {
-        debugView().onUnknownError()
+        bottomDebugBinding.debugView.onUnknownError()
     }
 
     private fun share() {
-        val file = saveToFile(requireContext(), debugView().sharedData)
+        val file = saveToFile(requireContext(), bottomDebugBinding.debugView.sharedData)
         requireActivity().shareFile(file)
     }
 
     protected fun clearDebugView() {
-        debugView().clear()
+        bottomDebugBinding.debugView.clear()
         runOnMobile {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }

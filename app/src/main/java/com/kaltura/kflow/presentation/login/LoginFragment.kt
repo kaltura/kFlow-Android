@@ -1,18 +1,18 @@
 package com.kaltura.kflow.presentation.login
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.kaltura.client.types.StringValue
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentLoginBinding
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
 import com.kaltura.kflow.utils.getUUID
-import com.kaltura.kflow.utils.getUUID2
-import kotlinx.android.synthetic.main.fragment_login.*
-import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -22,27 +22,38 @@ class LoginFragment : SharedTransitionFragment(R.layout.fragment_login) {
 
     private val viewModel: LoginViewModel by viewModel()
 
-    override fun debugView(): DebugView = debugView
     override val feature = Feature.LOGIN
+    private var _binding: FragmentLoginBinding? = null
+    private val binding get() = _binding!!
+        override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentLoginBinding.inflate(inflater,container,false)
+        val view = binding.root
+        return view
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        login.setOnClickListener {
+        binding.login.setOnClickListener {
             hideKeyboard()
-            makeLoginRequest(username.string, password.string, extraParamsKey.string,
-                    extraParamsDescription.string, extraParamsValue.string)
+            makeLoginRequest(binding.username.string, binding.password.string, binding.extraParamsKey.string,
+                binding.extraParamsDescription.string, binding.extraParamsValue.string)
         }
-        addExtraParams.setOnClickListener { showExtraParams(true) }
-        removeExtraParams.setOnClickListener { showExtraParams(false) }
+        binding.addExtraParams.setOnClickListener { showExtraParams(true) }
+        binding.removeExtraParams.setOnClickListener { showExtraParams(false) }
 
-        username.string = viewModel.getSavedUsername()
-        password.string = viewModel.getSavedPassword()
+        binding.username.string = viewModel.getSavedUsername()
+        binding.password.string = viewModel.getSavedPassword()
     }
 
     override fun subscribeUI() {
         observeResource(viewModel.loginRequest,
-                error = { login.error(lifecycleScope) },
-                success = { login.success(lifecycleScope) }
+                error = { binding.login.error(lifecycleScope) },
+                success = { binding.login.success(lifecycleScope) }
         )
     }
 
@@ -52,11 +63,11 @@ class LoginFragment : SharedTransitionFragment(R.layout.fragment_login) {
             clearDebugView()
             clearInputLayouts()
             if (email.isEmpty()) {
-                usernameInputLayout.showError("Empty username")
+                binding.usernameInputLayout.showError("Empty username")
                 return@withInternetConnection
             }
             if (password.isEmpty()) {
-                passwordInputLayout.showError("Empty password")
+                binding.passwordInputLayout.showError("Empty password")
                 return@withInternetConnection
             }
 
@@ -67,31 +78,35 @@ class LoginFragment : SharedTransitionFragment(R.layout.fragment_login) {
                     value = extraParamsValue
                 })
 
-            login.startAnimation {
+            binding.login.startAnimation {
                 viewModel.makeLoginRequest(email, password, getUUID(), extraParams)
             }
         }
     }
 
     private fun showExtraParams(isShow: Boolean) {
-        addExtraParams.visibleOrGone(isShow.not())
-        removeExtraParams.visibleOrGone(isShow)
-        extraParamsKeyInputLayout.visibleOrGone(isShow)
-        extraParamsDescriptionInputLayout.visibleOrGone(isShow)
-        extraParamsValueInputLayout.visibleOrGone(isShow)
+        binding.addExtraParams.visibleOrGone(isShow.not())
+        binding.removeExtraParams.visibleOrGone(isShow)
+        binding.extraParamsKeyInputLayout.visibleOrGone(isShow)
+        binding.extraParamsDescriptionInputLayout.visibleOrGone(isShow)
+        binding.extraParamsValueInputLayout.visibleOrGone(isShow)
 
         if (isShow.not()) {
-            extraParamsKey.text?.clear()
-            extraParamsDescription.text?.clear()
-            extraParamsValue.text?.clear()
+            binding.extraParamsKey.text?.clear()
+            binding.extraParamsDescription.text?.clear()
+            binding.extraParamsValue.text?.clear()
         }
     }
 
     private fun clearInputLayouts() {
-        usernameInputLayout.hideError()
-        passwordInputLayout.hideError()
-        extraParamsKeyInputLayout.hideError()
-        extraParamsDescriptionInputLayout.hideError()
-        extraParamsValueInputLayout.hideError()
+        binding.usernameInputLayout.hideError()
+        binding.passwordInputLayout.hideError()
+        binding.extraParamsKeyInputLayout.hideError()
+        binding.extraParamsDescriptionInputLayout.hideError()
+        binding.extraParamsValueInputLayout.hideError()
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

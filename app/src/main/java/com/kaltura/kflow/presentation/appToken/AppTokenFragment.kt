@@ -1,17 +1,18 @@
 package com.kaltura.kflow.presentation.appToken
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentAppTokenBinding
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
 import com.kaltura.kflow.utils.getUUID
-import kotlinx.android.synthetic.main.fragment_app_token.*
-import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -21,52 +22,62 @@ class AppTokenFragment : SharedTransitionFragment(R.layout.fragment_app_token) {
 
     private val viewModel: AppTokenViewModel by viewModel()
 
-    override fun debugView(): DebugView = debugView
     override val feature = Feature.LOGIN_APP_TOKEN
-
+    private var _binding: FragmentAppTokenBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentAppTokenBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        explicitLogin.setOnClickListener {
+        binding.explicitLogin.setOnClickListener {
             hideKeyboard()
-            makeExplicitLoginRequest(username.string, password.string)
+            makeExplicitLoginRequest(binding.username.string, binding.password.string)
         }
-        appToken.setOnClickListener {
+        binding.appToken.setOnClickListener {
             hideKeyboard()
             makeAppTokenStartSessionRequest()
         }
-        revokeSession.setOnClickListener {
+        binding.revokeSession.setOnClickListener {
             hideKeyboard()
             makeRevokeSessionRequest()
         }
 
-        username.string = viewModel.getSavedUsername()
-        password.string = viewModel.getSavedPassword()
+        binding.username.string = viewModel.getSavedUsername()
+        binding.password.string = viewModel.getSavedPassword()
     }
 
     override fun subscribeUI() {
         observeResource(viewModel.loginRequest,
                 error = {
-                    explicitLogin.error(lifecycleScope)
-                    appToken.error(lifecycleScope)
+                    binding.explicitLogin.error(lifecycleScope)
+                    binding.appToken.error(lifecycleScope)
                 },
                 success = {
-                    explicitLogin.success(lifecycleScope)
-                    appToken.success(lifecycleScope)
-                    viewModel.saveUserCreds(username.string, password.string)
+                    binding.explicitLogin.success(lifecycleScope)
+                    binding.appToken.success(lifecycleScope)
+                    viewModel.saveUserCreds(binding.username.string, binding.password.string)
                 }
         )
         observeResource(viewModel.revokeSessionRequest,
-                error = { revokeSession.error(lifecycleScope) },
-                success = { revokeSession.success(lifecycleScope) }
+                error = { binding.revokeSession.error(lifecycleScope) },
+                success = { binding.revokeSession.success(lifecycleScope) }
         )
         observeResource(viewModel.anonymousLoginRequest,
                 error = {
-                    explicitLogin.error(lifecycleScope)
-                    appToken.error(lifecycleScope)
+                    binding.explicitLogin.error(lifecycleScope)
+                    binding. appToken.error(lifecycleScope)
                 },
                 success = {
-                    explicitLogin.error(lifecycleScope)
-                    appToken.error(lifecycleScope)
+                    binding.explicitLogin.error(lifecycleScope)
+                    binding.appToken.error(lifecycleScope)
                     Snackbar.make(requireView(), "Anonymous login!", Snackbar.LENGTH_LONG).show()
                 }
         )
@@ -77,15 +88,15 @@ class AppTokenFragment : SharedTransitionFragment(R.layout.fragment_app_token) {
             clearDebugView()
             clearInputLayouts()
             if (email.isEmpty()) {
-                usernameInputLayout.showError("Empty username")
+                binding.usernameInputLayout.showError("Empty username")
                 return@withInternetConnection
             }
             if (password.isEmpty()) {
-                passwordInputLayout.showError("Empty password")
+                binding.passwordInputLayout.showError("Empty password")
                 return@withInternetConnection
             }
 
-            explicitLogin.startAnimation {
+            binding.explicitLogin.startAnimation {
                 viewModel.makeExplicitLoginRequest(email, password, getUUID())
             }
         }
@@ -96,7 +107,7 @@ class AppTokenFragment : SharedTransitionFragment(R.layout.fragment_app_token) {
             clearDebugView()
             clearInputLayouts()
 
-            appToken.startAnimation {
+            binding.appToken.startAnimation {
                 viewModel.makeAppTokenStartRequest(getUUID())
             }
         }
@@ -107,14 +118,14 @@ class AppTokenFragment : SharedTransitionFragment(R.layout.fragment_app_token) {
             clearDebugView()
             clearInputLayouts()
 
-            revokeSession.startAnimation {
+            binding.revokeSession.startAnimation {
                 viewModel.makeRevokeSessionRequest()
             }
         }
     }
 
     private fun clearInputLayouts() {
-        usernameInputLayout.hideError()
-        passwordInputLayout.hideError()
+        binding.usernameInputLayout.hideError()
+        binding.passwordInputLayout.hideError()
     }
 }

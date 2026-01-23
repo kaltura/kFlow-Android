@@ -16,12 +16,7 @@ import com.kaltura.kflow.manager.AwsManager
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.manager.PreferenceManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
-import com.kaltura.kflow.presentation.extension.getQuantityString
-import com.kaltura.kflow.presentation.extension.longToast
-import com.kaltura.kflow.presentation.extension.visible
 import com.kaltura.kflow.utils.*
-import kotlinx.android.synthetic.main.fragment_iot.*
-import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*

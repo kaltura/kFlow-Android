@@ -53,6 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@+id/requestSort"
                 android:textIsSelectable="true"
+                android:textColor="@color/black"
                 tools:text="Request" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -84,6 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@+id/responseSort"
                 android:textIsSelectable="true"
+                android:textColor="@color/black"
                 tools:text="Response" />
 
             <androidx.appcompat.widget.AppCompatImageView

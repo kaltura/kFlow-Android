@@ -15,7 +15,7 @@ fun FragmentActivity.shareFile(file: File) {
         val intentShareFile = Intent(Intent.ACTION_SEND)
         intentShareFile.type = "text/plain"
         val fileUri: Uri = if (Build.VERSION.SDK_INT > 21) {
-            FileProvider.getUriForFile(this, "$packageName.fileprovider", file)
+            FileProvider.getUriForFile(this, "$packageName.provider", file)
         } else {
             Uri.fromFile(file)
         }

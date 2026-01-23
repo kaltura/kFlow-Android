@@ -7,9 +7,10 @@ import com.kaltura.client.types.PpvPrice
 import com.kaltura.client.types.ProductPrice
 import com.kaltura.client.types.SubscriptionPrice
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.ItemProductPriceBinding
 import com.kaltura.kflow.presentation.extension.inflate
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_product_price.*
+
 import java.util.*
 
 /**
@@ -24,20 +25,21 @@ class ProductPriceListAdapter(private val productPrices: ArrayList<ProductPrice>
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) = holder.bind(productPrices[position])
 
     override fun getItemCount() = productPrices.size
-
+    private var _binding: ItemProductPriceBinding? = null
+    private val binding get() = _binding!!
     inner class MyViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         fun bind(productPrice: ProductPrice) {
-            productPriceType.text = "Product Type: ${productPrice.productType.value}"
+            binding.productPriceType.text = "Product Type: ${productPrice.productType.value}"
 
             when(productPrice.purchaseStatus.value.equals("FREE",true)) {
-                true -> price.text = "Actual price: FREE"
-                false -> price.text = "Actual price: ${productPrice.fullPrice.currencySign}${productPrice.fullPrice.amount}"
+                true -> binding.price.text = "Actual price: FREE"
+                false -> binding.price.text = "Actual price: ${productPrice.fullPrice.currencySign}${productPrice.fullPrice.amount}"
             }
 
             when(productPrice.purchaseStatus.value.equals("FREE",true)) {
-                true -> discountPrice.text = "Discount price: FREE"
-                false -> discountPrice.text = "Discount price: ${productPrice.price.currencySign}${productPrice.price.amount}"
+                true -> binding.discountPrice.text = "Discount price: FREE"
+                false -> binding.discountPrice.text = "Discount price: ${productPrice.price.currencySign}${productPrice.price.amount}"
             }
 
             if (productPrice is SubscriptionPrice) {

@@ -1,16 +1,17 @@
 package com.kaltura.kflow.presentation.anonymousLogin
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentAnonymousLoginBinding
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
 import com.kaltura.kflow.utils.getUUID
-import kotlinx.android.synthetic.main.fragment_anonymous_login.login
-import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -20,13 +21,23 @@ class AnonymousLoginFragment : SharedTransitionFragment(R.layout.fragment_anonym
 
     private val viewModel: AnonymousLoginViewModel by viewModel()
 
-    override fun debugView(): DebugView = debugView
-
     override val feature = Feature.ANONYMOUS_LOGIN
+    private var _binding: FragmentAnonymousLoginBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentAnonymousLoginBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        login.setOnClickListener {
+
+        binding.login.setOnClickListener {
             hideKeyboard()
             makeAnonymousLoginRequest()
         }
@@ -34,15 +45,15 @@ class AnonymousLoginFragment : SharedTransitionFragment(R.layout.fragment_anonym
 
     override fun subscribeUI() {
         observeResource(viewModel.loginRequest,
-                error = { login.error(lifecycleScope) },
-                success = { login.success(lifecycleScope) }
+                error = { binding.login.error(lifecycleScope) },
+                success = { binding.login.success(lifecycleScope) }
         )
     }
 
     private fun makeAnonymousLoginRequest() {
         withInternetConnection {
             clearDebugView()
-            login.startAnimation {
+            binding.login.startAnimation {
                 viewModel.anonymousLogin(getUUID())
             }
         }

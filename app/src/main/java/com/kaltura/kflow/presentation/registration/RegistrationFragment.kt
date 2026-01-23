@@ -1,15 +1,18 @@
 package com.kaltura.kflow.presentation.registration
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentCollectionsBinding
+import com.kaltura.kflow.databinding.FragmentRecordingsBinding
+import com.kaltura.kflow.databinding.FragmentRegistrationBinding
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
-import kotlinx.android.synthetic.main.fragment_registration.*
-import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -20,20 +23,30 @@ class RegistrationFragment : SharedTransitionFragment(R.layout.fragment_registra
     private val viewModel: RegistrationViewModel by viewModel()
     override val feature = Feature.REGISTRATION
 
-    override fun debugView(): DebugView = debugView
-
+    private var _binding: FragmentRegistrationBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentRegistrationBinding.inflate(inflater,container,false)
+        val view = binding.root
+        return view
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        register.setOnClickListener {
+        binding.register.setOnClickListener {
             hideKeyboard()
-            makeRegistrationRequest(firstName.string, lastName.string, username.string, email.string, password.string)
+            makeRegistrationRequest(binding.firstName.string, binding.lastName.string, binding.username.string, binding.email.string, binding.password.string)
         }
     }
 
     override fun subscribeUI() {
         observeResource(viewModel.registerRequest,
-                error = { register.error(lifecycleScope) },
-                success = { register.success(lifecycleScope) }
+                error = { binding.register.error(lifecycleScope) },
+                success = { binding.register.success(lifecycleScope) }
         )
     }
 
@@ -42,36 +55,36 @@ class RegistrationFragment : SharedTransitionFragment(R.layout.fragment_registra
             clearDebugView()
             clearInputLayouts()
             if (firstName.isEmpty()) {
-                firstNameInputLayout.showError("Empty first name")
+                binding.firstNameInputLayout.showError("Empty first name")
                 return@withInternetConnection
             }
             if (lastName.isEmpty()) {
-                lastNameInputLayout.showError("Empty last name")
+                binding.lastNameInputLayout.showError("Empty last name")
                 return@withInternetConnection
             }
             if (userName.isEmpty()) {
-                userNameInputLayout.showError("Empty username")
+                binding.userNameInputLayout.showError("Empty username")
                 return@withInternetConnection
             }
             if (email.isEmpty()) {
-                emailInputLayout.showError("Empty email")
+                binding.emailInputLayout.showError("Empty email")
                 return@withInternetConnection
             }
             if (password.isEmpty()) {
-                passwordInputLayout.showError("Empty password")
+                binding.passwordInputLayout.showError("Empty password")
                 return@withInternetConnection
             }
-            register.startAnimation {
+            binding.register.startAnimation {
                 viewModel.register(firstName, lastName, userName, email, password)
             }
         }
     }
 
     private fun clearInputLayouts() {
-        firstNameInputLayout.hideError()
-        lastNameInputLayout.hideError()
-        userNameInputLayout.hideError()
-        emailInputLayout.hideError()
-        passwordInputLayout.hideError()
+        binding.firstNameInputLayout.hideError()
+        binding.lastNameInputLayout.hideError()
+        binding.userNameInputLayout.hideError()
+        binding.emailInputLayout.hideError()
+        binding.passwordInputLayout.hideError()
     }
 }

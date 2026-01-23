@@ -23,7 +23,9 @@
             android:paddingTop="5dp"
             android:paddingEnd="10dp"
             android:paddingBottom="5dp"
-            android:src="@drawable/exo_controls_play" />
+            android:src="@drawable/play" />
+
+
 
         <ImageButton
             android:id="@+id/pause"
@@ -34,7 +36,7 @@
             android:paddingTop="5dp"
             android:paddingEnd="10dp"
             android:paddingBottom="5dp"
-            android:src="@drawable/exo_controls_pause" />
+            android:src="@drawable/pause" />
 
         <ImageButton
             android:id="@+id/startover"
@@ -45,7 +47,7 @@
             android:paddingTop="5dp"
             android:paddingEnd="10dp"
             android:paddingBottom="5dp"
-            android:src="@drawable/exo_controls_repeat_all" />
+            android:src="@drawable/replay" />
 
     </LinearLayout>
 

@@ -2,21 +2,25 @@ package com.kaltura.kflow.presentation.player
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
-import com.kaltura.android.exoplayer2.C
+import com.kaltura.androidx.media3.common.util.UnstableApi
 import com.kaltura.client.types.Asset
+import com.kaltura.dtg.exoparser.C
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.ViewDebugBinding
+import com.kaltura.kflow.databinding.ViewPlayerControlBinding
 import com.kaltura.kflow.presentation.extension.getColor
 import com.kaltura.kflow.presentation.extension.inflate
 import com.kaltura.playkit.PKLog
 import com.kaltura.playkit.PlayerState
 import com.kaltura.tvplayer.KalturaPlayer
-import kotlinx.android.synthetic.main.view_player_control.view.*
+
 import java.text.SimpleDateFormat
 import java.util.*
 
-class PlaybackControlsView @JvmOverloads constructor(
+@UnstableApi class PlaybackControlsView @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0) : LinearLayout(context, attrs, defStyleAttr) {
@@ -31,15 +35,17 @@ class PlaybackControlsView @JvmOverloads constructor(
     private val formatter = Formatter(formatBuilder, Locale.getDefault())
     private var dragging = false
     private val updateProgressAction = Runnable { updateProgress() }
-
+    private var _binding: ViewPlayerControlBinding? = null
+    private val binding get() = _binding!!
     init {
-        inflate(R.layout.view_player_control, true)
-        play.setOnClickListener { player?.play() }
-        pause.setOnClickListener { player?.pause() }
-        mediacontrollerProgress.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+//        inflate(R.layout.view_player_control, true)
+        _binding = ViewPlayerControlBinding.inflate(LayoutInflater.from(context), this,true)
+        binding.play.setOnClickListener { player?.play() }
+        binding.pause.setOnClickListener { player?.pause() }
+        binding.mediacontrollerProgress.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
-                    timeCurrent.text = stringForTime(positionValue(progress))
+                    binding.timeCurrent.text = stringForTime(positionValue(progress))
                 }
             }
 
@@ -67,9 +73,9 @@ class PlaybackControlsView @JvmOverloads constructor(
         val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
         val startTime = dateFormat.format(Date(startDate))
         val endTime = dateFormat.format(Date(endDate))
-        timeCurrent.text = startTime
-        time.text = endTime
-        mediacontrollerProgress.progress = (PROGRESS_BAR_MAX.toFloat() * currentProgress / durationMs).toInt()
+        binding.timeCurrent.text = startTime
+        binding.time.text = endTime
+        binding.mediacontrollerProgress.progress = (PROGRESS_BAR_MAX.toFloat() * currentProgress / durationMs).toInt()
     }
 
     private fun updateVodProgress() {
@@ -79,14 +85,14 @@ class PlaybackControlsView @JvmOverloads constructor(
 
         if (duration != C.TIME_UNSET) {
             log.d("updateProgress Set Duration:$duration")
-            time.text = stringForTime(duration)
+            binding.time.text = stringForTime(duration)
         }
         if (!dragging && position != C.POSITION_UNSET.toLong() && duration != C.TIME_UNSET) {
             log.d("updateProgress Set Position:$position")
-            timeCurrent.text = stringForTime(position)
-            mediacontrollerProgress.progress = progressBarValue(position)
+            binding.timeCurrent.text = stringForTime(position)
+            binding.mediacontrollerProgress.progress = progressBarValue(position)
         }
-        mediacontrollerProgress.secondaryProgress = progressBarValue(bufferedPosition)
+        binding.mediacontrollerProgress.secondaryProgress = progressBarValue(bufferedPosition)
         // Remove scheduled updates.
         removeCallbacks(updateProgressAction)
         // Schedule an update if necessary.
@@ -130,7 +136,7 @@ class PlaybackControlsView @JvmOverloads constructor(
     }
 
     fun setOnStartOverClickListener(listener: OnClickListener?) {
-        startover.setOnClickListener(listener)
+        binding.startover.setOnClickListener(listener)
     }
 
     fun release() = removeCallbacks(updateProgressAction)
@@ -138,10 +144,10 @@ class PlaybackControlsView @JvmOverloads constructor(
     fun resume() = updateProgress()
 
     fun disableControllersForLive() {
-        pause.isEnabled = false
-        play.isEnabled = false
-        pause.drawable.mutate().setTint(getColor(android.R.color.darker_gray))
-        play.drawable.mutate().setTint(getColor(android.R.color.darker_gray))
-        mediacontrollerProgress.setOnTouchListener { _, _ -> true }
+        binding.pause.isEnabled = false
+        binding.play.isEnabled = false
+        binding.pause.drawable.mutate().setTint(getColor(android.R.color.darker_gray))
+        binding.play.drawable.mutate().setTint(getColor(android.R.color.darker_gray))
+        binding.mediacontrollerProgress.setOnTouchListener { _, _ -> true }
     }
 }

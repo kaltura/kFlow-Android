@@ -1,20 +1,22 @@
 package com.kaltura.kflow.presentation.subscription
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentMediaPageBinding
+import com.kaltura.kflow.databinding.FragmentSubscriptionBinding
 import com.kaltura.kflow.entity.ParentRecyclerViewItem
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
 import com.kaltura.kflow.presentation.ui.ProgressDialog
-import kotlinx.android.synthetic.main.fragment_subscription.*
-import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.collections.ArrayList
 
@@ -33,23 +35,33 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
     private val progressDialog by lazy { ProgressDialog(activity) }
     private var selectedPackageBaseId: Double = 0.0
 
-    override fun debugView(): DebugView = debugView
     override val feature = Feature.SUBSCRIPTION
-
+    private var _binding: FragmentSubscriptionBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentSubscriptionBinding.inflate(inflater,container,false)
+        val view = binding.root
+        return view
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initPackageList()
         initEntitlementList()
-        showAssets.setOnClickListener {
+        binding.showAssets.setOnClickListener {
             hideKeyboard()
             showPackages()
         }
-        getPackages.setOnClickListener {
+        binding.getPackages.setOnClickListener {
             hideKeyboard()
-            makeGetPackageListRequest(packageAssetType.string)
+            makeGetPackageListRequest(binding.packageAssetType.string)
         }
-        getEntitlements.setOnClickListener {
+        binding.getEntitlements.setOnClickListener {
             hideKeyboard()
             makeGetEntitlementListRequest()
         }
@@ -57,22 +69,22 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
 
     override fun subscribeUI() {
         observeResource(viewModel.assetList,
-            error = { getPackages.error(lifecycleScope) },
+            error = { binding.getPackages.error(lifecycleScope) },
             success = {
                 assets = it
-                showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
-                showAssets.visible()
-                getPackages.success(lifecycleScope)
+                binding.showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
+                binding.showAssets.visible()
+                binding.getPackages.success(lifecycleScope)
             })
         observeResource(viewModel.entitlementList,
-            error = { getEntitlements.error(lifecycleScope) },
+            error = { binding.getEntitlements.error(lifecycleScope) },
             success = {
-                getEntitlements.success(lifecycleScope)
+                binding.getEntitlements.success(lifecycleScope)
                 showEntitlements(it)
             })
         observeResource(viewModel.subscriptionList) {
             subscriptionListAdapter.addSubscriptionToPackage(selectedPackageBaseId, it)
-            packageList.adapter = subscriptionListAdapter
+            binding.packageList.adapter = subscriptionListAdapter
         }
         observeResource(viewModel.assetsInSubscription) {
             hideLoadingDialog()
@@ -82,27 +94,27 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
     }
 
     private fun initPackageList() {
-        packageList.isNestedScrollingEnabled = false
-        packageList.layoutManager = LinearLayoutManager(requireContext())
-        packageList.addItemDecoration(
+        binding.packageList.isNestedScrollingEnabled = false
+        binding.packageList.layoutManager = LinearLayoutManager(requireContext())
+        binding.packageList.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
                 LinearLayoutManager.VERTICAL
             )
         )
-        packageList.adapter = subscriptionListAdapter
+        binding.packageList.adapter = subscriptionListAdapter
     }
 
     private fun initEntitlementList() {
-        entitlementList.isNestedScrollingEnabled = false
-        entitlementList.layoutManager = LinearLayoutManager(requireContext())
-        entitlementList.addItemDecoration(
+        binding.entitlementList.isNestedScrollingEnabled = false
+        binding.entitlementList.layoutManager = LinearLayoutManager(requireContext())
+        binding.entitlementList.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
                 LinearLayoutManager.VERTICAL
             )
         )
-        entitlementList.adapter = entitlementAdapter
+        binding.entitlementList.adapter = entitlementAdapter
     }
 
     private fun makeGetPackageListRequest(packageType: String) {
@@ -111,33 +123,33 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
             clearInputLayouts()
 
             if (packageType.isEmpty()) {
-                packageAssetTypeInputLayout.showError("Empty package type")
+                binding.packageAssetTypeInputLayout.showError("Empty package type")
                 return@withInternetConnection
             }
 
-            showAssets.gone()
-            packageList.gone()
-            entitlementList.gone()
+            binding.showAssets.gone()
+            binding.packageList.gone()
+            binding.entitlementList.gone()
 
-            getPackages.startAnimation {
+            binding.getPackages.startAnimation {
                 viewModel.getPackageList(packageType)
             }
         }
     }
 
     private fun clearInputLayouts() {
-        packageAssetTypeInputLayout.hideError()
+        binding.packageAssetTypeInputLayout.hideError()
     }
 
     private fun makeGetEntitlementListRequest() {
         withInternetConnection {
             clearDebugView()
 
-            showAssets.gone()
-            packageList.gone()
-            entitlementList.gone()
+            binding.showAssets.gone()
+            binding.packageList.gone()
+            binding.entitlementList.gone()
 
-            getEntitlements.startAnimation {
+            binding.getEntitlements.startAnimation {
                 viewModel.getEntitlementList()
             }
         }
@@ -158,20 +170,20 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
     }
 
     private fun showPackages() {
-        packageList.visible()
-        entitlementList.gone()
-        showAssets.gone()
+        binding.packageList.visible()
+        binding.entitlementList.gone()
+        binding.showAssets.gone()
         val packages = ArrayList<ParentRecyclerViewItem<Asset, Subscription>>()
         assets.forEach { packages.add(ParentRecyclerViewItem(it, arrayListOf())) }
         subscriptionListAdapter = SubscriptionListAdapter(packages).apply {
             packageGetSubscriptionListener = ::onPackageGetSubscriptionClicked
             subscriptionListener = ::onSubscriptionClicked
         }
-        packageList.adapter = subscriptionListAdapter
+        binding.packageList.adapter = subscriptionListAdapter
     }
 
     private fun showEntitlements(entitlements: ArrayList<Entitlement>) {
-        entitlementList.visible()
+        binding.entitlementList.visible()
         entitlementAdapter.entitlements = entitlements
     }
 

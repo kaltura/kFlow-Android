@@ -2,7 +2,9 @@ package com.kaltura.kflow.presentation.mediaPage
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
@@ -10,12 +12,13 @@ import com.github.leandroborgesferreira.loadingbutton.presentation.State
 import com.kaltura.client.enums.RuleType
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentFavoritesBinding
+import com.kaltura.kflow.databinding.FragmentMainBinding
+import com.kaltura.kflow.databinding.FragmentMediaPageBinding
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
-import kotlinx.android.synthetic.main.fragment_media_page.*
-import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -28,73 +31,83 @@ class MediaPageFragment : SharedTransitionFragment(R.layout.fragment_media_page)
     private var parentalRuleId = 0
     private var asset: Asset? = null
 
-    override fun debugView(): DebugView = debugView
     override val feature by lazy {
         when {
             args.isKeepAlive -> Feature.KEEP_ALIVE
             else -> Feature.MEDIA_PAGE
         }
     }
-
+    private var _binding: FragmentMediaPageBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentMediaPageBinding.inflate(inflater,container,false)
+        val view = binding.root
+        return view
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        playAsset.setOnClickListener {
+        binding.playAsset.setOnClickListener {
             navigate(MediaPageFragmentDirections.navigateToPlayer(args.isKeepAlive, asset = asset!!))
         }
-        getProductPrice.setOnClickListener {
+        binding.getProductPrice.setOnClickListener {
             hideKeyboard()
-            getProductPriceRequest(mediaId.string)
+            getProductPriceRequest(binding.mediaId.string)
         }
-        getBookmark.setOnClickListener {
+        binding.getBookmark.setOnClickListener {
             hideKeyboard()
-            getBookmarkRequest(mediaId.string)
+            getBookmarkRequest(binding.mediaId.string)
         }
-        getAssetRules.setOnClickListener {
+        binding.getAssetRules.setOnClickListener {
             hideKeyboard()
-            getAssetRulesRequest(mediaId.string)
+            getAssetRulesRequest(binding.mediaId.string)
         }
-        checkAll.setOnClickListener {
+        binding.checkAll.setOnClickListener {
             hideKeyboard()
-            checkAllTogetherRequest(mediaId.string)
+            checkAllTogetherRequest(binding.mediaId.string)
         }
-        insertPin.setOnClickListener {
+        binding.insertPin.setOnClickListener {
             hideKeyboard()
-            if (pinInputLayout.isGone) {
+            if (binding.pinInputLayout.isGone) {
                 showPinInput()
             } else {
-                checkPinRequest(pin.string)
+                checkPinRequest(binding.pin.string)
             }
         }
-        get.setOnClickListener {
+        binding.get.setOnClickListener {
             hideKeyboard()
-            getAssetRequest(mediaId.string)
+            getAssetRequest(binding.mediaId.string)
         }
         validateButtons()
     }
 
     override fun subscribeUI() {
         observeResource(viewModel.asset,
-                error = { get.error(lifecycleScope) },
+                error = { binding.get.error(lifecycleScope) },
                 success = {
-                    get.success(lifecycleScope)
+                    binding.get.success(lifecycleScope)
                     asset = it
                     validateButtons()
                 })
         observeResource(viewModel.productPrices,
-                error = { getProductPrice.error(lifecycleScope) },
-                success = { getProductPrice.success(lifecycleScope) })
+                error = { binding.getProductPrice.error(lifecycleScope) },
+                success = { binding.getProductPrice.success(lifecycleScope) })
         observeResource(viewModel.bookmarks,
-                error = { getBookmark.error(lifecycleScope) },
-                success = { getBookmark.success(lifecycleScope) })
+                error = { binding.getBookmark.error(lifecycleScope) },
+                success = { binding.getBookmark.success(lifecycleScope) })
         observeResource(viewModel.userAssetRules,
                 error = {
-                    if (getAssetRules.getState() == State.PROGRESS) getAssetRules.error(lifecycleScope)
-                    else checkAll.error(lifecycleScope)
+                    if (binding.getAssetRules.getState() == State.PROGRESS) binding.getAssetRules.error(lifecycleScope)
+                    else binding.checkAll.error(lifecycleScope)
                 },
                 success = {
-                    if (getAssetRules.getState() == State.PROGRESS) getAssetRules.success(lifecycleScope)
-                    else checkAll.success(lifecycleScope)
+                    if (binding.getAssetRules.getState() == State.PROGRESS) binding.getAssetRules.success(lifecycleScope)
+                    else binding.checkAll.success(lifecycleScope)
                     handleUserRules(it)
                     validateButtons()
                 })
@@ -106,15 +119,15 @@ class MediaPageFragment : SharedTransitionFragment(R.layout.fragment_media_page)
             clearInputLayouts()
 
             if (assetId.isEmpty()) {
-                mediaIdInputLayout.showError("Empty media ID")
+                binding.mediaIdInputLayout.showError("Empty media ID")
                 return@withInternetConnection
             }
 
             asset = null
             parentalRuleId = 0
-            pin.string = ""
+            binding.pin.string = ""
             validateButtons()
-            get.startAnimation {
+            binding.get.startAnimation {
                 viewModel.getAsset(assetId)
             }
         }
@@ -126,11 +139,11 @@ class MediaPageFragment : SharedTransitionFragment(R.layout.fragment_media_page)
             clearInputLayouts()
 
             if (assetId.isEmpty()) {
-                mediaIdInputLayout.showError("Empty media ID")
+                binding.mediaIdInputLayout.showError("Empty media ID")
                 return@withInternetConnection
             }
 
-            getProductPrice.startAnimation {
+            binding.getProductPrice.startAnimation {
                 viewModel.getProductPrice(assetId)
             }
         }
@@ -142,11 +155,11 @@ class MediaPageFragment : SharedTransitionFragment(R.layout.fragment_media_page)
             clearInputLayouts()
 
             if (assetId.isEmpty()) {
-                mediaIdInputLayout.showError("Empty media ID")
+                binding.mediaIdInputLayout.showError("Empty media ID")
                 return@withInternetConnection
             }
 
-            getBookmark.startAnimation {
+            binding.getBookmark.startAnimation {
                 viewModel.getBookmark(assetId)
             }
         }
@@ -158,15 +171,15 @@ class MediaPageFragment : SharedTransitionFragment(R.layout.fragment_media_page)
             clearInputLayouts()
 
             if (assetId.isEmpty()) {
-                mediaIdInputLayout.showError("Empty media ID")
+                binding.mediaIdInputLayout.showError("Empty media ID")
                 return@withInternetConnection
             }
             if (TextUtils.isDigitsOnly(assetId).not()) {
-                mediaIdInputLayout.showError("Wrong input")
+                binding.mediaIdInputLayout.showError("Wrong input")
                 return@withInternetConnection
             }
 
-            getAssetRules.startAnimation {
+            binding.getAssetRules.startAnimation {
                 viewModel.getAssetRules(assetId)
             }
         }
@@ -178,15 +191,15 @@ class MediaPageFragment : SharedTransitionFragment(R.layout.fragment_media_page)
             clearInputLayouts()
 
             if (assetId.isEmpty()) {
-                mediaIdInputLayout.showError("Empty media ID")
+                binding.mediaIdInputLayout.showError("Empty media ID")
                 return@withInternetConnection
             }
             if (TextUtils.isDigitsOnly(assetId).not()) {
-                mediaIdInputLayout.showError("Wrong input")
+                binding.mediaIdInputLayout.showError("Wrong input")
                 return@withInternetConnection
             }
 
-            checkAll.startAnimation {
+            binding.checkAll.startAnimation {
                 viewModel.checkAllTogether(assetId)
             }
         }
@@ -204,33 +217,33 @@ class MediaPageFragment : SharedTransitionFragment(R.layout.fragment_media_page)
     }
 
     private fun clearInputLayouts() {
-        mediaIdInputLayout.hideError()
+        binding.mediaIdInputLayout.hideError()
     }
 
     private fun showPinInput() {
-        pinInputLayout.visible()
-        insertPin.text = "Check pin"
-        showKeyboard(pin)
+        binding.pinInputLayout.visible()
+        binding.insertPin.text = "Check pin"
+        showKeyboard(binding.pin)
     }
 
     private fun validateButtons() {
         val isVisible = asset != null
-        playAsset.visibleOrGone(isVisible)
-        getProductPrice.visibleOrGone(isVisible)
-        getBookmark.visibleOrGone(isVisible)
-        getAssetRules.visibleOrGone(isVisible)
-        checkAll.visibleOrGone(isVisible)
+        binding.playAsset.visibleOrGone(isVisible)
+        binding.getProductPrice.visibleOrGone(isVisible)
+        binding.getBookmark.visibleOrGone(isVisible)
+        binding.getAssetRules.visibleOrGone(isVisible)
+        binding.checkAll.visibleOrGone(isVisible)
         validatePinLayout()
     }
 
     private fun validatePinLayout() {
         if (parentalRuleId > 0) {
-            pinLayout.visible()
+            binding.pinLayout.visible()
         } else {
-            pin.string = ""
-            pinLayout.gone()
-            pinInputLayout.gone()
-            insertPin.text = "Insert pin"
+            binding.pin.string = ""
+            binding.pinLayout.gone()
+            binding.pinInputLayout.gone()
+            binding.insertPin.text = "Insert pin"
         }
     }
 

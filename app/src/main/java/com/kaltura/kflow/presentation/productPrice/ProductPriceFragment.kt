@@ -1,18 +1,21 @@
 package com.kaltura.kflow.presentation.productPrice
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentPlayerBinding
+import com.kaltura.kflow.databinding.FragmentProductPriceBinding
+import com.kaltura.kflow.databinding.FragmentSubscriptionBinding
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
-import kotlinx.android.synthetic.main.fragment_product_price.*
-import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
@@ -24,44 +27,54 @@ class ProductPriceFragment : SharedTransitionFragment(R.layout.fragment_product_
     private val viewModel: ProductPriceViewModel by viewModel()
     private var productPrices = arrayListOf<ProductPrice>()
 
-    override fun debugView(): DebugView = debugView
     override val feature = Feature.PRODUCT_PRICE
-
+    private var _binding: FragmentProductPriceBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentProductPriceBinding.inflate(inflater,container,false)
+        val view = binding.root
+        return view
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initList()
-        showProductPrices.setOnClickListener {
+        binding.showProductPrices.setOnClickListener {
             hideKeyboard()
             showProductPrices()
         }
-        get.setOnClickListener {
+        binding.get.setOnClickListener {
             hideKeyboard()
-            makeGetAssetRequest(assetId.string, coupon.string)
+            makeGetAssetRequest(binding.assetId.string, binding.coupon.string)
         }
     }
 
     private fun initList() {
-        productPriceList.isNestedScrollingEnabled = false
-        productPriceList.layoutManager = LinearLayoutManager(requireContext())
-        productPriceList.addItemDecoration(
+        binding.productPriceList.isNestedScrollingEnabled = false
+        binding.productPriceList.layoutManager = LinearLayoutManager(requireContext())
+        binding.productPriceList.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
                 LinearLayoutManager.VERTICAL
             )
         )
-        productPriceList.adapter = ProductPriceListAdapter(arrayListOf())
+        binding.productPriceList.adapter = ProductPriceListAdapter(arrayListOf())
     }
 
     override fun subscribeUI() {
         observeResource(viewModel.productPriceList,
-            error = { get.error(lifecycleScope) },
+            error = { binding.get.error(lifecycleScope) },
             success = {
-                get.success(lifecycleScope)
+                binding.get.success(lifecycleScope)
                 productPrices = it
-                showProductPrices.text =
+                binding.showProductPrices.text =
                     getQuantityString(R.plurals.show_product_prices, productPrices.size)
-                showProductPrices.visible()
+                binding.showProductPrices.visible()
             })
     }
 
@@ -71,27 +84,27 @@ class ProductPriceFragment : SharedTransitionFragment(R.layout.fragment_product_
             clearInputLayouts()
 
             if (assetId.isEmpty()) {
-                assetIdInputLayout.showError("Empty asset ID")
+                binding.assetIdInputLayout.showError("Empty asset ID")
                 return@withInternetConnection
             }
 
-            showProductPrices.gone()
-            productPriceList.gone()
+            binding.showProductPrices.gone()
+            binding.productPriceList.gone()
 
-            get.startAnimation {
+            binding.get.startAnimation {
                 viewModel.getProductPrices(assetId, couponCode)
             }
         }
     }
 
     private fun clearInputLayouts() {
-        assetIdInputLayout.hideError()
+        binding.assetIdInputLayout.hideError()
     }
 
     private fun showProductPrices() {
-        productPriceList.visible()
-        showProductPrices.gone()
-        productPriceList.adapter = ProductPriceListAdapter(productPrices).apply {
+        binding.productPriceList.visible()
+        binding.showProductPrices.gone()
+        binding.productPriceList.adapter = ProductPriceListAdapter(productPrices).apply {
             onSubscriptionPriceClickListener = {
 
             }

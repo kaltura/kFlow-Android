@@ -5,9 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentSnsBinding
+import com.kaltura.kflow.databinding.ItemEntitlementBinding
 import com.kaltura.kflow.presentation.extension.*
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_entitlement.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -22,7 +23,8 @@ class EntitlementListAdapter : RecyclerView.Adapter<EntitlementListAdapter.MyVie
             field = value
             notifyDataSetChanged()
         }
-
+    private var _binding: ItemEntitlementBinding? = null
+    private val binding get() = _binding!!
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         MyViewHolder(parent.inflate(R.layout.item_entitlement))
 
@@ -39,14 +41,14 @@ class EntitlementListAdapter : RecyclerView.Adapter<EntitlementListAdapter.MyVie
             purchaseDayCalendar.timeInMillis = entitlement.purchaseDate * 1000
             val lastViewDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
             lastViewDayCalendar.timeInMillis = entitlement.lastViewDate * 1000
-            productId.text = "Product ID: ${entitlement.productId}"
-            purchaseDate.text = "Purchase Date: ${timeFormat.format(purchaseDayCalendar.time)}"
-            lastViewDate.text = "Last View Date: ${timeFormat.format(lastViewDayCalendar.time)}"
+            binding.productId.text = "Product ID: ${entitlement.productId}"
+            binding.purchaseDate.text = "Purchase Date: ${timeFormat.format(purchaseDayCalendar.time)}"
+            binding.lastViewDate.text = "Last View Date: ${timeFormat.format(lastViewDayCalendar.time)}"
 
             when (entitlement) {
-                is SubscriptionEntitlement -> type.text = "Type: Subscription"
-                is PpvEntitlement -> type.text = "Type: PPV"
-                is CollectionEntitlement -> type.text = "Type: Collection"
+                is SubscriptionEntitlement -> binding.type.text = "Type: Subscription"
+                is PpvEntitlement -> binding.type.text = "Type: PPV"
+                is CollectionEntitlement -> binding.type.text = "Type: Collection"
             }
         }
     }

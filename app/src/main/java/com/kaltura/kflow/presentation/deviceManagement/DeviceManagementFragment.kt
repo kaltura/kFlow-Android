@@ -1,17 +1,20 @@
 package com.kaltura.kflow.presentation.deviceManagement
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentDeviceManagementBinding
+import com.kaltura.kflow.databinding.FragmentIotBinding
+import com.kaltura.kflow.databinding.ViewDebugBinding
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
 import com.kaltura.kflow.utils.getUUID
-import kotlinx.android.synthetic.main.fragment_device_management.*
-import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -21,17 +24,27 @@ class DeviceManagementFragment : SharedTransitionFragment(R.layout.fragment_devi
 
     private val viewModel: DeviceManagementViewModel by viewModel()
 
-    override fun debugView(): DebugView = debugView
     override val feature = Feature.DEVICE_MANAGEMENT
-
+    private var _binding: FragmentDeviceManagementBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentDeviceManagementBinding.inflate(inflater,container,false)
+        val view = binding.root
+        return view
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        removeDeviceRequest.setOnClickListener {
+        binding.removeDeviceRequest.setOnClickListener {
             hideKeyboard()
             removeDeviceFromHousehold()
         }
-        addDeviceRequest.setOnClickListener {
+        binding.addDeviceRequest.setOnClickListener {
             hideKeyboard()
             addDeviceToHousehold()
         }
@@ -39,15 +52,15 @@ class DeviceManagementFragment : SharedTransitionFragment(R.layout.fragment_devi
 
     override fun subscribeUI() {
         observeResource(viewModel.removeDevice,
-                error = { removeDeviceRequest.error(lifecycleScope) },
+                error = { binding.removeDeviceRequest.error(lifecycleScope) },
                 success = {
-                    removeDeviceRequest.success(lifecycleScope)
+                    binding.removeDeviceRequest.success(lifecycleScope)
                     if (it) Snackbar.make(requireView(), "Device was removed!", Snackbar.LENGTH_SHORT).show()
                 })
         observeResource(viewModel.addDevice,
-                error = { addDeviceRequest.error(lifecycleScope) },
+                error = { binding.addDeviceRequest.error(lifecycleScope) },
                 success = {
-                    addDeviceRequest.success(lifecycleScope)
+                    binding.addDeviceRequest.success(lifecycleScope)
                     if (it) Snackbar.make(requireView(), "Device was added!", Snackbar.LENGTH_SHORT).show()
                 })
     }
@@ -56,7 +69,7 @@ class DeviceManagementFragment : SharedTransitionFragment(R.layout.fragment_devi
         withInternetConnection {
             clearDebugView()
 
-            removeDeviceRequest.startAnimation {
+            binding.removeDeviceRequest.startAnimation {
                 viewModel.removeDeviceFromHousehold(getUUID())
             }
         }
@@ -66,7 +79,7 @@ class DeviceManagementFragment : SharedTransitionFragment(R.layout.fragment_devi
         withInternetConnection {
             clearDebugView()
 
-            addDeviceRequest.startAnimation {
+            binding.addDeviceRequest.startAnimation {
                 viewModel.addDeviceToHousehold("${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}", getUUID())
             }
         }

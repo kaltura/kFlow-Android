@@ -1,16 +1,16 @@
 package com.kaltura.kflow.presentation.assetList
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.kaltura.client.types.Asset
 import com.kaltura.client.types.ProgramAsset
-import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.ItemAssetBinding
 import com.kaltura.kflow.entity.WatchedAsset
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.playkit.providers.api.phoenix.APIDefines
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_asset.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -35,7 +35,13 @@ class AssetListAdapter(private val isShowActions: Boolean) : RecyclerView.Adapte
             assets = value.map { it.asset }.toTypedArray()
         }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MyViewHolder(parent.inflate(R.layout.item_asset))
+    //override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MyViewHolder(parent.inflate(R.layout.item_asset))
+    private var _binding: ItemAssetBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        val bindMe = ItemAssetBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MyViewHolder(bindMe,parent)
+    }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         if (watchedAssets.isNotEmpty()) holder.bind(assets[position], watchedAssets[position].position)
@@ -44,7 +50,9 @@ class AssetListAdapter(private val isShowActions: Boolean) : RecyclerView.Adapte
 
     override fun getItemCount() = assets.size
 
-    inner class MyViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    inner class MyViewHolder(val binding: ItemAssetBinding,
+                             override val containerView: View?
+    ) : RecyclerView.ViewHolder(binding.root), LayoutContainer {
 
         fun bind(asset: Asset, position: Int = -1) {
             when {
@@ -59,55 +67,55 @@ class AssetListAdapter(private val isShowActions: Boolean) : RecyclerView.Adapte
                     time.append(startFormat.format(startDayCalendar.time))
                             .append(" - ")
                             .append(endFormat.format(endDayCalendar.time))
-                    assetTime.text = time
-                    assetTime.visible()
+                    binding.assetTime.text = time
+                    binding.assetTime.visible()
                 }
                 position >= 0 -> {
-                    assetTime.text = "Position: $position sec"
-                    assetTime.visible()
+                    binding.assetTime.text = "Position: $position sec"
+                    binding.assetTime.visible()
                 }
                 else -> {
-                    assetTime.gone()
+                    binding.assetTime.gone()
                 }
             }
 
-            assetName.text = asset.name
-            assetId.text = "Asset ID: ${asset.id}"
+            binding.assetName.text = asset.name
+            binding.assetId.text = "Asset ID: ${asset.id}"
             if (asset is ProgramAsset && asset.isProgramInPast()) {
-                playback.gone()
-                startover.gone()
-                catchUp.visible()
-                reminder.gone()
+                binding.playback.gone()
+                binding.startover.gone()
+                binding.catchUp.visible()
+                binding.reminder.gone()
             } else if (asset is ProgramAsset && asset.isProgramInLive()) {
-                playback.visible()
-                startover.visible()
-                catchUp.gone()
-                reminder.gone()
+                binding.playback.visible()
+                binding.startover.visible()
+                binding.catchUp.gone()
+                binding.reminder.gone()
             } else if (asset is ProgramAsset && asset.isProgramInFuture()) {
-                playback.gone()
-                startover.gone()
-                catchUp.gone()
-                reminder.visible()
+                binding.playback.gone()
+                binding.startover.gone()
+                binding.catchUp.gone()
+                binding.reminder.visible()
             } else {
-                playback.visible()
-                startover.gone()
-                catchUp.gone()
-                reminder.gone()
+                binding.playback.visible()
+                binding.startover.gone()
+                binding.catchUp.gone()
+                binding.reminder.gone()
             }
-            playback.setOnClickListener {
+            binding.playback.setOnClickListener {
                 if (asset is ProgramAsset) programClickListener(asset, APIDefines.PlaybackContextType.Playback)
                 else vodClickListener(asset)
             }
-            startover.setOnClickListener { programClickListener(asset, APIDefines.PlaybackContextType.StartOver) }
-            catchUp.setOnClickListener { programClickListener(asset, APIDefines.PlaybackContextType.Catchup) }
+            binding.startover.setOnClickListener { programClickListener(asset, APIDefines.PlaybackContextType.StartOver) }
+            binding.catchUp.setOnClickListener { programClickListener(asset, APIDefines.PlaybackContextType.Catchup) }
 
-            reminder.setOnClickListener{ reminderClickListener(asset) }
+            binding.reminder.setOnClickListener{ reminderClickListener(asset) }
 
             if (isShowActions.not()) {
-                playback.gone()
-                startover.gone()
-                catchUp.gone()
-                reminder.gone()
+                binding.playback.gone()
+                binding.startover.gone()
+                binding.catchUp.gone()
+                binding.reminder.gone()
             }
         }
     }

@@ -1,56 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/header"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <View
-        android:id="@+id/headerBg"
+    <RelativeLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="@color/colorPrimary" />
+        android:layout_height="match_parent">
+    </RelativeLayout>
+        <View
+            android:id="@+id/headerBg"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="@color/colorPrimary" />
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:theme="@style/ToolbarStyle"
-        app:navigationIcon="@drawable/ic_arrow_back_black_24dp" />
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/ToolbarStyle"
+            app:navigationIcon="@drawable/ic_arrow_back_black_24dp" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/sharedTransitionTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
-        android:gravity="center_horizontal"
         android:textColor="@android:color/white"
         android:textSize="26sp"
         android:textStyle="bold"
+        app:layout_anchor="@+id/toolbar"
+        app:layout_anchorGravity="bottom|center"
         tools:text="Login" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/sharedTransitionCard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/headerBg"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="-40dp"
-        android:layout_marginBottom="10dp"
-        app:cardBackgroundColor="@android:color/white"
-        app:cardElevation="4dp">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/sharedTransitionImage"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/sharedTransitionCard"
             android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="15dp"
-            tools:src="@drawable/ic_login" />
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/headerBg"
+            android:layout_gravity="bottom|center"
+            android:layout_marginTop="100dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardElevation="4dp">
 
-    </com.google.android.material.card.MaterialCardView>
-</RelativeLayout>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/sharedTransitionImage"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="50dp"
+                android:layout_marginBottom="15dp"
+
+                tools:src="@drawable/ic_login" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+    <!--<RelativeLayout-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:id="@+id/header"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content">-->
+
+<!--    <View-->
+<!--        android:id="@+id/headerBg"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="150dp"-->
+<!--        android:background="@color/colorPrimary" />-->
+
+<!--    <com.google.android.material.appbar.MaterialToolbar-->
+<!--        android:id="@+id/toolbar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="?attr/actionBarSize"-->
+<!--        android:theme="@style/ToolbarStyle"-->
+<!--        app:navigationIcon="@drawable/ic_arrow_back_black_24dp" />-->
+
+<!--    <androidx.appcompat.widget.AppCompatTextView-->
+<!--        android:id="@+id/sharedTransitionTitle"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_marginTop="30dp"-->
+<!--        android:gravity="center_horizontal"-->
+<!--        android:textColor="@android:color/white"-->
+<!--        android:textSize="26sp"-->
+<!--        android:textStyle="bold"-->
+<!--        tools:text="Login" />-->
+
+<!--    <com.google.android.material.card.MaterialCardView-->
+<!--        android:id="@+id/sharedTransitionCard"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/headerBg"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_marginTop="-40dp"-->
+<!--        android:layout_marginBottom="10dp"-->
+<!--        app:cardBackgroundColor="@android:color/white"-->
+<!--        app:cardElevation="4dp">-->
+
+<!--        <androidx.appcompat.widget.AppCompatImageView-->
+<!--            android:id="@+id/sharedTransitionImage"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="60dp"-->
+<!--            android:layout_marginStart="50dp"-->
+<!--            android:layout_marginTop="15dp"-->
+<!--            android:layout_marginEnd="50dp"-->
+<!--            android:layout_marginBottom="15dp"-->
+<!--            tools:src="@drawable/ic_login" />-->
+
+<!--    </com.google.android.material.card.MaterialCardView>-->
+<!--</RelativeLayout>-->
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

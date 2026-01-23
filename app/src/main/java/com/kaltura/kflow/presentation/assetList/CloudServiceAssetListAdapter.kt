@@ -1,13 +1,13 @@
 package com.kaltura.kflow.presentation.assetList
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.ItemCsBinding
 import com.kaltura.kflow.entity.EPGProgram
 import com.kaltura.kflow.presentation.extension.*
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_cs.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -19,13 +19,17 @@ class CloudServiceAssetListAdapter(private val isShowActions: Boolean) : Recycle
             notifyDataSetChanged()
         }
 
+    private var _binding: ItemCsBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = CSViewHolder(parent.inflate(
-        R.layout.item_cs))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CSViewHolder {
+        val bindMe = ItemCsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return CSViewHolder(bindMe,parent)
+    }
 
-
-    inner class CSViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
-        LayoutContainer {
+    inner class CSViewHolder(val binding: ItemCsBinding,
+                             override val containerView: View?
+    ) : RecyclerView.ViewHolder(binding.root), LayoutContainer {
 
         fun bind(asset: EPGProgram, position: Int = -1) {
             when {
@@ -40,20 +44,20 @@ class CloudServiceAssetListAdapter(private val isShowActions: Boolean) : Recycle
                     time.append(startFormat.format(startDayCalendar.time))
                         .append(" - ")
                         .append(endFormat.format(endDayCalendar.time))
-                    assetDates.text = time
-                    assetDates.visible()
+                    binding.assetDates.text = time
+                    binding.assetDates.visible()
                 }
                 position >= 0 -> {
-                    assetDates.text = "Position: $position sec"
-                    assetDates.visible()
+                    binding.assetDates.text = "Position: $position sec"
+                    binding.assetDates.visible()
                 }
                 else -> {
-                    assetDates.gone()
+                    binding.assetDates.gone()
                 }
             }
 
-            assetName.text = asset.name
-            assetId.text = "Asset ID: ${asset.epgID}"
+            binding.assetName.text = asset.name
+            binding.assetId.text = "Asset ID: ${asset.epgID}"
         }
     }
 

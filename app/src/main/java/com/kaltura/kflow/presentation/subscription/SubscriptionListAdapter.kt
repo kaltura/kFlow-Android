@@ -7,6 +7,9 @@ import com.kaltura.client.types.Asset
 import com.kaltura.client.types.DoubleValue
 import com.kaltura.client.types.Subscription
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.ItemEntitlementBinding
+import com.kaltura.kflow.databinding.ItemPackageBinding
+import com.kaltura.kflow.databinding.ItemSubscriptionBinding
 import com.kaltura.kflow.entity.ParentRecyclerViewItem
 import com.kaltura.kflow.presentation.extension.gone
 import com.kaltura.kflow.presentation.extension.inflate
@@ -19,8 +22,6 @@ import com.kaltura.kflow.presentation.ui.expandableRecyclerView.ExpandableRecycl
 import com.kaltura.kflow.presentation.ui.expandableRecyclerView.ParentListItem
 import com.kaltura.kflow.presentation.ui.expandableRecyclerView.ParentViewHolder
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_package.*
-import kotlinx.android.synthetic.main.item_subscription.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -57,7 +58,10 @@ class SubscriptionListAdapter(parentItemList: ArrayList<ParentRecyclerViewItem<A
             }
         }
     }
-
+    private var _bindingSubscription: ItemSubscriptionBinding? = null
+    private val bindingSubscription get() = _bindingSubscription!!
+    private var _bindingPackage: ItemPackageBinding? = null
+    private val bindingPackage get() = _bindingPackage!!
     inner class PackageViewHolder(override val containerView: View) : ParentViewHolder(containerView), LayoutContainer {
 
         private val INITIAL_POSITION = 0.0f
@@ -65,15 +69,15 @@ class SubscriptionListAdapter(parentItemList: ArrayList<ParentRecyclerViewItem<A
 
         fun bind(asset: Asset, isExpandable: Boolean) {
             isExpanded = isExpandable
-            packageName.text = asset.name
-            packageId.text = "Package ID: ${asset.id}"
+            bindingPackage.packageName.text = asset.name
+            bindingPackage.packageId.text = "Package ID: ${asset.id}"
             val metaBaseId = asset.metas["BaseID"]
-            baseId.text = "Base ID: ${(metaBaseId as? DoubleValue)?.value?.toInt() ?: "No ID"}"
-            get.visibleOrGone(metaBaseId != null)
-            get.setOnClickListener {
+            bindingPackage.baseId.text = "Base ID: ${(metaBaseId as? DoubleValue)?.value?.toInt() ?: "No ID"}"
+            bindingPackage.get.visibleOrGone(metaBaseId != null)
+            bindingPackage.get.setOnClickListener {
                 packageGetSubscriptionListener((metaBaseId as DoubleValue).value)
-                get.gone()
-                arrowIcon.visible()
+                bindingPackage.get.gone()
+                bindingPackage.arrowIcon.visible()
             }
         }
 
@@ -81,7 +85,7 @@ class SubscriptionListAdapter(parentItemList: ArrayList<ParentRecyclerViewItem<A
             get() = super.isExpanded
             set(value) {
                 super.isExpanded = value
-                if (value) arrowIcon.rotation = ROTATED_POSITION else arrowIcon.rotation = INITIAL_POSITION
+                if (value) bindingPackage.arrowIcon.rotation = ROTATED_POSITION else bindingPackage.arrowIcon.rotation = INITIAL_POSITION
             }
 
         override fun onExpansionToggled(expanded: Boolean) {
@@ -100,28 +104,28 @@ class SubscriptionListAdapter(parentItemList: ArrayList<ParentRecyclerViewItem<A
                     }
             rotateAnimation.duration = 200
             rotateAnimation.fillAfter = true
-            arrowIcon.startAnimation(rotateAnimation)
+            bindingPackage.arrowIcon.startAnimation(rotateAnimation)
         }
     }
 
     inner class SubscriptionViewHolder(override val containerView: View) : ChildViewHolder(containerView), LayoutContainer {
 
         fun bind(subscription: Subscription) {
-            subsName.text = if (subscription.name.isNotEmpty()) subscription.name else "NO NAME"
-            subsId.text = "Subscription ID: ${subscription.id}"
-            subsPrice.text = "Subscription Price: ${subscription.price.name}"
+            bindingSubscription.subsName.text = if (subscription.name.isNotEmpty()) subscription.name else "NO NAME"
+            bindingSubscription.subsId.text = "Subscription ID: ${subscription.id}"
+            bindingSubscription.subsPrice.text = "Subscription Price: ${subscription.price.name}"
 
             val dateFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.US)
 
             val startDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
             startDayCalendar.timeInMillis = subscription.startDate * 1000
-            startDate.text = "Start: ${dateFormat.format(startDayCalendar.time)}"
+            bindingSubscription.startDate.text = "Start: ${dateFormat.format(startDayCalendar.time)}"
 
             val endDayCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
             endDayCalendar.timeInMillis = subscription.endDate * 1000
-            endDate.text = "End: ${dateFormat.format(endDayCalendar.time)}"
+            bindingSubscription.endDate.text = "End: ${dateFormat.format(endDayCalendar.time)}"
 
-            arrow.visibleOrGone(subscription.channels.isNotEmpty())
+            bindingSubscription.arrow.visibleOrGone(subscription.channels.isNotEmpty())
             itemView.setOnClickListener {
                 val channelsId = arrayListOf<Long>()
                 subscription.channels.forEach { channelsId.add(it.id) }

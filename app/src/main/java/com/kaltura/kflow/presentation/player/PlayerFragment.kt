@@ -3,15 +3,21 @@ package com.kaltura.kflow.presentation.player
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import com.kaltura.androidx.media3.common.util.UnstableApi
 import com.kaltura.client.enums.*
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentAnonymousLoginBinding
+import com.kaltura.kflow.databinding.FragmentPlayerBinding
+import com.kaltura.kflow.databinding.ViewPlayerControlBinding
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
@@ -29,14 +35,12 @@ import com.kaltura.playkit.providers.api.phoenix.APIDefines.KalturaAssetType
 import com.kaltura.playkit.providers.ott.OTTMediaAsset
 import com.kaltura.playkit.providers.ott.PhoenixMediaProvider
 import com.kaltura.tvplayer.*
-import kotlinx.android.synthetic.main.fragment_player.*
-import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 
-/**
+@UnstableApi /**
  * Created by alex_lytvynenko on 04.12.2018.
  */
 class PlayerFragment : DebugFragment(R.layout.fragment_player) {
@@ -54,13 +58,23 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     private var playerKeepAliveService = PlayerKeepAliveService()
     private val initialPlaybackContextType by lazy { playbackContextTypeFromString(args.playbackContextType) }
 
-    override fun debugView(): DebugView = debugView
+    private var _binding: FragmentPlayerBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentPlayerBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         KalturaOttPlayer.initialize(requireContext(), viewModel.getPartnerId(), viewModel.getBaseUrl() + "/api_v3/")
-
-        toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
+        binding.toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
         initUI()
         asset = args.asset
         isKeepAlive = args.isKeepAlive
@@ -68,13 +82,13 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     private fun initUI() {
-        like.setOnCheckedChangeListener { _, _ ->
-            if (like.isPressed) actionLike()
+        binding.like.setOnCheckedChangeListener { _, _ ->
+            if (binding.like.isPressed) actionLike()
         }
-        favorite.setOnCheckedChangeListener { _, _ ->
-            if (favorite.isPressed) actionFavorite()
+        binding.favorite.setOnCheckedChangeListener { _, _ ->
+            if (binding.favorite.isPressed) actionFavorite()
         }
-        playerControls.setOnStartOverClickListener {
+        binding.playerControls.setOnStartOverClickListener {
             if (mediaEntry.mediaType == PKMediaEntry.MediaEntryType.Vod) player?.replay()
             else if (asset is ProgramAsset && (asset as ProgramAsset).isProgramInPast()) initPlayer(
                 APIDefines.PlaybackContextType.Catchup
@@ -83,14 +97,14 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                 APIDefines.PlaybackContextType.StartOver
             )
         }
-        checkAll.setOnClickListener {
+        binding.checkAll.setOnClickListener {
             hideKeyboard()
             checkAllTogetherRequest()
         }
-        insertPin.setOnClickListener {
+        binding.insertPin.setOnClickListener {
             hideKeyboard()
-            if (pinInputLayout.isGone) showPinInput()
-            else checkPinRequest(pin.string)
+            if (binding.pinInputLayout.isGone) showPinInput()
+            else checkPinRequest(binding.pin.string)
         }
     }
 
@@ -101,46 +115,46 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             else onAssetLoaded()
         }
         observeResource(viewModel.userAssetRules,
-            error = { checkAll.error(lifecycleScope) },
+            error = { binding.checkAll.error(lifecycleScope) },
             success = {
-                checkAll.success(lifecycleScope)
+                binding.checkAll.success(lifecycleScope)
                 it.forEach {
                     if (it.ruleType == RuleType.PARENTAL) {
                         parentalRuleId = it.id.toInt()
-                        pinLayout.visible()
+                        binding.pinLayout.visible()
                     }
                 }
             })
-        observeResource(viewModel.favoriteList) { favorite.isChecked = true }
+        observeResource(viewModel.favoriteList) { binding.favorite.isChecked = true }
         observeResource(viewModel.getLike) {
             likeId = it.id
-            like.isChecked = true
+            binding.like.isChecked = true
         }
         observeResource(viewModel.doLike, error = {
-            like.isEnabled = true
-            like.isChecked = false
+            binding.like.isEnabled = true
+            binding.like.isChecked = false
         }, success = {
-            like.isEnabled = true
+            binding.like.isEnabled = true
             likeId = it.id
         })
         observeResource(viewModel.doUnlike, error = {
-            like.isEnabled = true
-            like.isChecked = true
+            binding.like.isEnabled = true
+            binding.like.isChecked = true
         }, success = {
-            like.isEnabled = true
+            binding.like.isEnabled = true
             likeId = ""
         })
         observeResource(viewModel.doFavorite, error = {
-            favorite.isEnabled = true
-            favorite.isChecked = false
+            binding.favorite.isEnabled = true
+            binding.favorite.isChecked = false
         }, success = {
-            favorite.isEnabled = true
+            binding.favorite.isEnabled = true
         })
         observeResource(viewModel.doUnfavorite, error = {
-            favorite.isEnabled = true
-            favorite.isChecked = true
+            binding.favorite.isEnabled = true
+            binding.favorite.isChecked = true
         }, success = {
-            favorite.isEnabled = true
+            binding.favorite.isEnabled = true
         })
     }
 
@@ -152,7 +166,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     private fun onAssetLoaded() {
-        assetTitle.text = asset?.name ?: ""
+        binding.assetTitle.text = asset?.name ?: ""
         initPlayer(getPlaybackContextType())
         likeList()
         favoriteList()
@@ -274,13 +288,13 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
             )
-            playerLayout.addView(player?.playerView)
+            binding.playerLayout.addView(player?.playerView)
 
             val ottMediaOptions = buildOttMediaOptions(playbackContextType)
             player!!.loadMedia(ottMediaOptions, completion)
 
-            playerControls.player = player
-            playerControls.asset = asset
+            binding.playerControls.player = player
+            binding.playerControls.asset = asset
         }
     }
 
@@ -308,7 +322,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     private fun setMediaEntry() {
         if (mediaEntry.mediaType == PKMediaEntry.MediaEntryType.Live) {
             mediaEntry.mediaType = PKMediaEntry.MediaEntryType.DvrLive
-            playerControls.asset = asset
+            binding.playerControls.asset = asset
             //playerControls.disableControllersForLive();
         }
 
@@ -351,7 +365,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             it.addListener(
                 this,
                 AdEvent.Type.CONTENT_PAUSE_REQUESTED
-            ) { playerControls.setPlayerState(PlayerState.READY) }
+            ) { binding.playerControls.setPlayerState(PlayerState.READY) }
             it.addListener(this, PlayerEvent.pause) { }
             it.addListener(
                 this,
@@ -360,7 +374,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             it.addListener(
                 this,
                 PlayerEvent.stateChanged
-            ) { event: StateChanged -> playerControls.setPlayerState(event.newState) }
+            ) { event: StateChanged -> binding.playerControls.setPlayerState(event.newState) }
             it.addListener(this, PlayerEvent.Type.ERROR) { event: PKEvent? ->
                 //When the track data available, this event occurs. It brings the info object with it.
                 val playerError = event as PlayerEvent.Error?
@@ -381,9 +395,9 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
         val adapter =
             ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, languages)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        subtitles.adapter = adapter
-        subtitles.setSelection(tracks.indexOf(selected))
-        subtitles.onItemSelectedListener = object : OnItemSelectedListener {
+        binding.subtitles.adapter = adapter
+        binding.subtitles.setSelection(tracks.indexOf(selected))
+        binding.subtitles.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(
                 adapterView: AdapterView<*>?,
                 view: View,
@@ -426,7 +440,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     private fun actionLike() {
         withInternetConnection {
             clearDebugView()
-            like.isEnabled = false
+            binding.like.isEnabled = false
             if (likeId.isEmpty()) viewModel.like(asset!!.id)
             else viewModel.unlike(likeId)
         }
@@ -435,8 +449,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     private fun actionFavorite() {
         withInternetConnection {
             clearDebugView()
-            favorite.isEnabled = false
-            if (favorite.isChecked) viewModel.favorite(asset!!.id)
+            binding.favorite.isEnabled = false
+            if (binding.favorite.isChecked) viewModel.favorite(asset!!.id)
             else viewModel.unfavorite(asset!!.id)
         }
     }
@@ -449,7 +463,7 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
                 return@withInternetConnection
             }
 
-            checkAll.startAnimation {
+            binding.checkAll.startAnimation {
                 viewModel.checkAllValidations(asset!!.id)
             }
         }
@@ -458,9 +472,9 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     private fun checkPinRequest(pin: String) {
         withInternetConnection {
             clearDebugView()
-            pinInputLayout.hideError()
+            binding.pinInputLayout.hideError()
             if (TextUtils.isDigitsOnly(pin).not()) {
-                pinInputLayout.showError("Wrong input")
+                binding.pinInputLayout.showError("Wrong input")
                 return@withInternetConnection
             }
 
@@ -469,9 +483,9 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
     }
 
     private fun showPinInput() {
-        pinInputLayout.visible()
-        insertPin.text = "Check pin"
-        showKeyboard(pin)
+        binding.pinInputLayout.visible()
+        binding.insertPin.text = "Check pin"
+        showKeyboard(binding.pin)
     }
 
     override fun onDestroyView() {
@@ -484,13 +498,13 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
 
     override fun onPause() {
         super.onPause()
-        playerControls.release()
+        binding.playerControls.release()
         player?.onApplicationPaused()
     }
 
     override fun onResume() {
         super.onResume()
         player?.onApplicationResumed()
-        playerControls.resume()
+        binding.playerControls.resume()
     }
 }

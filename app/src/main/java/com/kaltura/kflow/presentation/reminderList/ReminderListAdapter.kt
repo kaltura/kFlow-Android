@@ -1,13 +1,12 @@
 package com.kaltura.kflow.presentation.reminderList
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.kaltura.client.types.AssetReminder
 import com.kaltura.client.types.Reminder
-import com.kaltura.kflow.R
-import com.kaltura.kflow.presentation.extension.inflate
+import com.kaltura.kflow.databinding.ItemReminderBinding
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_reminder.*
+
 
 class ReminderListAdapter : RecyclerView.Adapter<ReminderListAdapter.MyViewHolder>() {
 
@@ -19,21 +18,24 @@ class ReminderListAdapter : RecyclerView.Adapter<ReminderListAdapter.MyViewHolde
             notifyDataSetChanged()
         }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MyViewHolder(parent.inflate(
-        R.layout.item_reminder))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        val bindMe = ItemReminderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MyViewHolder(bindMe, parent)
+    }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) = holder.bind(reminders[position])
 
     override fun getItemCount() = reminders.size
 
-    inner class MyViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
-        LayoutContainer {
+    private var _binding: ItemReminderBinding? = null
+    private val binding get() = _binding!!
+    inner class MyViewHolder(val binding: ItemReminderBinding, override val containerView: View) : RecyclerView.ViewHolder(binding.root), LayoutContainer {
 
         fun bind(reminder: Reminder) {
 
-            reminder_name.text = reminder.name
-            reminder_id.text = reminder.id.toString()
-            deleteReminder.setOnClickListener{ deleteReminderClickListener(reminder) }
+            binding.reminderName.text = reminder.name
+            binding.reminderId.text = reminder.id.toString()
+            binding.deleteReminder.setOnClickListener { deleteReminderClickListener(reminder) }
 
         }
     }

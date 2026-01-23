@@ -1,31 +1,37 @@
 package com.kaltura.kflow.presentation.base
-
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.provider.CalendarContract
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
 import androidx.annotation.LayoutRes
 import androidx.core.content.FileProvider
 import com.kaltura.kflow.BuildConfig
+//import com.kaltura.kflow.BuildConfig
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentLoginBinding
+import com.kaltura.kflow.databinding.ViewSharedTransitionHeaderBinding
 import com.kaltura.kflow.presentation.debug.DebugFragment
 import com.kaltura.kflow.presentation.extension.toast
 import com.kaltura.kflow.presentation.main.Feature
 import com.kaltura.kflow.presentation.main.MainActivity
 import com.kaltura.kflow.presentation.ui.SharedTransition
 import com.kaltura.playkit.PKLog
-import kotlinx.android.synthetic.main.view_shared_transition_header.*
-import kotlinx.android.synthetic.main.view_shared_transition_header.view.*
+import okhttp3.internal.notify
 import java.io.File
+
 
 /**
  * Created by alex_lytvynenko on 05.03.2020.
  */
-abstract class SharedTransitionFragment(@LayoutRes contentLayoutId: Int) :
-    DebugFragment(contentLayoutId) {
+abstract class SharedTransitionFragment(@LayoutRes contentLayoutId: Int) : DebugFragment(contentLayoutId) {
 
     private var isFirstEnter = true
     abstract val feature: Feature
@@ -38,21 +44,38 @@ abstract class SharedTransitionFragment(@LayoutRes contentLayoutId: Int) :
         sharedElementEnterTransition = SharedTransition()
         sharedElementReturnTransition = SharedTransition()
     }
+    private var _binding: ViewSharedTransitionHeaderBinding? = null
+    private val binding get() = _binding!!
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+//    override fun onCreateView(
+//        inflater: LayoutInflater,
+//        container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ): View? {
+//        super.onCreateView(inflater, container, savedInstanceState)
+//        _binding = ViewSharedTransitionHeaderBinding.inflate(inflater,container,false)
+//        val view = binding.root
+//        return view
+//    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (header == null)
+        _binding = ViewSharedTransitionHeaderBinding.bind(view)
+        if (binding.header == null)
             throw IllegalStateException("Fragment must include R.layout.view_shared_transition_header view")
 
-        header.sharedTransitionTitle.transitionName = "${feature.text}_title"
-        header.sharedTransitionImage.transitionName = "${feature.text}_image"
-        header.sharedTransitionTitle.text = feature.text
-        header.sharedTransitionImage.setImageResource(feature.imageResId)
+        binding.sharedTransitionImage.transitionName = "${feature.text}_image"
+        binding.sharedTransitionTitle.text = feature.text
+        binding.sharedTransitionImage.setImageResource(feature.imageResId)
         animateCardEnter()
-        toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
+        binding.toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
         if ((requireActivity() as MainActivity).enableLogsCapturing) {
-            toolbar.inflateMenu(R.menu.menu_main)
-            toolbar.setOnMenuItemClickListener {
+            binding.toolbar.inflateMenu(R.menu.menu_main)
+            binding.toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.start_logging -> {
                         if (logsCapturingProcess == null) appendLogsToFile()
@@ -84,7 +107,7 @@ abstract class SharedTransitionFragment(@LayoutRes contentLayoutId: Int) :
                 duration = 500
                 interpolator = AccelerateDecelerateInterpolator()
             }
-            header.sharedTransitionCard.animation = animation
+            binding.sharedTransitionCard.animation = animation
             animation.start()
         }
     }

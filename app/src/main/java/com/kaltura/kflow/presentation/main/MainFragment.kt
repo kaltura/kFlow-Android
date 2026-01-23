@@ -1,16 +1,18 @@
 package com.kaltura.kflow.presentation.main
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.doOnPreDraw
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.*
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentMainBinding
 import com.kaltura.kflow.presentation.extension.isTv
 import com.kaltura.kflow.presentation.extension.navigateWithExtras
-import kotlinx.android.synthetic.main.fragment_main.*
 
 /**
  * Created by alex_lytvynenko on 11/18/18.
@@ -26,12 +28,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     private lateinit var rotationAnimation: SpringAnimation
     private var isDragging = false
-
+    private var _binding: FragmentMainBinding? = null
+    private val binding get() = _binding!!
     private val scrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             if (isDragging) {
                 rotationAnimation.cancel()
-                kaltura.rotation += -(dy.toFloat() / 2)
+                binding.kaltura.rotation += -(dy.toFloat() / 2)
             }
         }
 
@@ -41,8 +44,20 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         }
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentMainBinding.inflate(inflater,container,false)
+        val view = binding.root
+        return view
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+//        _binding = FragmentMainBinding.bind(view)
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
         initSpringAnimation()
@@ -50,8 +65,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     }
 
     private fun initList() {
-        list.setHasFixedSize(true)
-        list.layoutManager = GridLayoutManager(requireContext(), if (isTv()) 4 else 2)
+        binding.list.setHasFixedSize(true)
+        binding.list.layoutManager = GridLayoutManager(requireContext(), if (isTv()) 4 else 2)
         val adapter = FeatureAdapter(features)
         adapter.clickListener = { feature, image, title ->
             navigateWithExtras(when (feature) {
@@ -82,12 +97,12 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 Feature.SETTINGS -> MainFragmentDirections.navigateToSettings()
             }, image, title)
         }
-        list.adapter = adapter
-        list.addOnScrollListener(scrollListener)
+        binding.list.adapter = adapter
+        binding.list.addOnScrollListener(scrollListener)
     }
 
     private fun initSpringAnimation() {
-        rotationAnimation = SpringAnimation(kaltura, SpringAnimation.ROTATION).apply {
+        rotationAnimation = SpringAnimation(binding.kaltura, SpringAnimation.ROTATION).apply {
             spring = SpringForce(0f).apply {
                 stiffness = SpringForce.STIFFNESS_LOW
                 dampingRatio = SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY
@@ -97,6 +112,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        list.removeOnScrollListener(scrollListener)
+        binding.list.removeOnScrollListener(scrollListener)
+        _binding = null
     }
 }

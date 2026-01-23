@@ -1,17 +1,20 @@
 package com.kaltura.kflow.presentation.vod
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.kaltura.client.types.Asset
 import com.kaltura.client.types.MediaAsset
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentContinueWatchingBinding
+import com.kaltura.kflow.databinding.FragmentTransactionHistoryBinding
+import com.kaltura.kflow.databinding.FragmentVodBinding
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
-import kotlinx.android.synthetic.main.fragment_vod.*
-import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -22,38 +25,48 @@ class GetVodFragment : SharedTransitionFragment(R.layout.fragment_vod) {
     private var assets = arrayListOf<Asset>()
     private val viewModel: GetVodViewModel by viewModel()
 
-    override fun debugView(): DebugView = debugView
     override val feature = Feature.VOD
-
+    private var _binding: FragmentVodBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentVodBinding.inflate(inflater,container,false)
+        val view = binding.root
+        return view
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        showAssets.navigateOnClick { GetVodFragmentDirections.navigateToAssetList(assets = assets.toTypedArray()) }
-        get.setOnClickListener {
+        binding.showAssets.navigateOnClick { GetVodFragmentDirections.navigateToAssetList(assets = assets.toTypedArray()) }
+        binding.get.setOnClickListener {
             hideKeyboard()
-            makeGetVodRequest(name.string, assetType.string)
+            makeGetVodRequest(binding.name.string, binding.assetType.string)
         }
 
-        assetType.string = viewModel.getVodAssetType()
+        binding.assetType.string = viewModel.getVodAssetType()
     }
 
     override fun subscribeUI() {
         observeResource(viewModel.getAssetList,
-                error = { get.error(lifecycleScope) },
+                error = { binding.get.error(lifecycleScope) },
                 success = {
-                    get.success(lifecycleScope)
+                    binding.get.success(lifecycleScope)
                     assets = it.filterIsInstance<MediaAsset>() as ArrayList<Asset>
-                    showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
-                    showAssets.visible()
+                    binding.showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
+                    binding.showAssets.visible()
                 })
     }
 
     private fun makeGetVodRequest(name: String, assetType: String) {
         withInternetConnection {
             clearDebugView()
-            showAssets.gone()
+            binding.showAssets.gone()
 
-            get.startAnimation {
+            binding.get.startAnimation {
                 viewModel.getVodAssetList(name, assetType)
             }
         }

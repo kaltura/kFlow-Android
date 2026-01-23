@@ -1,30 +1,44 @@
 package com.kaltura.kflow.presentation.sns
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.kaltura.kflow.R
+import com.kaltura.kflow.databinding.FragmentDeviceManagementBinding
+import com.kaltura.kflow.databinding.FragmentSettingsBinding
+import com.kaltura.kflow.databinding.FragmentSnsBinding
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
 import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
-import kotlinx.android.synthetic.main.fragment_sns.*
-import kotlinx.android.synthetic.main.view_bottom_debug.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SnsFragment : SharedTransitionFragment(R.layout.fragment_sns) {
 
     private val viewModel: SNSViewModel by viewModel()
-    override fun debugView(): DebugView = debugView
+
     override val feature = Feature.SNS
     var isPushEnabled = false
-
+    private var _binding: FragmentSnsBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentSnsBinding.inflate(inflater,container,false)
+        val view = binding.root
+        return view
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        push_enable_status.gone()
-        register_sns.setOnClickListener {
+        binding.pushEnableStatus.gone()
+        binding.registerSns.setOnClickListener {
             makeSetDevicePushTokenRequest()
         }
-        push_enable_status.setOnClickListener {
+        binding.pushEnableStatus.setOnClickListener {
             makeSetPushStatusRequest(!isPushEnabled)
         }
     }
@@ -43,16 +57,16 @@ class SnsFragment : SharedTransitionFragment(R.layout.fragment_sns) {
             error = {
                 it.printStackTrace()
                 longToast("Getting Push Status Failed : $it")
-                register_sns.error(lifecycleScope)
-                push_enable_status.gone()
+                binding.registerSns.error(lifecycleScope)
+                binding.pushEnableStatus.gone()
             },
             success = {
                 isPushEnabled = it
-                push_enable_status.visible()
-                register_sns.success(lifecycleScope)
+                binding.pushEnableStatus.visible()
+                binding.registerSns.success(lifecycleScope)
                 when (it) {
-                    true -> push_enable_status.text = getText(R.string.disable_push_notification)//"Disable Push Notification"
-                    false -> push_enable_status.text = getText(R.string.enable_push_notification)//"Enable Push Notification"
+                    true -> binding.pushEnableStatus.text = getText(R.string.disable_push_notification)//"Disable Push Notification"
+                    false -> binding.pushEnableStatus.text = getText(R.string.enable_push_notification)//"Enable Push Notification"
 
                 }
             })
@@ -62,13 +76,13 @@ class SnsFragment : SharedTransitionFragment(R.layout.fragment_sns) {
                 longToast("Setting Push Status Failed : $it")
             },
             success = {
-                push_enable_status.visible()
-                push_enable_status.success(lifecycleScope)
-                push_enable_status.post {
+                binding.pushEnableStatus.visible()
+                binding.pushEnableStatus.success(lifecycleScope)
+                binding.pushEnableStatus.post {
                     isPushEnabled = !isPushEnabled
                     when (isPushEnabled) {
-                        true -> push_enable_status.text = getText(R.string.disable_push_notification)//"Disable Push Notification"
-                        false -> push_enable_status.text = getText(R.string.enable_push_notification)//"Enable  Push Notification"
+                        true -> binding.pushEnableStatus.text = getText(R.string.disable_push_notification)//"Disable Push Notification"
+                        false -> binding.pushEnableStatus.text = getText(R.string.enable_push_notification)//"Enable  Push Notification"
                     }
                 }
 
@@ -81,7 +95,7 @@ class SnsFragment : SharedTransitionFragment(R.layout.fragment_sns) {
             hideKeyboard()
             clearDebugView()
 
-            register_sns.startAnimation {
+            binding.registerSns.startAnimation {
                 viewModel.setDevicePushTokenRequest()
             }
         }
@@ -96,7 +110,7 @@ class SnsFragment : SharedTransitionFragment(R.layout.fragment_sns) {
     private fun makeSetPushStatusRequest(checked: Boolean) {
         withInternetConnection {
             clearDebugView()
-            push_enable_status.startAnimation {
+            binding.pushEnableStatus.startAnimation {
                 viewModel.setNotificationStatus(checked)
             }
         }
