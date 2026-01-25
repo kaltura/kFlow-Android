@@ -7,6 +7,8 @@ import com.kaltura.client.types.ExternalReceipt
 import com.kaltura.kflow.manager.PhoenixApiManager
 import com.kaltura.kflow.presentation.base.BaseViewModel
 import com.kaltura.kflow.utils.Resource
+import java.util.Locale
+import java.util.Locale.getDefault
 
 /**
  * Created by alex_lytvynenko on 2020-01-16.
@@ -21,7 +23,7 @@ class CheckReceiptViewModel(private val apiManager: PhoenixApiManager) : BaseVie
             if (productType.equals(TransactionType.PPV.value, ignoreCase = true) ||
                     productType.equals(TransactionType.SUBSCRIPTION.value, ignoreCase = true) ||
                     productType.equals(TransactionType.COLLECTION.value, ignoreCase = true)) {
-                this.productType = TransactionType.get(productType.toLowerCase())
+                this.productType = TransactionType.get(productType.lowercase(getDefault()))
             }
             this.productId = productId.toInt()
             this.contentId = contentId.toInt()

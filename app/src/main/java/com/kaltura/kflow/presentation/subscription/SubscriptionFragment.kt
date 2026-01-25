@@ -9,11 +9,9 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
-import com.kaltura.kflow.databinding.FragmentMediaPageBinding
 import com.kaltura.kflow.databinding.FragmentSubscriptionBinding
 import com.kaltura.kflow.entity.ParentRecyclerViewItem
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
-import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
 import com.kaltura.kflow.presentation.ui.ProgressDialog
@@ -32,7 +30,7 @@ class SubscriptionFragment : SharedTransitionFragment(R.layout.fragment_subscrip
         packageGetSubscriptionListener = ::onPackageGetSubscriptionClicked
         subscriptionListener = ::onSubscriptionClicked
     }
-    private val progressDialog by lazy { ProgressDialog(activity) }
+    private val progressDialog by lazy { ProgressDialog(activity,lifecycle) }
     private var selectedPackageBaseId: Double = 0.0
 
     override val feature = Feature.SUBSCRIPTION

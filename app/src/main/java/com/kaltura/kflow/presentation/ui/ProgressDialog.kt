@@ -4,12 +4,13 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatDialog
+import androidx.lifecycle.Lifecycle
 import com.kaltura.kflow.R
 
 /**
  * Created by alex_lytvynenko on 2019-07-22.
  */
-class ProgressDialog(context: Context?) : AppCompatDialog(context!!) {
+class ProgressDialog(context: Context?, override val lifecycle: Lifecycle) : AppCompatDialog(context!!) {
 
     init {
         setContentView(R.layout.dialog_progress)
