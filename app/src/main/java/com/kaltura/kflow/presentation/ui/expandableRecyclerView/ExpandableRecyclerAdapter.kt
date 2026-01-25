@@ -96,6 +96,7 @@ abstract class ExpandableRecyclerAdapter<PVH : ParentViewHolder, CVH : ChildView
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val listItem = getListItem(position)
         if (listItem is ParentWrapper) {
+            @Suppress("UNCHECKED_CAST")
             val parentViewHolder = holder as PVH
             if (parentViewHolder.isExpandable) {
                 parentViewHolder.setMainItemClickToExpand()
@@ -104,6 +105,7 @@ abstract class ExpandableRecyclerAdapter<PVH : ParentViewHolder, CVH : ChildView
             onBindParentViewHolder(parentViewHolder, position, listItem.parentListItem)
         } else {
             checkNotNull(listItem) { "Incorrect ViewHolder found" }
+            @Suppress("UNCHECKED_CAST")
             onBindChildViewHolder(holder as CVH, position, listItem)
         }
     }

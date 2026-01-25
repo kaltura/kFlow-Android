@@ -125,6 +125,7 @@ class PlayerViewModel(private val apiManager: PhoenixApiManager,
         multiRequestBuilder.setCompletion {
             if (it.isSuccess) {
                 if (it.results != null && it.results[2] != null) {
+                    @Suppress("UNCHECKED_CAST")
                     userAssetRules.value = Resource.Success((it.results[2] as ListResponse<UserAssetRule>).objects)
                 }
             }

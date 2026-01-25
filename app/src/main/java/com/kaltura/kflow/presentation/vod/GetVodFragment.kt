@@ -55,6 +55,7 @@ class GetVodFragment : SharedTransitionFragment(R.layout.fragment_vod) {
                 error = { binding.get.error(lifecycleScope) },
                 success = {
                     binding.get.success(lifecycleScope)
+                    @Suppress("UNCHECKED_CAST")
                     assets = it.filterIsInstance<MediaAsset>() as ArrayList<Asset>
                     binding.showAssets.text = getQuantityString(R.plurals.show_assets, assets.size)
                     binding.showAssets.visible()

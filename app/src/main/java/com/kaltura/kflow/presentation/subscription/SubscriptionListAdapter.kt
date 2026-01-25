@@ -39,6 +39,7 @@ class SubscriptionListAdapter(parentItemList: ArrayList<ParentRecyclerViewItem<A
     override fun onCreateChildViewHolder(childViewGroup: ViewGroup) = SubscriptionViewHolder(childViewGroup.inflate(R.layout.item_subscription))
 
     override fun onBindParentViewHolder(parentViewHolder: PackageViewHolder, position: Int, parentListItem: ParentListItem) {
+        @Suppress("UNCHECKED_CAST")
         val item = parentListItem as ParentRecyclerViewItem<Asset, Subscription>
         parentViewHolder.bind(item.parent, item.children.isNotEmpty())
     }
@@ -49,6 +50,7 @@ class SubscriptionListAdapter(parentItemList: ArrayList<ParentRecyclerViewItem<A
 
     fun addSubscriptionToPackage(packageBaseId: Double, subscriptions: ArrayList<Subscription>) {
         parentItemList.forEach {
+            @Suppress("UNCHECKED_CAST")
             val parentRecyclerViewItem = it as ParentRecyclerViewItem<Asset, Subscription>
             val baseId = (parentRecyclerViewItem.parent).metas["BaseID"]
             if (baseId != null && (baseId as DoubleValue).value == packageBaseId) {

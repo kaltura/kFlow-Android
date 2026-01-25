@@ -2,7 +2,7 @@ package com.kaltura.kflow.entity
 
 import android.os.Parcelable
 import com.kaltura.client.types.Asset
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 /**
  * Created by alex_lytvynenko on 25.07.2020.

@@ -53,6 +53,7 @@ class LiveTvFragment : SharedTransitionFragment(R.layout.fragment_live) {
                 error = { binding.get.error(lifecycleScope) },
                 success = {
                     binding.get.success(lifecycleScope)
+                    @Suppress("UNCHECKED_CAST")
                     channels = it.filterIsInstance<LiveAsset>() as ArrayList<Asset>
                     binding.showChannel.text = getQuantityString(R.plurals.show_channels, channels.size)
                     binding.showChannel.visible()

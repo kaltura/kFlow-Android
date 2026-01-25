@@ -90,6 +90,7 @@ class SubscriptionViewModel(private val apiManager: PhoenixApiManager) : BaseVie
         multiRequestBuilder.setCompletion {
             if (it.isSuccess && it.results != null) {
                 val assets = arrayListOf<Asset>()
+                @Suppress("UNCHECKED_CAST")
                 it.results.forEach { (it as ListResponse<Asset>).objects?.let { assets.addAll(it) } }
                 assetsInSubscription.value = Resource.Success(assets)
             }
