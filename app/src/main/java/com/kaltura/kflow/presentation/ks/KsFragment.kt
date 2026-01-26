@@ -5,11 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.kaltura.kflow.R
-import com.kaltura.kflow.databinding.FragmentFavoritesBinding
 import com.kaltura.kflow.databinding.FragmentKsBinding
-import com.kaltura.kflow.databinding.FragmentLoginBinding
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
-import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
 import org.koin.androidx.viewmodel.ext.android.viewModel

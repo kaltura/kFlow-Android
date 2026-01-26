@@ -9,9 +9,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.enums.RecordingStatus
 import com.kaltura.kflow.R
-import com.kaltura.kflow.databinding.FragmentPlayerBinding
 import com.kaltura.kflow.databinding.FragmentRecordingListBinding
-import com.kaltura.kflow.databinding.ItemRecordingBinding
 import com.kaltura.kflow.presentation.base.BaseFragment
 import com.kaltura.kflow.presentation.extension.navigate
 /**

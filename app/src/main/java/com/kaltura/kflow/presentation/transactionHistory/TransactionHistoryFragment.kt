@@ -9,11 +9,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kaltura.client.types.BillingTransaction
 import com.kaltura.kflow.R
-import com.kaltura.kflow.databinding.FragmentCheckReceiptBinding
-import com.kaltura.kflow.databinding.FragmentSubscriptionBinding
 import com.kaltura.kflow.databinding.FragmentTransactionHistoryBinding
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
-import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
 import org.koin.androidx.viewmodel.ext.android.viewModel

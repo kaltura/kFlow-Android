@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -16,9 +19,10 @@
             android:layout_height="match_parent"
             android:overScrollMode="never">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:paddingBottom="15dp">
 
                 <include layout="@layout/view_shared_transition_header" />
@@ -55,7 +59,7 @@
                         android:layout_height="wrap_content"
                         android:hint="END Point URL"
                         android:imeOptions="actionNext"
-                        android:nextFocusDown="@id/partnerId"
+                        android:nextFocusDown="@id/cloudfronturl"
                         android:singleLine="true" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -149,7 +153,21 @@
                         android:singleLine="true" />
 
                 </com.google.android.material.textfield.TextInputLayout>
-
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/urlTypeTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@android:color/white"
+                    android:drawableEnd="@drawable/ic_baseline_help_24"
+                    android:drawablePadding="7dp"
+                    android:gravity="center"
+                    android:paddingStart="7dp"
+                    android:paddingEnd="7dp"
+                    android:text="URL type"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/mediaFileFormatInputLayout" />
                 <RadioGroup
                     android:id="@+id/urlTypeLayout"
                     android:layout_width="match_parent"
@@ -188,9 +206,8 @@
                         android:paddingStart="5dp"
                         android:text="Play manifest" />
                 </RadioGroup>
-
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/urlTypeTitle"
+                    android:id="@+id/streamerTypeTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="25dp"
@@ -201,10 +218,9 @@
                     android:gravity="center"
                     android:paddingStart="7dp"
                     android:paddingEnd="7dp"
-                    android:text="URL type"
+                    android:text="Streamer Type"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/mediaFileFormatInputLayout" />
-
+                    app:layout_constraintTop_toBottomOf="@id/urlTypeLayout" />
                 <RadioGroup
                     android:id="@+id/streamerType"
                     android:layout_width="match_parent"
@@ -243,9 +259,8 @@
                         android:paddingStart="5dp"
                         android:text="Multicast" />
                 </RadioGroup>
-
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/streamerTypeTitle"
+                    android:id="@+id/mediaProtocolTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="25dp"
@@ -256,10 +271,9 @@
                     android:gravity="center"
                     android:paddingStart="7dp"
                     android:paddingEnd="7dp"
-                    android:text="Streamer Type"
+                    android:text="Media protocol"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/urlTypeLayout" />
-
+                    app:layout_constraintTop_toBottomOf="@id/streamerType" />
                 <RadioGroup
                     android:id="@+id/mediaProtocol"
                     android:layout_width="match_parent"
@@ -298,9 +312,8 @@
                         android:paddingStart="5dp"
                         android:text="Https" />
                 </RadioGroup>
-
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/mediaProtocolTitle"
+                    android:id="@+id/codecTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="25dp"
@@ -311,10 +324,9 @@
                     android:gravity="center"
                     android:paddingStart="7dp"
                     android:paddingEnd="7dp"
-                    android:text="Media protocol"
+                    android:text="Codec"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/streamerType" />
-
+                    app:layout_constraintTop_toBottomOf="@id/mediaProtocol" />
                 <RadioGroup
                     android:id="@+id/codec"
                     android:layout_width="match_parent"
@@ -345,22 +357,6 @@
                         android:paddingStart="5dp"
                         android:text="AVC" />
                 </RadioGroup>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/codecTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@android:color/white"
-                    android:drawableEnd="@drawable/ic_baseline_help_24"
-                    android:drawablePadding="7dp"
-                    android:gravity="center"
-                    android:paddingStart="7dp"
-                    android:paddingEnd="7dp"
-                    android:text="Codec"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/mediaProtocol" />
 
                 <com.google.android.material.checkbox.MaterialCheckBox
                     android:id="@+id/drm"
@@ -442,7 +438,7 @@
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/quality" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
         </ScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
@@ -471,3 +467,4 @@
         tools:layout_editor_absoluteY="0dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

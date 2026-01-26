@@ -15,11 +15,8 @@ import com.kaltura.androidx.media3.common.util.UnstableApi
 import com.kaltura.client.enums.*
 import com.kaltura.client.types.*
 import com.kaltura.kflow.R
-import com.kaltura.kflow.databinding.FragmentAnonymousLoginBinding
 import com.kaltura.kflow.databinding.FragmentPlayerBinding
-import com.kaltura.kflow.databinding.ViewPlayerControlBinding
 import com.kaltura.kflow.presentation.debug.DebugFragment
-import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.playkit.*
 import com.kaltura.playkit.PlayerEvent.StateChanged

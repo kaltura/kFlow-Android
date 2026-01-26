@@ -8,10 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.kaltura.kflow.R
 import com.kaltura.kflow.databinding.FragmentDeviceManagementBinding
-import com.kaltura.kflow.databinding.FragmentIotBinding
-import com.kaltura.kflow.databinding.ViewDebugBinding
 import com.kaltura.kflow.presentation.base.SharedTransitionFragment
-import com.kaltura.kflow.presentation.debug.DebugView
 import com.kaltura.kflow.presentation.extension.*
 import com.kaltura.kflow.presentation.main.Feature
 import com.kaltura.kflow.utils.getUUID
