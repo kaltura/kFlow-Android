@@ -8,7 +8,10 @@
     <string name="disable_push_notification">Disable Push Notification</string>
     <string name="enable_push_notification">Enable Push Notification</string>
 
-
+    <string name="social_login_web_client_id_message">Please set the Google Web Client ID defined on Google Cloud Console</string>
+    <string name="social_login_android_sha1_message">Please note that the Android SHA1 Fingerprint must be defined on Google Cloud Console</string>
+    <string name="social_login_web_client_id">Web Client ID</string>
+    <string name="social_login_google_sign_in_button">Google Provider SignIn</string>
 
 
     <plurals name="show_assets">

@@ -11,6 +11,7 @@ enum class Feature(val text: String, @DrawableRes val imageResId: Int) {
     LOGIN_APP_TOKEN("Login & AppToken", R.drawable.ic_login),
     WORK_WITH_KS("Work with KS", R.drawable.ic_ks),
     ANONYMOUS_LOGIN("Anonymous\nlogin", R.drawable.ic_anonymous),
+    SOCIAL_LOGIN("Social Login", R.drawable.ic_login),
     REGISTRATION("Registration", R.drawable.ic_registration),
     COLLECTIONS("Collections", R.drawable.ic_collections),
     VOD("VOD gallery", R.drawable.ic_vod),

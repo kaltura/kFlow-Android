@@ -23,6 +23,7 @@ import com.kaltura.kflow.presentation.reminderList.ReminderListViewModel
 import com.kaltura.kflow.presentation.search.SearchViewModel
 import com.kaltura.kflow.presentation.settings.SettingsViewModel
 import com.kaltura.kflow.presentation.sns.SNSViewModel
+import com.kaltura.kflow.presentation.socialLogin.SocialLoginViewModel
 import com.kaltura.kflow.presentation.subscription.SubscriptionViewModel
 import com.kaltura.kflow.presentation.transactionHistory.TransactionHistoryViewModel
 import com.kaltura.kflow.presentation.vod.GetVodViewModel
@@ -39,6 +40,7 @@ val viewModelModule = module {
     viewModel { FavoritesViewModel(get()) }
     viewModel { LiveTvViewModel(get()) }
     viewModel { LoginViewModel(get(), get()) }
+    viewModel { SocialLoginViewModel(get() )}
     viewModel { AppTokenViewModel(get(), get()) }
     viewModel { KsViewModel(get(), get()) }
     viewModel { MediaPageViewModel(get()) }

@@ -23,6 +23,9 @@
             android:id="@+id/navigate_to_anonymous_login"
             app:destination="@id/anonymous_login" />
         <action
+            android:id="@+id/navigate_to_social_login"
+            app:destination="@id/social_login" />
+        <action
             android:id="@+id/navigate_to_registration"
             app:destination="@id/registration" />
         <action
@@ -120,6 +123,12 @@
         android:name="com.kaltura.kflow.presentation.anonymousLogin.AnonymousLoginFragment"
         android:label="Anonymous login"
         tools:layout="@layout/fragment_anonymous_login" />
+
+    <fragment
+        android:id="@+id/social_login"
+        android:name="com.kaltura.kflow.presentation.socialLogin.SocialLoginFragment"
+        android:label="Social Login"
+        tools:layout="@layout/fragment_social" />
 
     <fragment
         android:id="@+id/check_receipt"
