@@ -46,7 +46,8 @@ class SocialLoginFragment : SharedTransitionFragment(R.layout.fragment_social) {
                     return@withInternetConnection
                 }
                 binding.google.startAnimation {
-                    viewModel.initiateGoogleSignInProcess(binding.webClientId.text.toString(),requireContext())
+                    //viewModel.initiateGoogleSignInProcess(binding.webClientId.text.toString(),requireContext())
+                    viewModel.initiateGoogleChooseAccountSignInProcess(binding.webClientId.text.toString(),requireContext())
                 }
             }
         }

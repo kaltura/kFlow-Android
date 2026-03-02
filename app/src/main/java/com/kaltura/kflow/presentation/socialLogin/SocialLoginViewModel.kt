@@ -16,6 +16,7 @@ import androidx.credentials.exceptions.NoCredentialException
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.kaltura.client.types.APIException
@@ -61,24 +62,38 @@ class SocialLoginViewModel(private val apiManager: PhoenixApiManager) : BaseView
                 googleSignInEvent.postValue(Resource.Error(createAPIException(e)))
         }
     }
-    fun generateSecureRandomNonce(byteLength: Int = 32): String {
-        val randomBytes = ByteArray(byteLength)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            SecureRandom.getInstanceStrong().nextBytes(randomBytes)
-            return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes)
+    fun initiateGoogleChooseAccountSignInProcess(webClientID: String, context: Context) {
+
+        val signInWithGoogleOption: GetSignInWithGoogleOption = GetSignInWithGoogleOption
+            .Builder(serverClientId = webClientID)
+            .setNonce(generateSecureRandomNonce())
+            .build()
+
+        val request: GetCredentialRequest = GetCredentialRequest.Builder()
+            .addCredentialOption(signInWithGoogleOption)
+            .build()
+
+        viewModelScope.launch {
+            val e = signIn(request, context)
+            if (e is NoCredentialException) {
+                val googleIdOptionFalse: GetGoogleIdOption = GetGoogleIdOption.Builder()
+                    .setFilterByAuthorizedAccounts(false)
+                    .setServerClientId(webClientID)
+                    .setNonce(generateSecureRandomNonce())
+                    .build()
+
+                val requestFalse: GetCredentialRequest = GetCredentialRequest.Builder()
+                    .addCredentialOption(googleIdOptionFalse)
+                    .build()
+
+                val tryRequestFalse = signIn(requestFalse, context)
+                if(tryRequestFalse != null) {
+                    googleSignInEvent.postValue(Resource.Error(createAPIException(tryRequestFalse)))
+                }
+            } else if(e != null)
+                googleSignInEvent.postValue(Resource.Error(createAPIException(e)))
         }
-        return ""
     }
-
-    fun createAPIException(objectException: Exception) : APIException{
-        var resultException = APIException()
-
-        resultException.setMessage(objectException.message)
-        resultException.stackTrace = objectException.stackTrace
-
-        return resultException
-    }
-
     suspend fun signIn(request: GetCredentialRequest, context: Context): Exception? {
         val credentialManager = CredentialManager.create(context)
         val failureMessage = "Sign in failed!"
@@ -138,5 +153,21 @@ class SocialLoginViewModel(private val apiManager: PhoenixApiManager) : BaseView
                 googleSignInEvent.postValue(Resource.Error(createAPIException(e)))
             }
         }
+    }
+    fun generateSecureRandomNonce(byteLength: Int = 32): String {
+        val randomBytes = ByteArray(byteLength)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            SecureRandom.getInstanceStrong().nextBytes(randomBytes)
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes)
+        }
+        return ""
+    }
+    fun createAPIException(objectException: Exception) : APIException{
+        var resultException = APIException()
+
+        resultException.setMessage(objectException.message)
+        resultException.stackTrace = objectException.stackTrace
+
+        return resultException
     }
 }
