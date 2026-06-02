@@ -49,7 +49,6 @@ class DebugView @JvmOverloads constructor(
                 binding.requestSort.drawable.mutate().setColor(R.color.colorAccent)
             }
             setRequestBody(requestJson)
-            Log.d("Elad","Opening DebugView with requestJson : "+requestJson)
         }
         binding.responseSort.setOnClickListener {
             if (binding.responseSort.isSelected) {
@@ -60,10 +59,7 @@ class DebugView @JvmOverloads constructor(
                 binding.responseSort.drawable.mutate().setColor(R.color.colorAccent)
             }
             setResponseBody(responseJson)
-            Log.d("Elad","Opening DebugView with responseJson : "+responseJson)
         }
-        Log.d("Elad","DebugView requestJson : "+requestJson)
-        Log.d("Elad","DebugView responseJson : "+responseJson)
     }
 
     fun setRequestBody(json: JSONObject) {
@@ -141,15 +137,5 @@ class DebugView @JvmOverloads constructor(
     private fun updateServiceUrl() {
         val serviceUrl = requestUrl.split("service")
         binding.serviceUrlBody.text = serviceUrl.getOrNull(1) ?: ""
-    }
-    fun test() {
-        var requestJ: JSONObject = JSONObject()
-        var responseJ: JSONObject = JSONObject()
-        requestJ.put("name","Elad Request Body")
-        responseJ.put("name","Elad Response Body")
-        //setRequestBody(requestJ)
-        //setResponseBody(responseJ)
-//        setRequestBody(requestJson)
-//        setResponseBody(responseJson)
     }
 }

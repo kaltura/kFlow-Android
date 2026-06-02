@@ -26,6 +26,9 @@
             android:id="@+id/navigate_to_social_login"
             app:destination="@id/social_login" />
         <action
+            android:id="@+id/navigate_to_social_facebook_login"
+            app:destination="@id/social_facebook_login" />
+        <action
             android:id="@+id/navigate_to_registration"
             app:destination="@id/registration" />
         <action
@@ -129,6 +132,12 @@
         android:name="com.kaltura.kflow.presentation.socialLogin.SocialLoginFragment"
         android:label="Social Login"
         tools:layout="@layout/fragment_social" />
+
+    <fragment
+        android:id="@+id/social_facebook_login"
+        android:name="com.kaltura.kflow.presentation.socialFacebookLogin.SocialFacebookLoginFragment"
+        android:label="Facebook Login"
+        tools:layout="@layout/fragment_social_facebook" />
 
     <fragment
         android:id="@+id/check_receipt"

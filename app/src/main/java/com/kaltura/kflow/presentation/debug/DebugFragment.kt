@@ -107,7 +107,6 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
 
     override fun setRequestBody(requestBody: JSONObject) {
         bottomDebugBinding.debugView.setRequestBody(requestBody)
-        Log.d("Elad","DebugFragment setRequestBody requestBody : "+requestBody)
         runOnMobile {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
@@ -116,7 +115,6 @@ abstract class DebugFragment(@LayoutRes contentLayoutId: Int) : BaseFragment(con
     override fun setResponseBody(responseBody: JSONObject) {
         responseBodyString = responseBody.toString()
         bottomDebugBinding.debugView.setResponseBody(responseBody)
-        Log.d("Elad","DebugFragment setResponseBody responseBody : "+responseBody)
     }
 
     override fun onError() {

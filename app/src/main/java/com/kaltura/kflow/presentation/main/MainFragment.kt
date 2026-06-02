@@ -20,7 +20,7 @@ import com.kaltura.kflow.presentation.extension.navigateWithExtras
 class MainFragment : Fragment(R.layout.fragment_main) {
 
     private val features = arrayOf(Feature.LOGIN, Feature.LOGIN_APP_TOKEN, Feature.WORK_WITH_KS,
-            Feature.ANONYMOUS_LOGIN,Feature.SOCIAL_LOGIN, Feature.REGISTRATION, Feature.COLLECTIONS, Feature.VOD,
+            Feature.ANONYMOUS_LOGIN,Feature.SOCIAL_LOGIN,Feature.SOCIAL_FACEBOOK_LOGIN,Feature.REGISTRATION, Feature.COLLECTIONS, Feature.VOD,
             Feature.CONTINUE_WATCHING, Feature.EPG, Feature.LIVE, Feature.FAVORITES, Feature.SEARCH,
             Feature.KEEP_ALIVE, Feature.MEDIA_PAGE, Feature.SUBSCRIPTION, Feature.PRODUCT_PRICE,
             Feature.CHECK_RECEIPT, Feature.TRANSACTION_HISTORY, Feature.RECORDINGS, Feature.BOOKMARK,
@@ -75,6 +75,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 Feature.WORK_WITH_KS -> MainFragmentDirections.navigateToKs()
                 Feature.ANONYMOUS_LOGIN -> MainFragmentDirections.navigateToAnonymousLogin()
                 Feature.SOCIAL_LOGIN -> MainFragmentDirections.navigateToSocialLogin()
+                Feature.SOCIAL_FACEBOOK_LOGIN -> MainFragmentDirections.navigateToSocialFacebookLogin()
                 Feature.REGISTRATION -> MainFragmentDirections.navigateToRegistration()
                 Feature.COLLECTIONS -> MainFragmentDirections.navigateToCollections()
                 Feature.VOD -> MainFragmentDirections.navigateToVod()

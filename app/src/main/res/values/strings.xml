@@ -7,14 +7,19 @@
 
     <string name="disable_push_notification">Disable Push Notification</string>
     <string name="enable_push_notification">Enable Push Notification</string>
-
+<!--Google Section-->
     <string name="social_login_goggle_section"><u>Google Section</u></string>
     <string name="social_login_web_client_id_message">Please set the Google Web Client ID defined on Google Cloud Console</string>
     <string name="social_login_android_sha1_message">Please note that the Android SHA1 Fingerprint must be defined on Google Cloud Console</string>
     <string name="social_login_web_client_id">Web Client ID</string>
     <string name="social_login_google_sign_in_button">Google Provider SignIn</string>
-<!--    <string name="social_login_apple_section"><u>Apple Section</u></string>-->
-
+<!--Facebook Section-->
+    <string name="social_login_facebook_section"><u>Facebook Section</u></string>
+    <string name="social_login_facebook_app_id_message">Please set the Facebook App ID defined on Facebook Apps Dashboard</string>
+    <string name="social_login_facebook_sha1_message">Please note that the Android SHA1 Fingerprint must be defined on Facebook Dashboard</string>
+    <string name="social_login_facebook_app_id">Facebook App ID</string>
+    <string name="social_login_facebook_secret">Facebook Secret</string>
+    <string name="social_login_facebook_sign_in_button">Facebook Provider SignIn</string>
 
     <plurals name="show_assets">
         <item quantity="one">Show %s asset</item>

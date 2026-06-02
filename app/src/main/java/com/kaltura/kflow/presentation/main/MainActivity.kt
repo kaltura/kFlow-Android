@@ -1,6 +1,7 @@
 package com.kaltura.kflow.presentation.main
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -144,5 +145,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private fun promptMessage(title: String) {
         Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Dispatches the event to active fragments
+        supportFragmentManager.fragments.forEach { fragment ->
+            fragment.onActivityResult(requestCode, resultCode, data)
+        }
     }
 }
