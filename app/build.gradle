@@ -96,7 +96,7 @@ dependencies {
     implementation 'com.kaltura:KalturaOttAndroidJavaClient:8.0.0.30025'
 
     // Playkit
-    implementation 'com.kaltura.player:tvplayer:5.0.3'
+    implementation 'com.kaltura.player:tvplayer:5.0.5'
 //    implementation 'com.kaltura.playkit:playkitproviders:4.30.10'
 //    implementation 'com.kaltura.playkit:youboraplugin:4.30.10'
 //    implementation 'com.kaltura.playkit:kavaplugin:4.30.10'

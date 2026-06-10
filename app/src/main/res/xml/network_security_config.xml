@@ -4,12 +4,13 @@
         <domain includeSubdomains="true">api.frs1.ott.kaltura.com</domain>
         <domain includeSubdomains="true">api.frp1.ott.kaltura.com</domain>
         <domain includeSubdomains="true">api.vrs1.ott.kaltura.com</domain>
+        <domain includeSubdomains="true">api.sgp2.ott.kaltura.com</domain>
     </domain-config>
     <debug-overrides>
         <trust-anchors>
             <certificates src="system" />
             <certificates src="user" />
-            <certificates src="@raw/charles"/>
+            <certificates src="@raw/elad"/>
         </trust-anchors>
     </debug-overrides>
     <base-config cleartextTrafficPermitted="true">
