@@ -26,6 +26,7 @@ import com.kaltura.playkit.player.TextTrack
 import com.kaltura.playkit.plugins.ads.AdEvent
 import com.kaltura.playkit.plugins.ott.OttEvent
 import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsConfig
+import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsEvent
 import com.kaltura.playkit.plugins.ott.PhoenixAnalyticsPlugin
 import com.kaltura.playkit.providers.api.phoenix.APIDefines
 import com.kaltura.playkit.providers.api.phoenix.APIDefines.KalturaAssetType
@@ -381,6 +382,8 @@ class PlayerFragment : DebugFragment(R.layout.fragment_player) {
             }
             //OLD WAY FOR GETTING THE CONCURRENCY
             it.addListener(this, OttEvent.OttEventType.Concurrency) { toast("Concurrency event") }
+            it.addListener(this, PhoenixAnalyticsEvent.concurrencyError) { toast("Concurrency event") }
+
         }
     }
 
